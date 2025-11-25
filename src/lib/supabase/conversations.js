@@ -22,7 +22,7 @@ import { createClient } from '@/lib/supabase/client'
 /**
  * Create a new conversation
  */
-export async function createConversation(userId, title = 'New Conversation', initialMessage = null) {
+export async function createConversation(userId, title = 'New Conversation', initialMessage = null, options = {}) {
   const supabase = createClient()
   
   const messages = initialMessage ? [initialMessage] : []
@@ -33,16 +33,37 @@ export async function createConversation(userId, title = 'New Conversation', ini
       user_id: userId,
       title: title,
       messages: messages,
+      model: options.model || 'gpt-4o',
     })
     .select()
     .single()
 
   if (error) {
     console.error('Error creating conversation:', error)
+    console.error('Error details:', JSON.stringify(error, null, 2))
     throw error
   }
 
   return data
+}
+
+/**
+ * Delete all conversations for a user
+ */
+export async function deleteAllConversations(userId) {
+  const supabase = createClient()
+  
+  const { error } = await supabase
+    .from('user_conversations')
+    .delete()
+    .eq('user_id', userId)
+
+  if (error) {
+    console.error('Error deleting all conversations:', error)
+    throw error
+  }
+
+  return true
 }
 
 /**
@@ -360,4 +381,84 @@ export function createMessage(role, content, options = {}) {
     model: options.model || null,
     ...options.metadata
   }
+}
+
+/**
+ * Update a specific message in a conversation
+ */
+export async function updateMessage(conversationId, userId, messageId, newContent) {
+  const supabase = createClient()
+  
+  // Get current messages
+  const { data: conversation, error: fetchError } = await supabase
+    .from('user_conversations')
+    .select('messages')
+    .eq('id', conversationId)
+    .eq('user_id', userId)
+    .single()
+
+  if (fetchError) {
+    console.error('Error fetching conversation:', fetchError)
+    throw fetchError
+  }
+
+  // Update the specific message
+  const updatedMessages = conversation.messages.map(msg =>
+    msg.id === messageId ? { ...msg, content: newContent, edited: true } : msg
+  )
+
+  // Save updated messages
+  const { data, error } = await supabase
+    .from('user_conversations')
+    .update({ messages: updatedMessages })
+    .eq('id', conversationId)
+    .eq('user_id', userId)
+    .select()
+    .single()
+
+  if (error) {
+    console.error('Error updating message:', error)
+    throw error
+  }
+
+  return data
+}
+
+/**
+ * Delete a specific message from a conversation
+ */
+export async function deleteMessage(conversationId, userId, messageId) {
+  const supabase = createClient()
+  
+  // Get current messages
+  const { data: conversation, error: fetchError } = await supabase
+    .from('user_conversations')
+    .select('messages')
+    .eq('id', conversationId)
+    .eq('user_id', userId)
+    .single()
+
+  if (fetchError) {
+    console.error('Error fetching conversation:', fetchError)
+    throw fetchError
+  }
+
+  // Remove the message
+  const updatedMessages = conversation.messages.filter(msg => msg.id !== messageId)
+
+  // Save updated messages
+  const { data, error } = await supabase
+    .from('user_conversations')
+    .update({ messages: updatedMessages })
+    .eq('id', conversationId)
+    .eq('user_id', userId)
+    .select()
+    .single()
+
+  if (error) {
+    console.error('Error deleting message:', error)
+    throw error
+  }
+
+  return data
 }

@@ -14,9 +14,10 @@ import { Loader2, User, Mail, Calendar, Shield, Upload, ArrowLeft, Globe, FileTe
 import { toast } from "sonner"
 import { createClient } from "@/lib/supabase/client"
 import { Header } from "@/components/Header"
+import { AvatarUpload } from "@/components/AvatarUpload"
 
 export default function ProfilePage() {
-  const { user, loading: authLoading } = useAuth()
+  const { user, loading: authLoading, refreshUser } = useAuth()
   const router = useRouter()
   const supabase = createClient()
   const [loading, setLoading] = useState(false)
@@ -25,6 +26,7 @@ export default function ProfilePage() {
   const [bio, setBio] = useState("")
   const [website, setWebsite] = useState("")
   const [profile, setProfile] = useState(null)
+  const [avatarUrl, setAvatarUrl] = useState("")
 
   // Fetch profile data from profiles table
   useEffect(() => {
@@ -48,11 +50,19 @@ export default function ProfilePage() {
         setEmail(data.email || "")
         setBio(data.bio || "")
         setWebsite(data.website || "")
+        setAvatarUrl(data.avatar_url || "")
       }
     }
 
     fetchProfile()
   }, [user, supabase])
+
+  // Update local state when user changes (e.g., after avatar upload)
+  useEffect(() => {
+    if (user?.user_metadata?.avatar_url) {
+      setAvatarUrl(user.user_metadata.avatar_url)
+    }
+  }, [user])
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -104,6 +114,9 @@ export default function ProfilePage() {
 
       if (profileError) throw profileError
 
+      // Refresh user data
+      await refreshUser()
+
       toast.success("Profile updated! ✨", {
         description: "Your profile information has been saved successfully.",
         duration: 3000,
@@ -115,6 +128,10 @@ export default function ProfilePage() {
     } finally {
       setLoading(false)
     }
+  }
+
+  const handleAvatarUploadSuccess = (newAvatarUrl) => {
+    setAvatarUrl(newAvatarUrl)
   }
 
   if (authLoading) {
@@ -153,10 +170,11 @@ export default function ProfilePage() {
         <Card className="mb-6">
           <CardContent className="pt-6">
             <div className="flex flex-col md:flex-row items-center gap-6">
-              <Avatar className="h-24 w-24">
-                <AvatarImage src={user?.user_metadata?.avatar_url} alt={user?.email} />
-                <AvatarFallback className="text-2xl">{getUserInitials()}</AvatarFallback>
-              </Avatar>
+              <AvatarUpload
+                currentAvatarUrl={avatarUrl || user?.user_metadata?.avatar_url}
+                userInitials={getUserInitials()}
+                onUploadSuccess={handleAvatarUploadSuccess}
+              />
               <div className="flex-1 text-center md:text-left">
                 <h1 className="text-3xl font-bold mb-2">
                   {user?.user_metadata?.full_name || 'User Profile'}
@@ -173,10 +191,6 @@ export default function ProfilePage() {
                   </div>
                 </div>
               </div>
-              <Button variant="outline" size="sm">
-                <Upload className="h-4 w-4 mr-2" />
-                Change Photo
-              </Button>
             </div>
           </CardContent>
         </Card>

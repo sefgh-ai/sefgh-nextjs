@@ -32,9 +32,21 @@ export const AuthProvider = ({ children }) => {
     return () => subscription.unsubscribe()
   }, [router, supabase.auth])
 
+  const refreshUser = async () => {
+    try {
+      const { data: { user: refreshedUser } } = await supabase.auth.getUser()
+      if (refreshedUser) {
+        setUser(refreshedUser)
+      }
+    } catch (error) {
+      console.error('Error refreshing user:', error)
+    }
+  }
+
   const value = {
     user,
     loading,
+    refreshUser,
     signOut: async () => {
       await supabase.auth.signOut()
       router.push('/')

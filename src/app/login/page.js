@@ -4,18 +4,36 @@ import { useState, useEffect } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Moon, Sun, Github, Loader2 } from "lucide-react"
+import { Moon, Sun, Github } from "lucide-react"
 import { useTheme } from "next-themes"
 import { createClient } from "@/lib/supabase/client"
 import { toast } from "sonner"
 import { useAuth } from "@/contexts/AuthContext"
+import { SignInPage } from "@/components/ui/sign-in"
+
+// Login page testimonials
+const loginTestimonials = [
+  {
+    avatarSrc: "https://randomuser.me/api/portraits/women/44.jpg",
+    name: "Emma Wilson",
+    handle: "@emmawilson",
+    text: "SEFGH-AI has transformed how I search for GitHub repos. Absolutely incredible!"
+  },
+  {
+    avatarSrc: "https://randomuser.me/api/portraits/men/32.jpg",
+    name: "Michael Chen",
+    handle: "@michaeldev",
+    text: "The AI-powered search is a game changer. Found exactly what I needed in seconds."
+  },
+  {
+    avatarSrc: "https://randomuser.me/api/portraits/women/65.jpg",
+    name: "Sarah Johnson",
+    handle: "@sarahcodes",
+    text: "Best developer tool I've used this year. Clean, fast, and incredibly powerful."
+  }
+];
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
   const { setTheme, theme } = useTheme()
@@ -37,6 +55,10 @@ export default function LoginPage() {
     e.preventDefault()
     setLoading(true)
     setError("")
+
+    const formData = new FormData(e.currentTarget)
+    const email = formData.get('email')
+    const password = formData.get('password')
 
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
@@ -80,6 +102,16 @@ export default function LoginPage() {
     } finally {
       setLoading(false)
     }
+  }
+
+  const handleResetPassword = () => {
+    toast.info("Password Reset", {
+      description: "Password reset feature coming soon! Check your email for instructions.",
+    });
+  }
+
+  const handleCreateAccount = () => {
+    router.push('/signup')
   }
 
   const handleGithubLogin = async () => {
@@ -136,10 +168,21 @@ export default function LoginPage() {
     }
   }
 
+  const GithubButton = (
+    <button 
+      onClick={handleGithubLogin}
+      className="w-full flex items-center justify-center gap-3 border border-border rounded-2xl py-4 hover:bg-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+      disabled={loading}
+    >
+      <Github className="h-5 w-5" />
+      GitHub
+    </button>
+  );
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-accent/20 px-4">
-      {/* Theme Toggle */}
-      <div className="fixed top-4 right-4">
+    <>
+      {/* Theme Toggle - Top Left */}
+      <div className="fixed top-4 left-4 z-50">
         <Button
           variant="ghost"
           size="icon"
@@ -152,125 +195,26 @@ export default function LoginPage() {
         </Button>
       </div>
 
-      <Card className="w-full max-w-md shadow-2xl">
-        <CardHeader className="space-y-1 text-center">
-          <Link href="/" className="inline-block mb-4">
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+      <SignInPage
+        title={
+          <span className="font-semibold text-foreground">
+            Welcome back to{' '}
+            <span className="bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent">
               SEFGH-AI
-            </h1>
-          </Link>
-          <CardTitle className="text-2xl font-bold">Welcome back</CardTitle>
-          <CardDescription>
-            Enter your credentials to access your account
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="name@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="w-full"
-              />
-            </div>
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="password">Password</Label>
-                <Link href="#" className="text-sm text-muted-foreground hover:text-primary">
-                  Forgot password?
-                </Link>
-              </div>
-              <Input
-                id="password"
-                type="password"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                className="w-full"
-              />
-            </div>
-            {error && (
-              <div className="p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">
-                {error}
-              </div>
-            )}
-            
-            <Button type="submit" className="w-full" size="lg" disabled={loading}>
-              {loading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Signing in...
-                </>
-              ) : (
-                'Sign In'
-              )}
-            </Button>
-          </form>
-
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t" />
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-card px-2 text-muted-foreground">
-                Or continue with
-              </span>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <Button 
-              variant="outline" 
-              className="w-full" 
-              onClick={handleGithubLogin}
-              disabled={loading}
-            >
-              <Github className="mr-2 h-4 w-4" />
-              GitHub
-            </Button>
-            <Button 
-              variant="outline" 
-              className="w-full"
-              onClick={handleGoogleLogin}
-              disabled={loading}
-            >
-              <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
-                <path
-                  fill="currentColor"
-                  d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                />
-                <path
-                  fill="currentColor"
-                  d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                />
-                <path
-                  fill="currentColor"
-                  d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-                />
-                <path
-                  fill="currentColor"
-                  d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-                />
-              </svg>
-              Google
-            </Button>
-          </div>
-        </CardContent>
-        <CardFooter className="flex justify-center">
-          <p className="text-sm text-muted-foreground">
-            Don't have an account?{" "}
-            <Link href="/signup" className="text-primary hover:underline font-semibold">
-              Sign up
-            </Link>
-          </p>
-        </CardFooter>
-      </Card>
-    </div>
+            </span>
+          </span>
+        }
+        description="Sign in to access your AI-powered GitHub search platform"
+        heroImageSrc="https://images.unsplash.com/photo-1557426272-fc759fdf7a8d?w=2160&q=80"
+        testimonials={loginTestimonials}
+        onSignIn={handleSubmit}
+        onGoogleSignIn={handleGoogleLogin}
+        onResetPassword={handleResetPassword}
+        onCreateAccount={handleCreateAccount}
+        loading={loading}
+        error={error}
+        GithubButton={GithubButton}
+      />
+    </>
   )
 }
