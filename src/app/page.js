@@ -9,6 +9,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import LanguageDropdown from "@/components/LanguageDropdown";
 import { useTheme } from "next-themes";
 import { Search, Sparkles, Code, Gem, Brain, Twitter, Sun, Moon, User, Home as HomeIcon } from "lucide-react";
+import SearchComponent from "@/components/ui/animated-glowing-search-bar";
 
 // Dynamically import SocialProof (ensure correct default export resolution and no SSR)
 const SocialProof = dynamic(() => import("@/components/marketing/SocialProof").then(m => m.default), { ssr: false });
@@ -142,21 +143,11 @@ export default function Home() {
           
           {/* Search Box */}
           <div className="max-w-3xl mx-auto mb-12">
-            <div className="relative">
-              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-              <input
-                placeholder={messages.hero.searchPlaceholders[searchPlaceholder]}
-                type="text"
-                className="w-full pl-12 pr-4 py-4 text-lg rounded-2xl glass-premium border-white/10 focus:outline-none transition-smooth shadow-soft hover:shadow-soft-lg"
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' && e.target.value) {
-                    router.push(`/search?q=${encodeURIComponent(e.target.value)}`);
-                  }
-                }}
-              />
-            </div>
+            <SearchComponent 
+              placeholder={messages.hero.searchPlaceholders[searchPlaceholder]}
+              onSearch={(query) => router.push(`/search?q=${encodeURIComponent(query)}`)}
+            />
           </div>
-
           {/* Action Buttons - Conditional based on auth status */}
           <div className="flex flex-wrap gap-4 justify-center items-center">
             {!user ? (
