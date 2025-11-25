@@ -34,15 +34,15 @@ export default function ParticleField() {
     const textParticles = [];
     const iconParticles = [];
 
-    // Sci-fi color palette
+    // Sci-fi color palette - blue focused with subtle green
     const colorPalette = [
-      [0.0, 0.8, 1.0],    // Cyan
-      [0.34, 0.65, 1.0],  // Blue
-      [0.6, 0.0, 1.0],    // Purple
-      [0.0, 1.0, 0.8],    // Teal
-      [0.14, 0.53, 0.21], // Green
-      [1.0, 0.8, 0.1],    // Amber
-      [1.0, 0.2, 0.8],    // Magenta
+      [0.23, 0.51, 0.96],  // Blue primary
+      [0.34, 0.65, 1.0],   // Blue light
+      [0.06, 0.53, 0.90],  // Blue darker
+      [0.13, 0.82, 0.82],  // Teal
+      [0.06, 0.39, 0.31],  // Darker green (subtle)
+      [0.23, 0.51, 0.96],  // Blue (repeat for higher frequency)
+      [0.13, 0.82, 0.82],  // Teal (repeat)
     ];
 
     for (let i = 0; i < count; i++) {
@@ -104,14 +104,14 @@ export default function ParticleField() {
 
     // Create icon particles that follow random nodes
     const iconTypes = ['github', 'branch', 'commit', 'pr', 'search', 'code'];
-    const iconsCount = 28;
+    const iconsCount = 22;  // Reduced from 28
     for (let k = 0; k < iconsCount; k++) {
       const pIndex = Math.floor(Math.random() * count);
       const k3 = pIndex * 3;
       iconParticles.push({
         particleIndex: pIndex,
         type: iconTypes[Math.floor(Math.random() * iconTypes.length)],
-        color: ['#00d9ff', '#00ff88', '#b800ff', '#58a6ff', '#f59e0b'][Math.floor(Math.random() * 5)],
+        color: ['#3b82f6', '#60a5fa', '#14b8a6', '#0ea5e9', '#0f766e'][Math.floor(Math.random() * 5)],
         size: Math.random() * 14 + 14,
         offset: [
           (Math.random() - 0.5) * 1.2,
@@ -159,19 +159,19 @@ export default function ParticleField() {
     };
   }, []);
 
-  // Create connection lines
+  // Create connection lines - SIGNIFICANTLY REDUCED
   const lineGeometries = useMemo(() => {
     const geometries = [];
     const positions = particleData.positions;
     
-    // Create connections between nearby nodes
-    for (let i = 0; i < particleData.count; i += 3) {
+    // Create connections between nearby nodes - much more selective
+    for (let i = 0; i < particleData.count; i += 12) {  // Skip more particles (was 3, now 12)
       const i3 = i * 3;
       const x1 = positions[i3];
       const y1 = positions[i3 + 1];
       const z1 = positions[i3 + 2];
 
-      for (let j = i + 3; j < Math.min(i + 30, particleData.count); j += 3) {
+      for (let j = i + 12; j < Math.min(i + 40, particleData.count); j += 12) {  // Skip more (was 3, now 12)
         const j3 = j * 3;
         const x2 = positions[j3];
         const y2 = positions[j3 + 1];
@@ -179,7 +179,7 @@ export default function ParticleField() {
 
         const dist = Math.sqrt((x2-x1)**2 + (y2-y1)**2 + (z2-z1)**2);
         
-        if (dist < 6) {
+        if (dist < 4) {  // Tighter threshold (was 6, now 4)
           const points = [
             new THREE.Vector3(x1, y1, z1),
             new THREE.Vector3(x2, y2, z2),
@@ -375,9 +375,9 @@ export default function ParticleField() {
         {lineGeometries.map((item, idx) => (
           <line key={idx} geometry={item.geometry}>
             <lineBasicMaterial 
-              color="#00d9ff" 
+              color="#3b82f6" 
               transparent={true}
-              opacity={0.3 * (1 - item.distance / 6)}
+              opacity={0.15 * (1 - item.distance / 4)}
               blending={THREE.AdditiveBlending}
             />
           </line>
@@ -393,7 +393,7 @@ export default function ParticleField() {
               rotation={textData.rotation}
               scale={textData.scale}
               color={[
-                '#00d9ff', '#00ff88', '#b800ff', '#58a6ff', '#f59e0b', '#22d3ee', '#22c55e'
+                '#3b82f6', '#60a5fa', '#2563eb', '#0ea5e9', '#14b8a6', '#0f766e', '#3b82f6'
               ][idx % 7]}
               fontSize={1.0}
               anchorX="center"
@@ -411,8 +411,8 @@ export default function ParticleField() {
               <group ref={(g) => { if (g) specialIconRefs.current[idx] = g; }}>
                 <Html transform style={{ pointerEvents: 'none' }}>
                   <div style={{
-                    color: textData.text === 'Adeel' ? '#f59e0b' : '#22d3ee',
-                    filter: 'drop-shadow(0 0 6px rgba(0,217,255,0.7))',
+                    color: textData.text === 'Adeel' ? '#3b82f6' : '#14b8a6',
+                    filter: 'drop-shadow(0 0 6px rgba(59,130,246,0.7))',
                   }}>
                     {textData.text === 'Adeel' ? <Code size={16} /> : <Github size={16} />}
                   </div>
@@ -457,9 +457,9 @@ export default function ParticleField() {
             >
               <sphereGeometry args={[0.08, 8, 8]} />
               <meshBasicMaterial 
-                color={i % 3 === 0 ? "#00ff88" : "#00d9ff"} 
+                color={i % 7 === 0 ? "#0f766e" : "#3b82f6"} 
                 transparent={true}
-                opacity={0.6}
+                opacity={0.5}
               />
             </mesh>
           );
@@ -468,10 +468,10 @@ export default function ParticleField() {
 
       {/* Sci-fi lighting */}
       <ambientLight intensity={0.3} />
-      <pointLight position={[0, 0, 0]} intensity={1.5} color="#00d9ff" />
-      <pointLight position={[10, 10, 10]} intensity={0.8} color="#00ff88" />
-      <pointLight position={[-10, -10, -10]} intensity={0.6} color="#b800ff" />
-      <pointLight position={[0, 15, 0]} intensity={0.5} color="#00d9ff" />
+      <pointLight position={[0, 0, 0]} intensity={1.5} color="#3b82f6" />
+      <pointLight position={[10, 10, 10]} intensity={0.8} color="#14b8a6" />
+      <pointLight position={[-10, -10, -10]} intensity={0.6} color="#2563eb" />
+      <pointLight position={[0, 15, 0]} intensity={0.5} color="#0ea5e9" />
     </>
   );
 }
