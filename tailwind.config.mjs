@@ -137,6 +137,14 @@ const config = {
   				'50%': {
   					transform: 'translateY(-10px)'
   				}
+  			},
+  			'spin-slow': {
+  				'0%': {
+  					transform: 'rotate(0deg)'
+  				},
+  				'100%': {
+  					transform: 'rotate(360deg)'
+  				}
   			}
   		},
   		animation: {
@@ -144,7 +152,8 @@ const config = {
   			'accordion-up': 'accordion-up 0.2s ease-out',
   			'glow-pulse': 'glow-pulse 2s ease-in-out infinite',
   			'shimmer': 'shimmer 3s linear infinite',
-  			'float': 'float 3s ease-in-out infinite'
+  			'float': 'float 3s ease-in-out infinite',
+  			'spin-slow': 'spin-slow 20s linear infinite'
   		}
   	}
   },
