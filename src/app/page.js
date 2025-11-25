@@ -142,66 +142,18 @@ export default function Home() {
           
           {/* Search Box */}
           <div className="max-w-3xl mx-auto mb-12">
-            <div className="relative flex items-center justify-center">
-              <div id="poda" className="relative flex items-center justify-center group w-full">
-                {/* Glow Layer 1 */}
-                <div className="absolute z-[-1] overflow-hidden h-full w-full max-h-[70px] rounded-xl blur-[3px] 
-                                before:absolute before:content-[''] before:z-[-2] before:w-[999px] before:h-[999px] before:bg-no-repeat before:top-1/2 before:left-1/2 before:-translate-x-1/2 before:-translate-y-1/2 before:rotate-[60deg]
-                                before:bg-[conic-gradient(#000,#3b82f6_5%,#000_38%,#000_50%,#14b8a6_60%,#000_87%)] before:transition-all before:duration-[2000ms]
-                                group-hover:before:rotate-[-120deg] group-focus-within:before:rotate-[420deg] group-focus-within:before:duration-[4000ms]">
-                </div>
-                {/* Glow Layer 2 */}
-                <div className="absolute z-[-1] overflow-hidden h-full w-full max-h-[65px] rounded-xl blur-[3px] 
-                                before:absolute before:content-[''] before:z-[-2] before:w-[600px] before:h-[600px] before:bg-no-repeat before:top-1/2 before:left-1/2 before:-translate-x-1/2 before:-translate-y-1/2 before:rotate-[82deg]
-                                before:bg-[conic-gradient(rgba(0,0,0,0),#2563eb,rgba(0,0,0,0)_10%,rgba(0,0,0,0)_50%,#0f766e,rgba(0,0,0,0)_60%)] before:transition-all before:duration-[2000ms]
-                                group-hover:before:rotate-[-98deg] group-focus-within:before:rotate-[442deg] group-focus-within:before:duration-[4000ms]">
-                </div>
-                {/* Glow Layer 3 */}
-                <div className="absolute z-[-1] overflow-hidden h-full w-full max-h-[65px] rounded-xl blur-[3px] 
-                                before:absolute before:content-[''] before:z-[-2] before:w-[600px] before:h-[600px] before:bg-no-repeat before:top-1/2 before:left-1/2 before:-translate-x-1/2 before:-translate-y-1/2 before:rotate-[82deg]
-                                before:bg-[conic-gradient(rgba(0,0,0,0),#2563eb,rgba(0,0,0,0)_10%,rgba(0,0,0,0)_50%,#0f766e,rgba(0,0,0,0)_60%)] before:transition-all before:duration-[2000ms]
-                                group-hover:before:rotate-[-98deg] group-focus-within:before:rotate-[442deg] group-focus-within:before:duration-[4000ms]">
-                </div>
-                {/* Glow Layer 4 */}
-                <div className="absolute z-[-1] overflow-hidden h-full w-full max-h-[65px] rounded-xl blur-[3px] 
-                                before:absolute before:content-[''] before:z-[-2] before:w-[600px] before:h-[600px] before:bg-no-repeat before:top-1/2 before:left-1/2 before:-translate-x-1/2 before:-translate-y-1/2 before:rotate-[82deg]
-                                before:bg-[conic-gradient(rgba(0,0,0,0),#2563eb,rgba(0,0,0,0)_10%,rgba(0,0,0,0)_50%,#0f766e,rgba(0,0,0,0)_60%)] before:transition-all before:duration-[2000ms]
-                                group-hover:before:rotate-[-98deg] group-focus-within:before:rotate-[442deg] group-focus-within:before:duration-[4000ms]">
-                </div>
-                {/* Glow Layer 5 */}
-                <div className="absolute z-[-1] overflow-hidden h-full w-full max-h-[63px] rounded-lg blur-[2px] 
-                                before:absolute before:content-[''] before:z-[-2] before:w-[600px] before:h-[600px] before:bg-no-repeat before:top-1/2 before:left-1/2 before:-translate-x-1/2 before:-translate-y-1/2 before:rotate-[83deg]
-                                before:bg-[conic-gradient(rgba(0,0,0,0)_0%,#60a5fa,rgba(0,0,0,0)_8%,rgba(0,0,0,0)_50%,#0ea5e9,rgba(0,0,0,0)_58%)] before:brightness-140
-                                before:transition-all before:duration-[2000ms] group-hover:before:rotate-[-97deg] group-focus-within:before:rotate-[443deg] group-focus-within:before:duration-[4000ms]">
-                </div>
-                {/* Glow Layer 6 */}
-                <div className="absolute z-[-1] overflow-hidden h-full w-full max-h-[59px] rounded-xl blur-[0.5px] 
-                                before:absolute before:content-[''] before:z-[-2] before:w-[600px] before:h-[600px] before:bg-no-repeat before:top-1/2 before:left-1/2 before:-translate-x-1/2 before:-translate-y-1/2 before:rotate-[70deg]
-                                before:bg-[conic-gradient(#1c191c,#3b82f6_5%,#1c191c_14%,#1c191c_50%,#14b8a6_60%,#1c191c_64%)] before:brightness-130
-                                before:transition-all before:duration-[2000ms] group-hover:before:rotate-[-110deg] group-focus-within:before:rotate-[430deg] group-focus-within:before:duration-[4000ms]">
-                </div>
-
-                {/* Main Input Container */}
-                <div id="main" className="relative group w-full">
-                  <input
-                    placeholder={messages.hero.searchPlaceholders[searchPlaceholder]}
-                    type="text"
-                    className="bg-[#010201] border-none w-full h-[56px] rounded-lg text-white pl-12 pr-4 text-lg focus:outline-none placeholder-gray-400"
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' && e.target.value) {
-                        router.push(`/search?q=${encodeURIComponent(e.target.value)}`);
-                      }
-                    }}
-                  />
-                  {/* Pink/Cyan mask effect */}
-                  <div id="cyan-mask" className="pointer-events-none w-[30px] h-[20px] absolute bg-[#14b8a6] top-[10px] left-[5px] blur-2xl opacity-80 transition-all duration-[2000ms] group-hover:opacity-0"></div>
-                  
-                  {/* Search Icon */}
-                  <div id="search-icon" className="absolute left-5 top-[15px]">
-                    <Search className="w-6 h-6 text-blue-300" />
-                  </div>
-                </div>
-              </div>
+            <div className="relative">
+              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+              <input
+                placeholder={messages.hero.searchPlaceholders[searchPlaceholder]}
+                type="text"
+                className="w-full pl-12 pr-4 py-4 text-lg rounded-2xl glass-premium border-white/10 focus:outline-none transition-smooth shadow-soft hover:shadow-soft-lg"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && e.target.value) {
+                    router.push(`/search?q=${encodeURIComponent(e.target.value)}`);
+                  }
+                }}
+              />
             </div>
           </div>
 
