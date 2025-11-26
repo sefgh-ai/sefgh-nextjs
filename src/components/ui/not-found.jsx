@@ -1,23 +1,23 @@
 'use client';
 
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   ArrowLeft,
+  Home,
   ArrowRight,
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
 export function NotFound({
-  errorCode = "404 error",
-  title = "We can't find this page",
-  description = "The page you are looking for doesn't exist or has been moved.",
+  errorCode = "404",
+  title = "Look like you're lost",
+  description = "The page you are looking for is not available!",
   links = [],
   onBackClick,
   onHomeClick,
   backButtonText = "Go back",
-  homeButtonText = "Go Home",
+  homeButtonText = "Go to Home",
   showBackground = true,
   className,
   children,
@@ -25,83 +25,91 @@ export function NotFound({
   return (
     <main
       className={cn(
-        "h-screen w-full flex items-start md:items-center justify-center py-16 px-4 md:py-24 md:px-20 bg-background gradient-mesh",
+        "min-h-screen w-full flex items-center justify-center py-16 px-4 bg-white dark:bg-background",
         className
       )}
     >
-      {showBackground && (
-        <div className="fixed inset-0 z-0 opacity-50 bg-[image:linear-gradient(to_right,var(--muted-foreground),transparent_1px),linear-gradient(to_bottom,var(--muted-foreground),transparent_1px)] [background-size:32px_32px] md:[background-size:48px_48px] [mask-image:radial-gradient(ellipse_60%_30%_at_50%_0%,black_0%,transparent_100%)] md:[mask-image:radial-gradient(ellipse_30%_30%_at_50%_20%,black_0%,transparent_100%)]" />
-      )}
+      <div className="container mx-auto">
+        <div className="flex justify-center">
+          <div className="w-full sm:w-10/12 md:w-8/12 text-center">
+            {/* 404 Animated Hero Section */}
+            <div
+              className="relative h-[250px] sm:h-[350px] md:h-[400px] bg-center bg-no-repeat bg-contain overflow-hidden"
+              style={{
+                backgroundImage: "url('https://cdn.dribbble.com/users/285475/screenshots/2083086/dribbble_1.gif')",
+              }}
+              aria-hidden="true"
+            >
+              <h1 className="text-center text-black dark:text-white text-6xl sm:text-7xl md:text-8xl pt-6 sm:pt-8 font-bold relative z-10">
+                {errorCode}
+              </h1>
+            </div>
 
-      <section className="flex flex-col items-center gap-8 md:gap-16 z-10">
-        {children || (
-          <>
-            <div className="flex flex-col items-center gap-8 md:gap-12">
-              <header className="flex flex-col items-center gap-4">
-                <div>
-                  <Badge
-                    variant="outline"
-                    className="px-2.5 py-1 text-sm font-medium gap-2"
-                  >
-                    <div className="size-2 bg-primary rounded-full" />
-                    {errorCode}
-                  </Badge>
-                </div>
-                <div className="flex flex-col items-center gap-4 md:gap-6">
-                  <h1 className="text-center text-4xl md:text-6xl font-semibold">
-                    {title}
-                  </h1>
-                  <p className="text-center text-lg md:text-xl text-muted-foreground">
-                    {description}
-                  </p>
-                </div>
-              </header>
-              <div className="flex gap-3 flex-col md:flex-row w-full items-center justify-center">
+            {/* Content Section */}
+            <div className="mt-[-50px]">
+              <h3 className="text-2xl text-black dark:text-white sm:text-3xl font-bold mb-4">
+                {title}
+              </h3>
+              <p className="mb-6 text-black dark:text-muted-foreground sm:mb-5">
+                {description}
+              </p>
+
+              {/* Action Buttons */}
+              <div className="flex gap-3 flex-col sm:flex-row justify-center items-center my-5">
                 <Button
-                  className="w-full md:w-fit"
                   variant="outline"
                   onClick={onBackClick}
+                  className="w-full sm:w-auto border-gray-300 dark:border-white/10 text-black dark:text-white hover:bg-gray-100 dark:hover:bg-white/10"
                 >
                   <ArrowLeft className="mr-2 h-4 w-4" />
                   {backButtonText}
                 </Button>
-                <Button className="w-full md:w-fit" onClick={onHomeClick}>
+                <Button
+                  variant="default"
+                  onClick={onHomeClick}
+                  className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white"
+                >
+                  <Home className="mr-2 h-4 w-4" />
                   {homeButtonText}
                 </Button>
               </div>
             </div>
 
+            {/* Helpful Links Section */}
             {links.length > 0 && (
-              <div className="flex flex-col divide-y w-full border-t border-b glass-premium rounded-xl overflow-hidden">
-                {links.map((link) => (
-                  <Link
-                    href={link.href}
-                    key={link.title}
-                    className="py-5 px-6 flex items-start md:items-center gap-4 md:gap-5 flex-col md:flex-row hover:bg-muted/50 transition-colors"
-                  >
-                    <div className="border p-2.5 md:p-3 rounded-lg bg-card">
-                      <link.icon className="size-5 md:size-6" />
-                    </div>
-                    <div className="flex gap-5 flex-1 w-full">
-                      <div className="flex flex-col gap-1">
-                        <div className="text-lg font-semibold">
-                          {link.title}
+              <div className="mt-12 flex flex-col gap-3 max-w-2xl mx-auto">
+                <h4 className="text-lg font-semibold text-black dark:text-white mb-2">
+                  Helpful Links
+                </h4>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  {links.map((link) => (
+                    <Link
+                      href={link.href}
+                      key={link.title}
+                      className="group relative p-4 border border-gray-200 dark:border-white/10 rounded-xl hover:border-green-500 dark:hover:border-green-500 transition-all hover:shadow-lg bg-white dark:bg-card"
+                    >
+                      <div className="flex flex-col items-center text-center gap-3">
+                        <div className="p-3 rounded-lg bg-green-100 dark:bg-green-950/30 text-green-600 dark:text-green-400 group-hover:scale-110 transition-transform">
+                          <link.icon className="size-6" />
                         </div>
-                        <div className="text-muted-foreground">
-                          {link.subtitle}
+                        <div className="flex flex-col gap-1">
+                          <div className="text-base font-semibold text-black dark:text-white flex items-center justify-center gap-2">
+                            {link.title}
+                            <ArrowRight className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+                          </div>
+                          <div className="text-sm text-gray-600 dark:text-muted-foreground">
+                            {link.subtitle}
+                          </div>
                         </div>
                       </div>
-                      <div className="self-start ml-auto">
-                        <ArrowRight className="h-4 w-4 text-muted-foreground" />
-                      </div>
-                    </div>
-                  </Link>
-                ))}
+                    </Link>
+                  ))}
+                </div>
               </div>
             )}
-          </>
-        )}
-      </section>
+          </div>
+        </div>
+      </div>
     </main>
   );
 }

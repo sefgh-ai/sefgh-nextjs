@@ -26,7 +26,8 @@ export const AuthProvider = ({ children }) => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       setUser(session?.user ?? null)
       setLoading(false)
-      router.refresh()
+      // Don't refresh router to prevent infinite loops
+      // router.refresh() is removed - pages will use manual refresh if needed
     })
 
     return () => subscription.unsubscribe()

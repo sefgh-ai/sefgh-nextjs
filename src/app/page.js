@@ -11,6 +11,7 @@ import { useTheme } from "next-themes";
 import { Search, Sparkles, Code, Gem, Brain, Twitter, Sun, Moon, User, Home as HomeIcon } from "lucide-react";
 import SearchComponent from "@/components/ui/animated-glowing-search-bar";
 import AppFooter from "@/components/ui/app-footer";
+import { AnimatedNavbar } from "@/components/AnimatedNavbar";
 
 
 
@@ -83,28 +84,24 @@ export default function Home() {
       {/* Three.js 3D Background */}
       {mounted && allowMotion && <ThreeBackground />}
 
-      {/* Header */}
+      {/* Top Bar - Logo and Actions */}
       <header className="relative z-10 bg-transparent">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-3">
+        <div className="w-full px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between gap-4">
+          <Link href="/" className="flex items-center gap-3 flex-shrink-0">
             {mounted && <ParticleText text={t('header.logo')} />}
             <span className="px-2.5 py-1 glass-premium rounded-md text-blue-400/80 text-xs font-medium border border-blue-500/20">
               v2.8.5
             </span>
           </Link>
           
-          <div className="flex items-center gap-6">
+          {/* Animated Navbar - Centered with max space */}
+          <div className="flex-1 flex justify-center max-w-5xl mx-auto">
+            {mounted && <AnimatedNavbar />}
+          </div>
+          
+          <div className="flex items-center gap-6 flex-shrink-0">
             {/* Language Selector (Dropdown) */}
             <LanguageDropdown />
-            {/* Theme Toggle */}
-            <button
-              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              className="relative inline-flex items-center justify-center h-9 w-9 rounded-md border border-blue-500/20 text-slate-400 hover:text-white hover:bg-slate-800/50 transition-colors hover:shadow-glow-blue"
-              aria-label="Toggle theme"
-            >
-              <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-              <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-            </button>
             
             {/* Show Profile or Sign Up based on auth status */}
             {user ? (
