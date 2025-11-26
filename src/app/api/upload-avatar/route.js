@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server'
 
 export async function POST(request) {
   try {
-    const supabase = createClient()
+    const supabase = await createClient()
     
     // Check if user is authenticated
     const { data: { user }, error: authError } = await supabase.auth.getUser()
@@ -72,9 +72,36 @@ export async function POST(request) {
       })
 
     if (uploadError) {
-      console.error('Upload error:', uploadError)
+      console.error('❌ Avatar upload failed:', {
+        message: uploadError.message,
+        statusCode: uploadError.statusCode,
+        name: uploadError.name,
+        error: uploadError,
+        fileName,
+        fileType: file.type,
+        fileSize: file.size,
+        userId: user.id
+      })
+      
+      // Check if bucket exists
+      const { data: buckets } = await supabase.storage.listBuckets()
+      const avatarsBucket = buckets?.find(b => b.name === 'avatars')
+      
+      if (!avatarsBucket) {
+        return NextResponse.json(
+          { 
+            error: 'Storage bucket not configured. Please run supabase/avatar-storage-setup.sql to set up the avatars bucket.',
+            details: uploadError.message
+          },
+          { status: 500 }
+        )
+      }
+      
       return NextResponse.json(
-        { error: 'Failed to upload avatar' },
+        { 
+          error: 'Failed to upload avatar',
+          details: uploadError.message 
+        },
         { status: 500 }
       )
     }
@@ -92,9 +119,17 @@ export async function POST(request) {
     })
 
     if (updateError) {
-      console.error('Update error:', updateError)
+      console.error('❌ User metadata update failed:', {
+        message: updateError.message,
+        error: updateError,
+        publicUrl,
+        userId: user.id
+      })
       return NextResponse.json(
-        { error: 'Failed to update user profile' },
+        { 
+          error: 'Failed to update user profile',
+          details: updateError.message 
+        },
         { status: 500 }
       )
     }
@@ -106,8 +141,23 @@ export async function POST(request) {
       .eq('id', user.id)
 
     if (profileError) {
-      console.error('Profile update error:', profileError)
+      console.error('⚠️ Profiles table update failed (non-critical):', {
+        message: profileError.message,
+        code: profileError.code,
+        details: profileError.details,
+        hint: profileError.hint,
+        error: profileError,
+        userId: user.id
+      })
+      // Don't return error - avatar is already uploaded and user metadata updated
+      console.log('ℹ️ Note: If profiles table does not exist, run supabase/avatar-storage-setup.sql')
     }
+
+    console.log('✅ Avatar upload successful:', {
+      userId: user.id,
+      fileName,
+      publicUrl
+    })
 
     return NextResponse.json({
       success: true,
@@ -115,9 +165,17 @@ export async function POST(request) {
     })
 
   } catch (error) {
-    console.error('Server error:', error)
+    console.error('❌ Unexpected server error:', {
+      message: error.message,
+      stack: error.stack,
+      name: error.name,
+      error
+    })
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { 
+        error: 'Internal server error',
+        details: error.message 
+      },
       { status: 500 }
     )
   }
