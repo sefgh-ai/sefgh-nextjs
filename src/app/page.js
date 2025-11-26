@@ -11,8 +11,7 @@ import { useTheme } from "next-themes";
 import { Search, Sparkles, Code, Gem, Brain, Twitter, Sun, Moon, User, Home as HomeIcon } from "lucide-react";
 import SearchComponent from "@/components/ui/animated-glowing-search-bar";
 
-// Dynamically import SocialProof (ensure correct default export resolution and no SSR)
-const SocialProof = dynamic(() => import("@/components/marketing/SocialProof").then(m => m.default), { ssr: false });
+
 
 // Dynamically import ParticleText with no SSR (canvas needs browser)
 const ParticleText = dynamic(
@@ -182,12 +181,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Social Proof Section */}
-      <section className="relative px-4 sm:px-6 lg:px-8 py-12 border-t border-slate-800/50">
-        <div className="max-w-6xl mx-auto">
-          <SocialProof />
-        </div>
-      </section>
+
 
       {/* Features Section */}
       <section className="relative px-4 sm:px-6 lg:px-8 py-20 border-t border-slate-800/50">
