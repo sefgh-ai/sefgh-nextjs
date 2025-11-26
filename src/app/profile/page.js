@@ -15,6 +15,7 @@ import { toast } from "sonner"
 import { createClient } from "@/lib/supabase/client"
 import { Header } from "@/components/Header"
 import { AvatarUpload } from "@/components/AvatarUpload"
+import { ActivityLogger } from "@/lib/activity-logger"
 
 export default function ProfilePage() {
   const { user, loading: authLoading, refreshUser } = useAuth()
@@ -27,6 +28,7 @@ export default function ProfilePage() {
   const [website, setWebsite] = useState("")
   const [profile, setProfile] = useState(null)
   const [avatarUrl, setAvatarUrl] = useState("")
+  const [githubUsername, setGithubUsername] = useState("")
 
   // Fetch profile data from profiles table
   useEffect(() => {
@@ -52,6 +54,14 @@ export default function ProfilePage() {
         setWebsite(data.website || "")
         setAvatarUrl(data.avatar_url || "")
       }
+      
+      // Try to get GitHub username
+      const username = user.user_metadata?.github_username 
+        || user.user_metadata?.user_name
+        || user.identities?.find(id => id.provider === 'github')?.identity_data?.user_name
+        || '';
+      
+      setGithubUsername(username)
     }
 
     fetchProfile()
@@ -70,6 +80,9 @@ export default function ProfilePage() {
         description: "You need to be logged in to view your profile",
       })
       router.push('/login')
+    } else if (user) {
+      // Log profile view activity
+      ActivityLogger.profileView()
     }
   }, [user, authLoading, router])
 
@@ -316,36 +329,6 @@ export default function ProfilePage() {
                   <span className="text-sm capitalize">
                     {user?.app_metadata?.provider || 'email'}
                   </span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Activity Stats */}
-          <Card className="md:col-span-2">
-            <CardHeader>
-              <CardTitle>Activity Statistics</CardTitle>
-              <CardDescription>
-                Your usage and activity overview
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="text-center p-4 rounded-lg bg-accent/50">
-                  <div className="text-2xl font-bold">0</div>
-                  <div className="text-sm text-muted-foreground">Searches</div>
-                </div>
-                <div className="text-center p-4 rounded-lg bg-accent/50">
-                  <div className="text-2xl font-bold">0</div>
-                  <div className="text-sm text-muted-foreground">Bookmarks</div>
-                </div>
-                <div className="text-center p-4 rounded-lg bg-accent/50">
-                  <div className="text-2xl font-bold">0</div>
-                  <div className="text-sm text-muted-foreground">Favorites</div>
-                </div>
-                <div className="text-center p-4 rounded-lg bg-accent/50">
-                  <div className="text-2xl font-bold">0</div>
-                  <div className="text-sm text-muted-foreground">Projects</div>
                 </div>
               </div>
             </CardContent>

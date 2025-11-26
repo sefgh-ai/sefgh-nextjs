@@ -12,6 +12,7 @@ import { SearchBox } from "@/components/search/SearchBox"
 import { SearchFilters } from "@/components/search/SearchFilters"
 import { SearchResults } from "@/components/search/SearchResults"
 import { PopularSearches } from "@/components/search/PopularSearches"
+import { ActivityLogger } from "@/lib/activity-logger"
 
 export default function SearchPage() {
   const [searchQuery, setSearchQuery] = useState("")
@@ -47,6 +48,9 @@ export default function SearchPage() {
       if (response.ok) {
         setSearchResults(data.items || [])
         toast.success(`Found ${data.total_count} repositories`)
+        
+        // Log search activity
+        ActivityLogger.search(searchQuery)
       } else {
         throw new Error(data.error || 'Search failed')
       }

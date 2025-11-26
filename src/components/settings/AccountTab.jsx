@@ -7,93 +7,32 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { toast } from 'sonner';
 import { useSettings } from '@/contexts/SettingsContext';
-
-// Activity Heatmap Component
-function ActivityHeatmap() {
-  const [heatmapData, setHeatmapData] = useState([]);
-
-  useEffect(() => {
-    // Generate 365 days of sample data
-    const data = [];
-    const today = new Date();
-    for (let i = 364; i >= 0; i--) {
-      const date = new Date(today);
-      date.setDate(date.getDate() - i);
-      data.push({
-        date: date.toISOString().split('T')[0],
-        count: Math.floor(Math.random() * 25) // Random search count
-      });
-    }
-    setHeatmapData(data);
-  }, []);
-
-  const getIntensityColor = (count) => {
-    if (count === 0) return 'bg-gray-200 dark:bg-gray-800';
-    if (count <= 5) return 'bg-green-200 dark:bg-green-900';
-    if (count <= 10) return 'bg-green-400 dark:bg-green-700';
-    if (count <= 20) return 'bg-green-600 dark:bg-green-500';
-    return 'bg-green-800 dark:bg-green-300';
-  };
-
-  // Calculate statistics
-  const totalSearches = heatmapData.reduce((sum, day) => sum + day.count, 0);
-  const dailyAvg = (totalSearches / 365).toFixed(1);
-  
-  // Calculate current streak
-  let currentStreak = 0;
-  for (let i = heatmapData.length - 1; i >= 0; i--) {
-    if (heatmapData[i].count > 0) {
-      currentStreak++;
-    } else {
-      break;
-    }
-  }
-
-  return (
-    <div className="space-y-6">
-      {/* Heatmap Grid */}
-      <div className="overflow-x-auto pb-2">
-        <div className="inline-grid grid-flow-col gap-[3px]" style={{ gridTemplateRows: 'repeat(7, minmax(0, 1fr))' }}>
-          {heatmapData.map((day, idx) => (
-            <div
-              key={idx}
-              className={`w-[10px] h-[10px] rounded-[2px] ${getIntensityColor(day.count)} transition-all cursor-pointer hover:ring-1 hover:ring-primary hover:scale-110`}
-              title={`${day.date}: ${day.count} searches`}
-            />
-          ))}
-        </div>
-      </div>
-
-      {/* Statistics */}
-      <div className="grid grid-cols-3 gap-6">
-        <div className="text-center">
-          <p className="text-xs text-muted-foreground mb-2">Daily avg</p>
-          <p className="text-3xl font-bold mb-1">{dailyAvg}</p>
-          <p className="text-xs text-muted-foreground">searches</p>
-        </div>
-        <div className="text-center">
-          <p className="text-xs text-muted-foreground mb-2">Current streak</p>
-          <p className="text-3xl font-bold mb-1">{currentStreak}</p>
-          <p className="text-xs text-muted-foreground">days</p>
-        </div>
-        <div className="text-center">
-          <p className="text-xs text-muted-foreground mb-2">Total searches</p>
-          <p className="text-3xl font-bold">{totalSearches.toLocaleString()}</p>
-        </div>
-      </div>
-    </div>
-  );
-}
+import { useAuth } from '@/contexts/AuthContext';
+import { ActivityLogger } from '@/lib/activity-logger';
 
 export default function AccountTab() {
   const router = useRouter();
   const { closeSettings } = useSettings();
+  const { user } = useAuth();
   const [userId, setUserId] = useState('');
+  const [githubUsername, setGithubUsername] = useState('');
 
   useEffect(() => {
-    // Get user ID from auth context or generate
-    setUserId('dca82b68-408a-4ff4-828a-affcb9ccd720');
-  }, []);
+    if (user) {
+      setUserId(user.id || 'dca82b68-408a-4ff4-828a-affcb9ccd720');
+      
+      // Try to get GitHub username from user metadata or identities
+      const username = user.user_metadata?.github_username 
+        || user.user_metadata?.user_name
+        || user.identities?.find(id => id.provider === 'github')?.identity_data?.user_name
+        || '';
+      
+      setGithubUsername(username);
+      
+      // Log settings view activity
+      ActivityLogger.settingsView();
+    }
+  }, [user]);
 
   const handleCopyUserId = () => {
     navigator.clipboard.writeText(userId);
@@ -153,12 +92,6 @@ export default function AccountTab() {
           </div>
         </div>
         <Button variant="outline" className="flex-shrink-0">Connect</Button>
-      </div>
-
-      {/* Activity Heatmap */}
-      <div className="p-6 rounded-2xl bg-card border border-border/50">
-        <h3 className="text-base font-semibold mb-5">Activity</h3>
-        <ActivityHeatmap />
       </div>
 
       {/* User ID */}
