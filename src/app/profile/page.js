@@ -16,6 +16,7 @@ import { createClient } from "@/lib/supabase/client"
 import { Header } from "@/components/Header"
 import { AvatarUpload } from "@/components/AvatarUpload"
 import { ActivityLogger } from "@/lib/activity-logger"
+import UsageContributionsCard from "@/components/usage-contributions/UsageContributionsCard"
 
 export default function ProfilePage() {
   const { user, loading: authLoading, refreshUser } = useAuth()
@@ -333,6 +334,11 @@ export default function ProfilePage() {
               </div>
             </CardContent>
           </Card>
+        </div>
+
+        {/* Usage Contributions Activity */}
+        <div className="mt-6">
+          <UsageContributionsCard year={2025} />
         </div>
       </div>
     </div>

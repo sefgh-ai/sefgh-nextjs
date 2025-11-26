@@ -12,10 +12,12 @@ import PlansTab from './account-settings/PlansTab';
 import NotificationTab from './account-settings/NotificationTab';
 import DomainTab from './account-settings/DomainTab';
 import LanguageTab from './account-settings/LanguageTab';
+import ActivityTab from './account-settings/ActivityTab';
 import { Button } from './ui/button';
 
 const accountTabs = [
   { id: 'general', label: 'General Details', completed: true },
+  { id: 'activity', label: 'Activity', completed: false },
   { id: 'permissions', label: 'User Permission', completed: false },
   { id: 'privacy', label: 'Share & Privacy', completed: true },
   { id: 'billing', label: 'Billing', completed: false },
@@ -45,6 +47,8 @@ export default function AccountSettingsPanel({ open, onOpenChange }) {
     switch (activeTab) {
       case 'general':
         return <GeneralDetailsTab onChange={() => setHasUnsavedChanges(true)} />;
+      case 'activity':
+        return <ActivityTab />;
       case 'permissions':
         return <UserPermissionTab />;
       case 'privacy':
