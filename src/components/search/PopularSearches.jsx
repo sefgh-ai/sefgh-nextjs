@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button"
 export function PopularSearches({ setSearchQuery, handleSearch }) {
   const handleQuickSearch = (query) => {
     setSearchQuery(query)
-    handleSearch({ preventDefault: () => {} })
+    // Call handleSearch without event object (it uses optional chaining)
+    handleSearch()
   }
 
   return (

@@ -25,7 +25,7 @@ export default function SearchPage() {
   const { user } = useAuth()
 
   const handleSearch = async (e) => {
-    e.preventDefault()
+    e?.preventDefault()
     
     if (!searchQuery.trim()) {
       toast.error("Please enter a search query")

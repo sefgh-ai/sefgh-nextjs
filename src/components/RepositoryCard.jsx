@@ -1,7 +1,10 @@
+'use client'
+
 import { Star, GitFork, Clock, Scale, Copy, Download, ExternalLink } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { toast } from "sonner"
+import { useRouter } from "next/navigation"
 
 const languageColors = {
   JavaScript: '#f1e05a',
@@ -23,6 +26,8 @@ const languageColors = {
 }
 
 export function RepositoryCard({ repo, onSelect }) {
+  const router = useRouter()
+  
   const formatNumber = (num) => {
     if (num >= 1000) {
       return (num / 1000).toFixed(1) + 'k'
@@ -61,9 +66,23 @@ export function RepositoryCard({ repo, onSelect }) {
     window.open(repo.html_url, '_blank')
   }
 
+  const handleCardClick = () => {
+    // Navigate to repo details page
+    const [owner, repoName] = repo.full_name.split('/')
+    router.push(`/repo/${owner}/${repoName}`)
+  }
+
+  const handleOpenCanvas = (e) => {
+    e.stopPropagation()
+    // Open canvas (existing behavior for backward compatibility)
+    if (onSelect) {
+      onSelect(repo)
+    }
+  }
+
   return (
     <div
-      onClick={() => onSelect(repo)}
+      onClick={handleCardClick}
       className="group p-5 rounded-xl border bg-card hover:shadow-lg transition-all duration-200 cursor-pointer hover:border-primary/50"
     >
       {/* Repository Name */}
@@ -124,15 +143,17 @@ export function RepositoryCard({ repo, onSelect }) {
           size="sm"
           className="flex-1"
           onClick={handleCopyUrl}
+          title="Copy repository URL"
         >
           <Copy className="h-3 w-3 mr-1.5" />
-          Copy URL
+          Copy
         </Button>
         <Button
           variant="outline"
           size="sm"
           className="flex-1"
           onClick={handleClone}
+          title="Copy clone URL"
         >
           <Download className="h-3 w-3 mr-1.5" />
           Clone
@@ -142,9 +163,10 @@ export function RepositoryCard({ repo, onSelect }) {
           size="sm"
           className="flex-1"
           onClick={handleOpenGitHub}
+          title="Open on GitHub"
         >
           <ExternalLink className="h-3 w-3 mr-1.5" />
-          Open
+          GitHub
         </Button>
       </div>
     </div>
