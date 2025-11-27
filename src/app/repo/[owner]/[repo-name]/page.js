@@ -82,8 +82,8 @@ async function getSefghData(repoFullName) {
     userRating = userRatingData || null
   }
 
-  // Fetch top-level comments (not nested yet - will implement in comments component)
-  const { data: comments } = await supabase
+  // Fetch top-level comments with user info
+  const { data: rawComments } = await supabase
     .from('repo_comments')
     .select('*')
     .eq('repo_full_name', repoFullName)
@@ -91,6 +91,88 @@ async function getSefghData(repoFullName) {
     .eq('is_deleted', false)
     .order('created_at', { ascending: false })
     .limit(10)
+
+  // Function to fetch replies recursively
+  const fetchReplies = async (commentId) => {
+    const { data: replies } = await supabase
+      .from('repo_comments')
+      .select('*')
+      .eq('parent_id', commentId)
+      .eq('is_deleted', false)
+      .order('created_at', { ascending: true })
+
+    if (!replies || replies.length === 0) return []
+
+    return await Promise.all(
+      replies.map(async (reply) => {
+        // Get user info
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('username, avatar_url')
+          .eq('id', reply.user_id)
+          .single()
+
+        let userEmail = null
+        if (!profile?.username) {
+          const { data: { user: replyUser } } = await supabase.auth.admin.getUserById(reply.user_id)
+          userEmail = replyUser?.email
+        }
+
+        // Fetch nested replies
+        const nestedReplies = await fetchReplies(reply.id)
+
+        return {
+          ...reply,
+          user_name: profile?.username || null,
+          user_email: userEmail,
+          user_avatar: profile?.avatar_url || null,
+          replies: nestedReplies
+        }
+      })
+    )
+  }
+
+  // Enrich comments with user info and nested replies
+  const comments = await Promise.all(
+    (rawComments || []).map(async (comment) => {
+      // Try to get user profile first
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('username, avatar_url')
+        .eq('id', comment.user_id)
+        .single()
+
+      // If no profile, get email from user metadata
+      let userEmail = null
+      if (!profile?.username) {
+        const { data: { user: commentUser } } = await supabase.auth.admin.getUserById(comment.user_id)
+        userEmail = commentUser?.email
+      }
+
+      // Fetch nested replies
+      const replies = await fetchReplies(comment.id)
+
+      return {
+        ...comment,
+        user_name: profile?.username || null,
+        user_email: userEmail,
+        user_avatar: profile?.avatar_url || null,
+        replies: replies
+      }
+    })
+  )
+
+  // Fetch collection/save status
+  const { data: saves } = await supabase
+    .from('repo_collections')
+    .select('user_id')
+    .eq('repo_full_name', repoFullName)
+
+  const saveCount = saves?.length || 0
+  let userSaved = false
+  if (user) {
+    userSaved = saves?.some(s => s.user_id === user.id) || false
+  }
 
   return {
     votes: {
@@ -104,7 +186,9 @@ async function getSefghData(repoFullName) {
       average: averageRating
     },
     userRating,
-    comments: comments || []
+    comments: comments || [],
+    saveCount,
+    userSaved
   }
 }
 

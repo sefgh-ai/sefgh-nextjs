@@ -70,7 +70,7 @@ export function RepoRatingSection({ repoFullName, initialRatings, userRating }) 
           </div>
           <div className="text-center">
             <div className="text-4xl font-bold text-yellow-500">
-              {ratings.average > 0 ? ratings.average.toFixed(1) : '-'}
+              {ratings.average > 0 ? (Math.round(ratings.average * 10) / 10).toString() : '-'}
             </div>
             <div className="flex gap-0.5 mt-1">
               {[1, 2, 3, 4, 5].map((star) => (

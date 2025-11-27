@@ -24,6 +24,9 @@ import { RepoVoteSection } from '@/components/repo-details/RepoVoteSection'
 import { RepoDrawer } from '@/components/repo-details/RepoDrawer'
 import { RepoRatingSection } from '@/components/repo-details/RepoRatingSection'
 import { RepoCommentsSection } from '@/components/repo-details/RepoCommentsSection'
+import { RepoCollectButton } from '@/components/repo-details/RepoCollectButton'
+import { RepoVideoTab } from '@/components/repo-details/RepoVideoTab'
+import { RepoQRCode } from '@/components/repo-details/RepoQRCode'
 
 export default function RepoDetailsLayout({ 
   repoData, 
@@ -35,21 +38,25 @@ export default function RepoDetailsLayout({
   const { user } = useAuth()
   const [canvasOpen, setCanvasOpen] = useState(false)
 
-  // Format numbers
+  // Format numbers (consistent for SSR)
   const formatNumber = (num) => {
-    if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`
-    if (num >= 1000) return `${(num / 1000).toFixed(1)}k`
-    return num?.toString() || '0'
+    const n = Number(num)
+    if (isNaN(n)) return '0'
+    if (n >= 1000000) {
+      return Math.floor(n / 100000) / 10 + 'M'
+    }
+    if (n >= 1000) {
+      return Math.floor(n / 100) / 10 + 'k'
+    }
+    return String(n)
   }
 
-  // Format date
+  // Format date (consistent for SSR)
   const formatDate = (dateString) => {
+    if (!dateString) return ''
     const date = new Date(dateString)
-    return date.toLocaleDateString('en-US', { 
-      year: 'numeric', 
-      month: 'short', 
-      day: 'numeric' 
-    })
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+    return `${months[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`
   }
 
   return (
@@ -116,6 +123,12 @@ export default function RepoDetailsLayout({
               View README & Code
             </Button>
 
+            <RepoCollectButton
+              repoFullName={`${owner}/${repoName}`}
+              initialSaved={sefghData?.userSaved || false}
+              initialCount={sefghData?.saveCount || 0}
+            />
+
             <Button
               variant="outline"
               size="lg"
@@ -130,6 +143,8 @@ export default function RepoDetailsLayout({
               <MessageSquare className="h-4 w-4 mr-2" />
               Discuss
             </Button>
+
+            <RepoQRCode repoFullName={`${owner}/${repoName}`} />
 
             {/* Claim Button - Future implementation */}
             <Button
@@ -245,23 +260,8 @@ export default function RepoDetailsLayout({
               </Card>
             </TabsContent>
 
-            <TabsContent value="ratings" className="mt-4">
-              <RepoRatingSection
-                repoFullName={`${owner}/${repoName}`}
-                initialRatings={sefghData.ratings}
-                userRating={sefghData.userRating}
-              />
-            </TabsContent>
-
             <TabsContent value="video" className="mt-4">
-              <Card className="p-6 bg-card/50 text-center">
-                <p className="text-muted-foreground">
-                  No video available for this repository yet.
-                </p>
-                <p className="text-sm text-muted-foreground mt-2">
-                  Videos can be added from YouTube or uploaded to the repository.
-                </p>
-              </Card>
+              <RepoVideoTab repoFullName={`${owner}/${repoName}`} />
             </TabsContent>
           </Tabs>
 

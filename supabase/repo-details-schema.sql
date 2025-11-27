@@ -29,18 +29,22 @@ CREATE INDEX IF NOT EXISTS idx_repo_votes_user ON repo_votes(user_id);
 -- RLS Policies for repo_votes
 ALTER TABLE repo_votes ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view all votes" ON repo_votes;
 CREATE POLICY "Users can view all votes"
   ON repo_votes FOR SELECT
   USING (true);
 
+DROP POLICY IF EXISTS "Users can insert their own votes" ON repo_votes;
 CREATE POLICY "Users can insert their own votes"
   ON repo_votes FOR INSERT
   WITH CHECK (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can update their own votes" ON repo_votes;
 CREATE POLICY "Users can update their own votes"
   ON repo_votes FOR UPDATE
   USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can delete their own votes" ON repo_votes;
 CREATE POLICY "Users can delete their own votes"
   ON repo_votes FOR DELETE
   USING (auth.uid() = user_id);
@@ -67,18 +71,22 @@ CREATE INDEX IF NOT EXISTS idx_repo_ratings_user ON repo_ratings(user_id);
 -- RLS Policies for repo_ratings
 ALTER TABLE repo_ratings ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view all ratings" ON repo_ratings;
 CREATE POLICY "Users can view all ratings"
   ON repo_ratings FOR SELECT
   USING (true);
 
+DROP POLICY IF EXISTS "Users can insert their own ratings" ON repo_ratings;
 CREATE POLICY "Users can insert their own ratings"
   ON repo_ratings FOR INSERT
   WITH CHECK (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can update their own ratings" ON repo_ratings;
 CREATE POLICY "Users can update their own ratings"
   ON repo_ratings FOR UPDATE
   USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can delete their own ratings" ON repo_ratings;
 CREATE POLICY "Users can delete their own ratings"
   ON repo_ratings FOR DELETE
   USING (auth.uid() = user_id);
@@ -101,25 +109,25 @@ CREATE TABLE IF NOT EXISTS repo_comments (
 );
 
 CREATE INDEX IF NOT EXISTS idx_repo_comments_repo ON repo_comments(repo_full_name);
-CREATE INDEX IF NOT EXISTS idx_repo_comments_user ON repo_comments(user_id);
-CREATE INDEX IF NOT EXISTS idx_repo_comments_parent ON repo_comments(parent_id);
-CREATE INDEX IF NOT EXISTS idx_repo_comments_created ON repo_comments(created_at DESC);
-
 -- RLS Policies for repo_comments
 ALTER TABLE repo_comments ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view all non-deleted comments" ON repo_comments;
 CREATE POLICY "Users can view all non-deleted comments"
   ON repo_comments FOR SELECT
   USING (is_deleted = false OR auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can insert their own comments" ON repo_comments;
 CREATE POLICY "Users can insert their own comments"
   ON repo_comments FOR INSERT
   WITH CHECK (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can update their own comments" ON repo_comments;
 CREATE POLICY "Users can update their own comments"
   ON repo_comments FOR UPDATE
   USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can delete their own comments" ON repo_comments;
 CREATE POLICY "Users can delete their own comments"
   ON repo_comments FOR DELETE
   USING (auth.uid() = user_id);
@@ -136,25 +144,25 @@ CREATE TABLE IF NOT EXISTS comment_votes (
   
   UNIQUE(user_id, comment_id)
 );
-
-CREATE INDEX IF NOT EXISTS idx_comment_votes_comment ON comment_votes(comment_id);
-CREATE INDEX IF NOT EXISTS idx_comment_votes_user ON comment_votes(user_id);
-
 -- RLS Policies for comment_votes
 ALTER TABLE comment_votes ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view all comment votes" ON comment_votes;
 CREATE POLICY "Users can view all comment votes"
   ON comment_votes FOR SELECT
   USING (true);
 
+DROP POLICY IF EXISTS "Users can insert their own comment votes" ON comment_votes;
 CREATE POLICY "Users can insert their own comment votes"
   ON comment_votes FOR INSERT
   WITH CHECK (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can update their own comment votes" ON comment_votes;
 CREATE POLICY "Users can update their own comment votes"
   ON comment_votes FOR UPDATE
   USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can delete their own comment votes" ON comment_votes;
 CREATE POLICY "Users can delete their own comment votes"
   ON comment_votes FOR DELETE
   USING (auth.uid() = user_id);
@@ -178,21 +186,20 @@ CREATE TABLE IF NOT EXISTS repo_claims (
   UNIQUE(repo_full_name)
 );
 
-CREATE INDEX IF NOT EXISTS idx_repo_claims_user ON repo_claims(user_id);
-CREATE INDEX IF NOT EXISTS idx_repo_claims_repo ON repo_claims(repo_full_name);
-CREATE INDEX IF NOT EXISTS idx_repo_claims_status ON repo_claims(claim_status);
-
 -- RLS Policies for repo_claims
 ALTER TABLE repo_claims ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view verified claims" ON repo_claims;
 CREATE POLICY "Users can view verified claims"
   ON repo_claims FOR SELECT
   USING (claim_status = 'verified' OR auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can insert their own claims" ON repo_claims;
 CREATE POLICY "Users can insert their own claims"
   ON repo_claims FOR INSERT
   WITH CHECK (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can view their own claims" ON repo_claims;
 CREATE POLICY "Users can view their own claims"
   ON repo_claims FOR SELECT
   USING (auth.uid() = user_id);
@@ -270,6 +277,96 @@ DROP TRIGGER IF EXISTS trigger_update_comment_vote_count ON comment_votes;
 CREATE TRIGGER trigger_update_comment_vote_count
 AFTER INSERT OR UPDATE OR DELETE ON comment_votes
 FOR EACH ROW EXECUTE FUNCTION update_comment_vote_count();
+
+-- ============================================
+-- REPO COLLECTIONS TABLE (Save/Bookmark repos)
+-- ============================================
+CREATE TABLE IF NOT EXISTS repo_collections (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  repo_full_name TEXT NOT NULL,
+  collection_name TEXT DEFAULT 'default', -- Allow users to organize into collections
+  notes TEXT, -- Optional notes about why they saved it
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  
+  -- One repo can be in multiple collections per user
+  UNIQUE(user_id, repo_full_name, collection_name)
+);
+
+CREATE INDEX IF NOT EXISTS idx_repo_collections_user ON repo_collections(user_id);
+-- RLS Policies for repo_collections
+ALTER TABLE repo_collections ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Users can view their own collections" ON repo_collections;
+CREATE POLICY "Users can view their own collections"
+  ON repo_collections FOR SELECT
+  USING (auth.uid() = user_id);
+
+DROP POLICY IF EXISTS "Users can insert their own collections" ON repo_collections;
+CREATE POLICY "Users can insert their own collections"
+  ON repo_collections FOR INSERT
+  WITH CHECK (auth.uid() = user_id);
+
+DROP POLICY IF EXISTS "Users can update their own collections" ON repo_collections;
+CREATE POLICY "Users can update their own collections"
+  ON repo_collections FOR UPDATE
+  USING (auth.uid() = user_id);
+
+DROP POLICY IF EXISTS "Users can delete their own collections" ON repo_collections;
+CREATE POLICY "Users can delete their own collections"
+  ON repo_collections FOR DELETE
+  USING (auth.uid() = user_id);
+
+-- ============================================
+-- REPO VIDEOS TABLE (Store video links)
+-- ============================================
+CREATE TABLE IF NOT EXISTS repo_videos (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  repo_full_name TEXT NOT NULL,
+  video_url TEXT NOT NULL, -- YouTube, GitHub video, or direct link
+  video_type TEXT NOT NULL CHECK (video_type IN ('youtube', 'github', 'direct')), 
+  title TEXT,
+  description TEXT,
+  thumbnail_url TEXT,
+  duration INTEGER, -- Duration in seconds
+  uploaded_by UUID REFERENCES auth.users(id),
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  is_featured BOOLEAN DEFAULT false
+);
+-- RLS Policies for repo_videos
+ALTER TABLE repo_videos ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Anyone can view videos" ON repo_videos;
+CREATE POLICY "Anyone can view videos"
+  ON repo_videos FOR SELECT
+  USING (true);
+
+DROP POLICY IF EXISTS "Authenticated users can insert videos" ON repo_videos;
+CREATE POLICY "Authenticated users can insert videos"
+  ON repo_videos FOR INSERT
+  WITH CHECK (auth.uid() = uploaded_by);
+
+DROP POLICY IF EXISTS "Users can update their own videos" ON repo_videos;
+CREATE POLICY "Users can update their own videos"
+  ON repo_videos FOR UPDATE
+  USING (auth.uid() = uploaded_by);
+
+DROP POLICY IF EXISTS "Users can delete their own videos" ON repo_videos;
+CREATE POLICY "Users can delete their own videos"
+  ON repo_videos FOR DELETE
+  USING (auth.uid() = uploaded_by);
+
+-- ============================================
+-- HELPER VIEWS (Additional)
+-- ============================================
+
+-- View for repository collection counts
+CREATE OR REPLACE VIEW repo_collection_stats AS
+SELECT 
+  repo_full_name,
+  COUNT(DISTINCT user_id) as total_saves
+FROM repo_collections
+GROUP BY repo_full_name;
 
 -- ============================================
 -- SETUP COMPLETE MESSAGE

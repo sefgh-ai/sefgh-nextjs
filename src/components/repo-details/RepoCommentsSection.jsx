@@ -16,6 +16,25 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { cn } from '@/lib/utils'
 
+// Format date consistently for SSR
+const formatDate = (dateString) => {
+  if (!dateString) return ''
+  const date = new Date(dateString)
+  const now = new Date()
+  const diffMs = now - date
+  const diffMins = Math.floor(diffMs / 60000)
+  const diffHours = Math.floor(diffMs / 3600000)
+  const diffDays = Math.floor(diffMs / 86400000)
+  
+  if (diffMins < 1) return 'just now'
+  if (diffMins < 60) return `${diffMins} min${diffMins > 1 ? 's' : ''} ago`
+  if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`
+  if (diffDays < 7) return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`
+  
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+  return `${months[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`
+}
+
 // Single comment component (Reddit-style)
 function Comment({ comment, onReply, onVote, onDelete, depth = 0 }) {
   const { user } = useAuth()
@@ -50,15 +69,19 @@ function Comment({ comment, onReply, onVote, onDelete, depth = 0 }) {
         {/* Comment Header */}
         <div className="flex items-start gap-3 mb-3">
           <Avatar className="h-8 w-8">
-            <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${comment.user_id}`} />
-            <AvatarFallback>U</AvatarFallback>
+            <AvatarImage src={comment.user_avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${comment.user_id}`} />
+            <AvatarFallback>
+              {comment.user_name?.[0]?.toUpperCase() || comment.user_email?.[0]?.toUpperCase() || 'U'}
+            </AvatarFallback>
           </Avatar>
           
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-1">
-              <span className="font-medium text-sm">Anonymous User</span>
+              <span className="font-medium text-sm">
+                {comment.user_email?.split('@')[0] || comment.user_name || 'Anonymous User'}
+              </span>
               <span className="text-xs text-muted-foreground">
-                {new Date(comment.created_at).toLocaleDateString()}
+                {formatDate(comment.created_at)}
               </span>
               {comment.is_edited && (
                 <span className="text-xs text-muted-foreground italic">(edited)</span>
@@ -228,18 +251,101 @@ export function RepoCommentsSection({ repoFullName, initialComments }) {
   }
 
   const handleReply = async (parentId, replyText) => {
-    // TODO: Implement nested reply posting
-    console.log('Reply to:', parentId, replyText)
+    if (!user) {
+      toast.error('Please login to reply')
+      throw new Error('Not authenticated')
+    }
+
+    const response = await fetch('/api/repo/comments', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        repoFullName,
+        commentText: replyText,
+        parentId: parentId
+      })
+    })
+
+    const data = await response.json()
+
+    if (!response.ok) {
+      throw new Error(data.error || 'Failed to post reply')
+    }
+
+    // Add reply to nested comments recursively
+    const addReplyToComment = (comments, parentId, newReply) => {
+      return comments.map(comment => {
+        if (comment.id === parentId) {
+          return {
+            ...comment,
+            replies: [...(comment.replies || []), newReply]
+          }
+        }
+        if (comment.replies && comment.replies.length > 0) {
+          return {
+            ...comment,
+            replies: addReplyToComment(comment.replies, parentId, newReply)
+          }
+        }
+        return comment
+      })
+    }
+
+    setComments(addReplyToComment(comments, parentId, data.comment))
   }
 
   const handleVote = async (commentId, voteType) => {
-    // TODO: Implement comment voting
-    console.log('Vote on comment:', commentId, voteType)
+    if (!user) {
+      toast.error('Please login to vote')
+      return
+    }
+
+    try {
+      const response = await fetch('/api/repo/comments/vote', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          commentId,
+          voteType
+        })
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to vote')
+      }
+
+      // Update comment in state
+      setComments(comments.map(comment => 
+        comment.id === commentId 
+          ? { ...comment, upvotes: data.upvotes, downvotes: data.downvotes }
+          : comment
+      ))
+    } catch (error) {
+      console.error('Vote error:', error)
+      toast.error('Failed to vote')
+    }
   }
 
   const handleDelete = async (commentId) => {
-    // TODO: Implement comment deletion
-    console.log('Delete comment:', commentId)
+    if (!confirm('Are you sure you want to delete this comment?')) return
+
+    try {
+      const response = await fetch(`/api/repo/comments?id=${commentId}`, {
+        method: 'DELETE'
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to delete comment')
+      }
+
+      setComments(comments.filter(c => c.id !== commentId))
+      toast.success('Comment deleted')
+    } catch (error) {
+      console.error('Delete error:', error)
+      toast.error('Failed to delete comment')
+    }
   }
 
   return (

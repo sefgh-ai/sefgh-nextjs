@@ -99,15 +99,18 @@ export function RepoVoteSection({ repoFullName, initialVotes, userVote }) {
     }
   }
 
-  // Format vote count with K/M suffix
+  // Format vote count with K/M suffix (consistent for SSR)
   const formatVotes = (count) => {
-    if (Math.abs(count) >= 1000000) {
-      return `${(count / 1000000).toFixed(1)}M`
+    const n = Number(count)
+    if (isNaN(n)) return '0'
+    const absN = Math.abs(n)
+    if (absN >= 1000000) {
+      return (n < 0 ? '-' : '') + (Math.floor(absN / 100000) / 10) + 'M'
     }
-    if (Math.abs(count) >= 1000) {
-      return `${(count / 1000).toFixed(1)}k`
+    if (absN >= 1000) {
+      return (n < 0 ? '-' : '') + (Math.floor(absN / 100) / 10) + 'k'
     }
-    return count.toString()
+    return String(n)
   }
 
   return (

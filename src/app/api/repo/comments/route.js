@@ -72,9 +72,21 @@ export async function POST(request) {
       )
     }
 
+    // Get user info for the response
+    const { data: userData } = await supabase
+      .from('profiles')
+      .select('username, avatar_url')
+      .eq('id', user.id)
+      .single()
+
     return NextResponse.json({
       success: true,
-      comment: newComment
+      comment: {
+        ...newComment,
+        user_name: userData?.username || null,
+        user_email: user.email,
+        user_avatar: userData?.avatar_url || null
+      }
     })
 
   } catch (error) {
@@ -129,9 +141,24 @@ export async function GET(request) {
       )
     }
 
-    // For each top-level comment, get reply count
-    const commentsWithReplyCounts = await Promise.all(
+    // For each comment, get user info and reply count
+    const commentsWithDetails = await Promise.all(
       comments.map(async (comment) => {
+        // Get user info
+        const { data: userData } = await supabase
+          .from('profiles')
+          .select('username, avatar_url')
+          .eq('id', comment.user_id)
+          .single()
+
+        // If no profile, get email from auth.users
+        let userEmail = null
+        if (!userData) {
+          const { data: authUser } = await supabase.auth.admin.getUserById(comment.user_id)
+          userEmail = authUser?.user?.email
+        }
+
+        // Get reply count
         const { count } = await supabase
           .from('repo_comments')
           .select('*', { count: 'exact', head: true })
@@ -140,13 +167,16 @@ export async function GET(request) {
 
         return {
           ...comment,
+          user_name: userData?.username || null,
+          user_email: userEmail,
+          user_avatar: userData?.avatar_url || null,
           reply_count: count || 0
         }
       })
     )
 
     return NextResponse.json({
-      comments: commentsWithReplyCounts || []
+      comments: commentsWithDetails || []
     })
 
   } catch (error) {
