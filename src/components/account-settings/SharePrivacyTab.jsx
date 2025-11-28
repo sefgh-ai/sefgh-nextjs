@@ -57,7 +57,7 @@ export default function SharePrivacyTab() {
           <div className="flex items-center gap-6 p-5 border border-border rounded-xl bg-card">
             {/* QR Code */}
             <div className="flex-shrink-0">
-              <div className="w-32 h-32 border border-border rounded-lg bg-white flex items-center justify-center p-3">
+              <div className="w-32 h-32 border border-border rounded-lg bg-card dark:bg-white flex items-center justify-center p-3">
                 <QrCode className="w-full h-full text-foreground" />
               </div>
               <p className="text-xs text-center text-muted-foreground mt-2">16×16</p>

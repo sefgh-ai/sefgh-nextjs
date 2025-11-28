@@ -51,7 +51,7 @@ export function RepoQRCode({ repoFullName }) {
         <div className="flex flex-col items-center space-y-4">
           {qrCodeUrl ? (
             <>
-              <div className="p-4 bg-white rounded-lg">
+              <div className="p-4 bg-card dark:bg-white rounded-lg">
                 <img
                   src={qrCodeUrl}
                   alt="QR Code"
