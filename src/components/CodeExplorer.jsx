@@ -119,8 +119,8 @@ export function CodeExplorer({ repository, onClose }) {
       </div>
 
       {/* Tabs */}
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col">
-        <div className="border-b px-4">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col min-h-0">
+        <div className="border-b px-4 flex-shrink-0">
           <TabsList className="w-full justify-start h-12 bg-transparent">
             <TabsTrigger value="readme" className="gap-2">
               <FileText className="h-4 w-4" />
@@ -137,7 +137,7 @@ export function CodeExplorer({ repository, onClose }) {
           </TabsList>
         </div>
 
-        <ScrollArea className="flex-1">
+        <div className="flex-1 overflow-y-auto min-h-0">
           <div className="p-6">
             {loading ? (
               <div className="flex items-center justify-center py-12">
@@ -298,7 +298,7 @@ export function CodeExplorer({ repository, onClose }) {
               </>
             )}
           </div>
-        </ScrollArea>
+        </div>
       </Tabs>
     </div>
   )

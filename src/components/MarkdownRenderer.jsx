@@ -190,15 +190,27 @@ export function MarkdownRenderer({ content, className = '', onOpenInCanvas }) {
         },
         // Customize paragraphs
         p({ node, children, ...props }) {
-          // Check if paragraph contains code blocks (pre/code elements)
-          // Code blocks render as div, which cannot be nested in p tags
-          const hasCodeBlock = node?.children?.some(
-            child => child.type === 'element' && (child.tagName === 'code' || child.tagName === 'pre')
-          )
+          // Check if paragraph contains block-level elements that should not be nested in <p>
+          // This includes code blocks, which render as <div> elements
+          const hasBlockElements = node?.children?.some(child => {
+            if (child.type === 'element') {
+              // Check for code elements (both inline and block)
+              if (child.tagName === 'code' || child.tagName === 'pre') {
+                // Block code has className with language-*
+                const hasLanguageClass = child.properties?.className?.some(
+                  cls => cls.startsWith('language-')
+                )
+                return hasLanguageClass
+              }
+              // Also check for other block elements
+              return ['div', 'section', 'article', 'aside'].includes(child.tagName)
+            }
+            return false
+          })
           
-          // If it contains code blocks, render as div to avoid invalid HTML nesting
-          if (hasCodeBlock) {
-            return <>{children}</>
+          // If it contains block elements, render as fragment to avoid invalid HTML nesting
+          if (hasBlockElements) {
+            return <div className="my-2 leading-relaxed">{children}</div>
           }
           
           return (
