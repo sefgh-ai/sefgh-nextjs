@@ -15,19 +15,9 @@ export function RepoDrawer({ open, onOpenChange, repository }) {
         <div className="h-full flex flex-col bg-card">
           {/* Header */}
           <SheetHeader className="px-6 py-4 border-b border-white/10 flex-shrink-0">
-            <div className="flex items-center justify-between">
-              <SheetTitle className="text-xl font-bold">
-                Repository Canvas
-              </SheetTitle>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => onOpenChange(false)}
-                className="h-8 w-8"
-              >
-                <X className="h-4 w-4" />
-              </Button>
-            </div>
+            <SheetTitle className="text-xl font-bold">
+              Repository Canvas
+            </SheetTitle>
           </SheetHeader>
 
           {/* Content */}
