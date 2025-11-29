@@ -1,9 +1,10 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
+import { memo } from 'react';
 import Footer from './Footer';
 
-export default function PageWrapper({ children }) {
+const PageWrapper = memo(function PageWrapper({ children }) {
   const pathname = usePathname();
   
   // Don't show footer on landing page or 404 page
@@ -18,4 +19,6 @@ export default function PageWrapper({ children }) {
       {!isLandingPage && <Footer />}
     </div>
   );
-}
+});
+
+export default PageWrapper;

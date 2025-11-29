@@ -1,8 +1,11 @@
 'use client';
 
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
 
 const LanguageContext = createContext();
+
+// Cache translations to avoid reloading
+const translationCache = {};
 
 const translations = {
   en: () => import('@/locales/en.json').then(m => m.default),
@@ -41,20 +44,25 @@ export function LanguageProvider({ children }) {
   }, []);
 
   useEffect(() => {
-    // Load translations for current locale
-    translations[locale]().then(msgs => {
-      setMessages(msgs);
-    });
+    // Load translations for current locale with caching
+    if (translationCache[locale]) {
+      setMessages(translationCache[locale]);
+    } else {
+      translations[locale]().then(msgs => {
+        translationCache[locale] = msgs;
+        setMessages(msgs);
+      });
+    }
   }, [locale]);
 
-  const changeLanguage = (newLocale) => {
+  const changeLanguage = useCallback((newLocale) => {
     setLocale(newLocale);
     if (typeof window !== 'undefined') {
       localStorage.setItem('sefgh-language', newLocale);
     }
-  };
+  }, []);
 
-  const t = (key) => {
+  const t = useCallback((key) => {
     if (!messages) return key;
     const keys = key.split('.');
     let value = messages;
@@ -62,10 +70,18 @@ export function LanguageProvider({ children }) {
       value = value?.[k];
     }
     return value || key;
-  };
+  }, [messages]);
+
+  const value = useMemo(() => ({
+    locale,
+    changeLanguage,
+    t,
+    languages,
+    messages
+  }), [locale, changeLanguage, t, messages]);
 
   return (
-    <LanguageContext.Provider value={{ locale, changeLanguage, t, languages, messages }}>
+    <LanguageContext.Provider value={value}>
       {children}
     </LanguageContext.Provider>
   );

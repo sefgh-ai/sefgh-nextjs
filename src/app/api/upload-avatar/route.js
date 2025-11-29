@@ -106,15 +106,18 @@ export async function POST(request) {
       )
     }
 
-    // Get public URL
+    // Get public URL with timestamp for cache busting
     const { data: { publicUrl } } = supabase.storage
       .from('avatars')
       .getPublicUrl(fileName)
+    
+    // Add timestamp to force browser cache refresh
+    const publicUrlWithTimestamp = `${publicUrl}?t=${Date.now()}`
 
     // Update user metadata with new avatar URL
     const { error: updateError } = await supabase.auth.updateUser({
       data: {
-        avatar_url: publicUrl
+        avatar_url: publicUrlWithTimestamp
       }
     })
 
@@ -137,7 +140,7 @@ export async function POST(request) {
     // Update profiles table
     const { error: profileError } = await supabase
       .from('profiles')
-      .update({ avatar_url: publicUrl })
+      .update({ avatar_url: publicUrlWithTimestamp })
       .eq('id', user.id)
 
     if (profileError) {
@@ -156,12 +159,12 @@ export async function POST(request) {
     console.log('✅ Avatar upload successful:', {
       userId: user.id,
       fileName,
-      publicUrl
+      publicUrl: publicUrlWithTimestamp
     })
 
     return NextResponse.json({
       success: true,
-      avatar_url: publicUrl
+      avatar_url: publicUrlWithTimestamp
     })
 
   } catch (error) {

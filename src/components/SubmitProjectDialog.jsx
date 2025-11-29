@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from "react"
+import { useState, useMemo, useCallback } from "react"
 import { Button } from "@/components/ui/button"
 import { X } from "lucide-react"
 import {
@@ -27,7 +27,9 @@ export function SubmitProjectDialog({ children }) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { user } = useAuth()
   const router = useRouter()
-  const supabase = createClient()
+  
+  // Memoize supabase client
+  const supabase = useMemo(() => createClient(), [])
 
   // Check if user is logged in before opening modal
   const handleOpenChange = (newOpen) => {

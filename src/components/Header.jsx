@@ -9,13 +9,14 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { toast } from "sonner"
+import { useCallback, memo } from 'react'
 
-export function Header() {
+const Header = memo(function Header() {
   const { setTheme, theme } = useTheme()
   const { user, signOut, loading } = useAuth()
   const { openSettings } = useSettings()
 
-  const handleSignOut = async () => {
+  const handleSignOut = useCallback(async () => {
     try {
       const userName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User'
       
@@ -30,15 +31,15 @@ export function Header() {
         description: error.message,
       })
     }
-  }
+  }, [user, signOut])
 
-  const getUserInitials = () => {
+  const getUserInitials = useCallback(() => {
     if (user?.user_metadata?.full_name) {
       const names = user.user_metadata.full_name.split(' ')
       return names.map(n => n[0]).join('').toUpperCase().slice(0, 2)
     }
     return user?.email?.[0]?.toUpperCase() || 'U'
-  }
+  }, [user])
 
   if (loading) {
     return (
@@ -82,8 +83,12 @@ export function Header() {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                <Avatar className="h-8 w-8">
-                  <AvatarImage src={user?.user_metadata?.avatar_url} alt={user?.email} />
+                <Avatar className="h-8 w-8" key={user?.user_metadata?.avatar_url}>
+                  <AvatarImage 
+                    src={user?.user_metadata?.avatar_url} 
+                    alt={user?.email}
+                    crossOrigin="anonymous"
+                  />
                   <AvatarFallback>{getUserInitials()}</AvatarFallback>
                 </Avatar>
               </Button>
@@ -134,4 +139,6 @@ export function Header() {
       </div>
     </>
   )
-}
+})
+
+export { Header }

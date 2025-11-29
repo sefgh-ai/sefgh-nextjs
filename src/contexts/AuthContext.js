@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, useContext, useEffect, useState, useMemo, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 
@@ -10,9 +10,13 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
   const router = useRouter()
-  const supabase = createClient()
+  
+  // Memoize supabase client to prevent recreation
+  const supabase = useMemo(() => createClient(), [])
 
   useEffect(() => {
+    let initialLoad = true
+    
     // Check active sessions and sets the user
     const getSession = async () => {
       const { data: { session } } = await supabase.auth.getSession()
@@ -24,36 +28,71 @@ export const AuthProvider = ({ children }) => {
 
     // Listen for changes on auth state (sign in, sign out, etc.)
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      setUser(session?.user ?? null)
+      // Skip refresh on initial load to avoid double refresh
+      if (initialLoad && event === 'INITIAL_SESSION') {
+        initialLoad = false
+        return
+      }
+      
+      if (event === 'SIGNED_IN' && session?.user) {
+        // Only refresh on actual sign-in, not initial page load
+        if (!initialLoad) {
+          const { data: { session: freshSession }, error } = await supabase.auth.refreshSession()
+          if (!error && freshSession) {
+            console.log('🔄 Session refreshed on sign-in, avatar_url:', freshSession.user?.user_metadata?.avatar_url)
+            setUser(freshSession.user)
+          } else {
+            setUser(session.user)
+          }
+        } else {
+          setUser(session.user)
+        }
+        initialLoad = false
+      } else if (event === 'USER_UPDATED' && session?.user) {
+        // Handle user metadata updates
+        setUser(session.user)
+      } else {
+        setUser(session?.user ?? null)
+      }
       setLoading(false)
-      // Don't refresh router to prevent infinite loops
-      // router.refresh() is removed - pages will use manual refresh if needed
     })
 
     return () => subscription.unsubscribe()
-  }, [router, supabase.auth])
+  }, [supabase])
 
-  const refreshUser = async () => {
+  const refreshUser = useCallback(async () => {
     try {
-      const { data: { user: refreshedUser } } = await supabase.auth.getUser()
-      if (refreshedUser) {
-        setUser(refreshedUser)
+      // Force refresh session from server to get latest user metadata
+      const { data: { session }, error } = await supabase.auth.refreshSession()
+      if (error) {
+        console.error('Error refreshing session:', error)
+        return
       }
+      
+      if (session?.user) {
+        setUser(session.user)
+        return session.user
+      }
+      
+      return null
     } catch (error) {
       console.error('Error refreshing user:', error)
+      return null
     }
-  }
+  }, [supabase])
 
-  const value = {
+  const signOut = useCallback(async () => {
+    await supabase.auth.signOut()
+    router.push('/')
+    router.refresh()
+  }, [supabase, router])
+
+  const value = useMemo(() => ({
     user,
     loading,
     refreshUser,
-    signOut: async () => {
-      await supabase.auth.signOut()
-      router.push('/')
-      router.refresh()
-    }
-  }
+    signOut
+  }), [user, loading, refreshUser, signOut])
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }

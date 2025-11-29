@@ -28,9 +28,10 @@ export default async function middleware(request) {
   )
 
   // Refresh session if expired - required for Server Components
+  // This ensures user metadata is always up-to-date
   const {
-    data: { user },
-  } = await supabase.auth.getUser()
+    data: { session },
+  } = await supabase.auth.getSession()
 
   return supabaseResponse
 }

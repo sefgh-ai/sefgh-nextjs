@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { Bell, Check, Trash2, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -19,7 +19,50 @@ export function NotificationBell({ userId }) {
   const bellRef = useRef(null);
   const tooltipTimeout = useRef(null);
   const router = useRouter();
-  const supabase = createClient();
+  
+  // Memoize supabase client
+  const supabase = useMemo(() => createClient(), []);
+
+  const fetchNotifications = useCallback(async () => {
+    try {
+      const { data, error } = await supabase
+        .from('notifications')
+        .select('*')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false })
+        .limit(20);
+
+      if (error) throw error;
+
+      setNotifications(data || []);
+      setUnreadCount(data?.filter(n => !n.is_read).length || 0);
+    } catch (error) {
+      console.error('Error fetching notifications:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, [userId, supabase]);
+
+  const handleRealtimeUpdate = useCallback((payload) => {
+    if (payload.eventType === 'INSERT') {
+      setNotifications(prev => [payload.new, ...prev]);
+      if (!payload.new.is_read) {
+        setUnreadCount(prev => prev + 1);
+      }
+    } else if (payload.eventType === 'UPDATE') {
+      setNotifications(prev =>
+        prev.map(n => (n.id === payload.new.id ? payload.new : n))
+      );
+      if (payload.old.is_read !== payload.new.is_read) {
+        setUnreadCount(prev => payload.new.is_read ? prev - 1 : prev + 1);
+      }
+    } else if (payload.eventType === 'DELETE') {
+      setNotifications(prev => prev.filter(n => n.id !== payload.old.id));
+      if (!payload.old.is_read) {
+        setUnreadCount(prev => prev - 1);
+      }
+    }
+  }, []);
 
   useEffect(() => {
     if (userId) {
@@ -36,9 +79,7 @@ export function NotificationBell({ userId }) {
             table: 'notifications',
             filter: `user_id=eq.${userId}`,
           },
-          (payload) => {
-            handleRealtimeUpdate(payload);
-          }
+          handleRealtimeUpdate
         )
         .subscribe();
 
@@ -46,7 +87,7 @@ export function NotificationBell({ userId }) {
         supabase.removeChannel(channel);
       };
     }
-  }, [userId]);
+  }, [userId, supabase, fetchNotifications, handleRealtimeUpdate]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -67,71 +108,30 @@ export function NotificationBell({ userId }) {
   }, [isOpen]);
 
   // Handle hover for tooltip
-  const handleMouseEnter = () => {
+  const handleMouseEnter = useCallback(() => {
     if (!isOpen) {
       tooltipTimeout.current = setTimeout(() => {
         setShowTooltip(true);
       }, 300);
     }
-  };
+  }, [isOpen]);
 
-  const handleMouseLeave = () => {
+  const handleMouseLeave = useCallback(() => {
     if (tooltipTimeout.current) {
       clearTimeout(tooltipTimeout.current);
     }
     setShowTooltip(false);
-  };
+  }, []);
 
-  const handleBellClick = () => {
+  const handleBellClick = useCallback(() => {
     setIsOpen(!isOpen);
     setShowTooltip(false);
     if (tooltipTimeout.current) {
       clearTimeout(tooltipTimeout.current);
     }
-  };
+  }, [isOpen]);
 
-  const fetchNotifications = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('notifications')
-        .select('*')
-        .eq('user_id', userId)
-        .order('created_at', { ascending: false })
-        .limit(20);
-
-      if (error) throw error;
-
-      setNotifications(data || []);
-      setUnreadCount(data?.filter(n => !n.is_read).length || 0);
-    } catch (error) {
-      console.error('Error fetching notifications:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleRealtimeUpdate = (payload) => {
-    if (payload.eventType === 'INSERT') {
-      setNotifications(prev => [payload.new, ...prev]);
-      if (!payload.new.is_read) {
-        setUnreadCount(prev => prev + 1);
-      }
-    } else if (payload.eventType === 'UPDATE') {
-      setNotifications(prev =>
-        prev.map(n => (n.id === payload.new.id ? payload.new : n))
-      );
-      if (payload.old.is_read !== payload.new.is_read) {
-        setUnreadCount(prev => payload.new.is_read ? prev - 1 : prev + 1);
-      }
-    } else if (payload.eventType === 'DELETE') {
-      setNotifications(prev => prev.filter(n => n.id !== payload.old.id));
-      if (!payload.old.is_read) {
-        setUnreadCount(prev => prev - 1);
-      }
-    }
-  };
-
-  const markAsRead = async (notificationId) => {
+  const markAsRead = useCallback(async (notificationId) => {
     try {
       const { error } = await supabase
         .from('notifications')
@@ -170,9 +170,9 @@ export function NotificationBell({ userId }) {
     } catch (error) {
       console.error('Error deleting notification:', error);
     }
-  };
+  }, [supabase]);
 
-  const handleNotificationClick = async (notification) => {
+  const handleNotificationClick = useCallback(async (notification) => {
     if (!notification.is_read) {
       await markAsRead(notification.id);
     }
@@ -181,11 +181,11 @@ export function NotificationBell({ userId }) {
       setIsOpen(false);
       router.push(notification.link);
     }
-  };
+  }, [markAsRead, router]);
 
-  const getNotificationIcon = (type) => {
-    switch (type) {
-      case 'success':
+  const getNotificationIcon = useCallback((type) => {
+
+  const markAllAsRead = useCallback(async () => {
         return '✓';
       case 'warning':
         return '⚠';
@@ -194,9 +194,9 @@ export function NotificationBell({ userId }) {
       default:
         return 'ℹ';
     }
-  };
+  }, []);
 
-  const getNotificationColor = (type) => {
+  const getNotificationColor = useCallback((type) => {
     switch (type) {
       case 'success':
         return 'text-green-500 bg-green-500/10';
@@ -207,9 +207,9 @@ export function NotificationBell({ userId }) {
       default:
         return 'text-blue-500 bg-blue-500/10';
     }
-  };
+  }, []);
 
-  const formatTime = (timestamp) => {
+  const formatTime = useCallback((timestamp) => {
     const date = new Date(timestamp);
     const now = new Date();
     const diffMs = now - date;
@@ -223,9 +223,9 @@ export function NotificationBell({ userId }) {
     if (diffDays < 7) return `${diffDays}d ago`;
     
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-  };
+  }, []);
 
-  const formatTimestamp = (timestamp) => {
+  const formatTimestamp = useCallback((timestamp) => {
     const date = new Date(timestamp);
     return date.toLocaleString('en-US', {
       month: 'short',
@@ -233,9 +233,12 @@ export function NotificationBell({ userId }) {
       hour: '2-digit',
       minute: '2-digit',
     });
-  };
+  }, []);
 
-  const latestNotification = notifications.find(n => !n.is_read) || notifications[0];
+  const latestNotification = useMemo(
+    () => notifications.find(n => !n.is_read) || notifications[0],
+    [notifications]
+  );
 
   return (
     <div className="relative">

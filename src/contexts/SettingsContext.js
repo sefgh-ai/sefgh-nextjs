@@ -1,26 +1,26 @@
 'use client';
 
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useCallback, useMemo } from 'react';
 
 const SettingsContext = createContext();
 
 export function SettingsProvider({ children }) {
   const [settingsModalOpen, setSettingsModalOpen] = useState(false);
 
-  const openSettings = () => setSettingsModalOpen(true);
-  const closeSettings = () => setSettingsModalOpen(false);
-  const toggleSettings = () => setSettingsModalOpen(prev => !prev);
+  const openSettings = useCallback(() => setSettingsModalOpen(true), []);
+  const closeSettings = useCallback(() => setSettingsModalOpen(false), []);
+  const toggleSettings = useCallback(() => setSettingsModalOpen(prev => !prev), []);
+
+  const value = useMemo(() => ({
+    settingsModalOpen,
+    setSettingsModalOpen,
+    openSettings,
+    closeSettings,
+    toggleSettings,
+  }), [settingsModalOpen, openSettings, closeSettings, toggleSettings]);
 
   return (
-    <SettingsContext.Provider
-      value={{
-        settingsModalOpen,
-        setSettingsModalOpen,
-        openSettings,
-        closeSettings,
-        toggleSettings,
-      }}
-    >
+    <SettingsContext.Provider value={value}>
       {children}
     </SettingsContext.Provider>
   );

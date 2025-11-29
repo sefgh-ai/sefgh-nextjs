@@ -71,15 +71,12 @@ export default function LoginPage() {
       const userName = data.user?.user_metadata?.full_name || data.user?.email?.split('@')[0] || 'there'
       
       toast.success(`Welcome back, ${userName}! 🎉`, {
-        description: "You've successfully signed in. Redirecting...",
-        duration: 3000,
+        description: "You've successfully signed in.",
+        duration: 2000,
       })
       
-      // Redirect to search page on success
-      setTimeout(() => {
-        router.push('/search')
-        router.refresh()
-      }, 1000)
+      // Redirect to search page immediately
+      router.push('/search')
     } catch (error) {
       setError(error.message)
       

@@ -64,8 +64,14 @@ export function AvatarUpload({ currentAvatarUrl, userInitials, onUploadSuccess }
         throw new Error(data.error || 'Upload failed')
       }
 
+      console.log('✅ Upload API returned:', data.avatar_url)
+      
+      // Small delay to ensure metadata is propagated (reduced from 500ms to 200ms)
+      await new Promise(resolve => setTimeout(resolve, 200))
+      
       // Refresh user data to get updated avatar
-      await refreshUser()
+      const updatedUser = await refreshUser()
+      console.log('🔄 After refresh, avatar_url:', updatedUser?.user_metadata?.avatar_url)
 
       toast.success('Avatar updated! 🎉', {
         description: 'Your profile picture has been updated successfully.',
