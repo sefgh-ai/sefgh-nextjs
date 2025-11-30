@@ -3,20 +3,20 @@
 import { usePathname } from "next/navigation"
 import { useSettings } from "@/contexts/SettingsContext"
 import { 
-  HomeIcon, 
-  MagnifyingGlassIcon, 
-  ChatBubbleLeftIcon, 
-  ArrowTrendingUpIcon, 
-  StarIcon, 
-  CodeBracketIcon, 
-  UsersIcon, 
-  FunnelIcon, 
-  ClockIcon, 
-  BookmarkIcon, 
-  Cog6ToothIcon, 
-  LockClosedIcon,
-  ArrowUpTrayIcon
-} from "@heroicons/react/24/outline"
+  Home, 
+  Search, 
+  MessageSquare, 
+  TrendingUp, 
+  Star, 
+  Code, 
+  Users, 
+  Filter, 
+  Clock, 
+  Settings, 
+  Lock,
+  Upload,
+  Key
+} from "lucide-react"
 import {
   Sidebar,
   SidebarContent,
@@ -63,7 +63,7 @@ export function SearchSidebar({ user }) {
                   }`}
                 >
                   <a href="/home">
-                    <HomeIcon className="h-4 w-4" />
+                    <Home className="h-4 w-4" />
                     <span>Home</span>
                   </a>
                 </SidebarMenuButton>
@@ -78,7 +78,7 @@ export function SearchSidebar({ user }) {
                   }`}
                 >
                   <a href="/search">
-                    <MagnifyingGlassIcon className="h-4 w-4" />
+                    <Search className="h-4 w-4" />
                     <span>Search</span>
                   </a>
                 </SidebarMenuButton>
@@ -93,7 +93,7 @@ export function SearchSidebar({ user }) {
                   }`}
                 >
                   <a href="/chat">
-                    <ChatBubbleLeftIcon className="h-4 w-4" />
+                    <MessageSquare className="h-4 w-4" />
                     <span>AI Chat</span>
                   </a>
                 </SidebarMenuButton>
@@ -108,14 +108,14 @@ export function SearchSidebar({ user }) {
                   }`}
                 >
                   <a href="/trending">
-                    <ArrowTrendingUpIcon className="h-4 w-4" />
+                    <TrendingUp className="h-4 w-4" />
                     <span>Trending</span>
                   </a>
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton className="rounded-xl hover:bg-white/10 hover:glow-border-cyan transition-smooth">
-                  <StarIcon className="h-4 w-4" />
+                  <Star className="h-4 w-4" />
                   <span>Starred</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -131,19 +131,19 @@ export function SearchSidebar({ user }) {
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton className="hover:bg-accent">
-                  <CodeBracketIcon className="h-4 w-4" />
+                  <Code className="h-4 w-4" />
                   <span>Repositories</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton className="hover:bg-accent">
-                  <UsersIcon className="h-4 w-4" />
+                  <Users className="h-4 w-4" />
                   <span>Users</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton className="hover:bg-accent">
-                  <FunnelIcon className="h-4 w-4" />
+                  <Filter className="h-4 w-4" />
                   <span>Topics</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -162,38 +162,41 @@ export function SearchSidebar({ user }) {
                   <SidebarMenuButton 
                     asChild 
                     className={`rounded-xl transition-smooth ${
+                      pathname === '/playground' 
+                        ? 'bg-gradient-to-r from-blue-500/20 to-slate-500/20 glow-border-blue' 
+                        : 'hover:bg-accent'
+                    }`}
+                  >
+                    <a href="/playground">
+                      <Key className="h-4 w-4" />
+                      <span>Playground</span>
+                    </a>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuButton 
+                    asChild 
+                    className={`rounded-xl transition-smooth ${
                       pathname === '/submissions' 
                         ? 'bg-gradient-to-r from-blue-500/20 to-slate-500/20 glow-border-blue' 
                         : 'hover:bg-accent'
                     }`}
                   >
                     <a href="/submissions">
-                      <ArrowUpTrayIcon className="h-4 w-4" />
+                      <Upload className="h-4 w-4" />
                       <span>Submissions</span>
                     </a>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
                 <SidebarMenuItem>
                   <SidebarMenuButton className="hover:bg-accent">
-                    <ClockIcon className="h-4 w-4" />
+                    <Clock className="h-4 w-4" />
                     <span>History</span>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
                 <SidebarMenuItem>
-                  <SidebarMenuButton className="hover:bg-accent">
-                    <BookmarkIcon className="h-4 w-4" />
-                    <span>Bookmarks</span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-                <SidebarMenuItem>
-                  <SidebarMenuButton className="hover:bg-accent">
-                    <StarIcon className="h-4 w-4" />
-                    <span>Favorites</span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-                <SidebarMenuItem>
                   <SidebarMenuButton onClick={openSettings} className="hover:bg-accent cursor-pointer">
-                    <Cog6ToothIcon className="h-4 w-4" />
+                    <Settings className="h-4 w-4" />
                     <span>Settings</span>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -210,7 +213,7 @@ export function SearchSidebar({ user }) {
                 <SidebarMenuItem>
                   <SidebarMenuButton asChild className="hover:bg-accent">
                     <a href="/login">
-                      <LockClosedIcon className="h-4 w-4" />
+                      <Lock className="h-4 w-4" />
                       <span>Login to Access</span>
                     </a>
                   </SidebarMenuButton>

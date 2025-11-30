@@ -48,16 +48,29 @@ export async function fetchGitHubRepoData(url) {
   const { owner, repo } = parsed;
   
   try {
+    // Create abort controller for timeout
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
+    
     // Fetch repo data from GitHub API
     const response = await fetch(`https://api.github.com/repos/${owner}/${repo}`, {
       headers: {
         'Accept': 'application/vnd.github.v3+json',
+        ...(process.env.NEXT_PUBLIC_GITHUB_TOKEN && {
+          'Authorization': `Bearer ${process.env.NEXT_PUBLIC_GITHUB_TOKEN}`
+        })
       },
+      signal: controller.signal,
     });
+    
+    clearTimeout(timeoutId);
     
     if (!response.ok) {
       if (response.status === 404) {
         throw new Error('Repository not found');
+      }
+      if (response.status === 403) {
+        throw new Error('GitHub API rate limit exceeded. Please try again later.');
       }
       throw new Error('Failed to fetch repository data');
     }

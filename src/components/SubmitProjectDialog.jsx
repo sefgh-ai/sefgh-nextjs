@@ -82,24 +82,35 @@ export function SubmitProjectDialog({ children }) {
     }
 
     setIsSubmitting(true)
+    let toastId = null;
     
     try {
-      // Check if URL already exists
+      // Stage 1: Validating
+      toastId = toast.loading("Validating submission...");
+      
+      // Check if URL already exists (using maybeSingle to avoid error throw)
       const { data: existing } = await supabase
         .from('repo_submissions')
         .select('id')
         .eq('url', projectUrl.trim())
-        .single()
+        .maybeSingle()
       
       if (existing) {
+        toast.dismiss(toastId);
         toast.error("This repository has already been submitted")
         setIsSubmitting(false)
         return
       }
       
-      // Fetch GitHub repo data and auto-detect tags
-      toast.loading("Fetching repository data from GitHub...")
+      // Stage 2: Fetching GitHub data
+      toast.dismiss(toastId);
+      toastId = toast.loading("Fetching repository data from GitHub...");
+      
       const githubData = await fetchGitHubRepoData(projectUrl.trim())
+      
+      // Stage 3: Saving
+      toast.dismiss(toastId);
+      toastId = toast.loading("Saving submission...");
       
       // Insert submission into database
       const { data, error } = await supabase
@@ -116,7 +127,7 @@ export function SubmitProjectDialog({ children }) {
       
       if (error) throw error
       
-      toast.dismiss()
+      toast.dismiss(toastId);
       toast.success("Project submitted successfully! 🎉", {
         description: "Your submission is now visible in your submissions page."
       })
@@ -128,11 +139,16 @@ export function SubmitProjectDialog({ children }) {
       setDescription("")
     } catch (error) {
       console.error("Submission error:", error)
+      if (toastId) toast.dismiss(toastId);
       toast.dismiss()
       
       if (error.message === 'Repository not found') {
         toast.error("Repository not found", {
           description: "The GitHub repository doesn't exist or is private."
+        })
+      } else if (error.message?.includes('timeout') || error.message?.includes('rate limit')) {
+        toast.error("GitHub API Error", {
+          description: error.message
         })
       } else if (error.message === 'Failed to fetch repository data') {
         toast.error("Failed to fetch repository data", {

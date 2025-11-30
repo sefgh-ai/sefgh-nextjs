@@ -293,10 +293,23 @@
   }
 }
 
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
 /* Animation Classes */
 .animate-element {
   animation: fadeSlideIn 0.6s ease-out forwards;
   opacity: 0;
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
 }
 
 .animate-slide-right {

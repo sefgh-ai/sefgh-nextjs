@@ -25,3 +25,4 @@ WITH CHECK (auth.uid() = user_id);
 -- Create index for faster queries
 CREATE INDEX idx_repo_submissions_user_id ON repo_submissions(user_id);
 CREATE INDEX idx_repo_submissions_submitted_at ON repo_submissions(submitted_at DESC);
+CREATE INDEX idx_repo_submissions_url ON repo_submissions(url); -- For fast duplicate checks

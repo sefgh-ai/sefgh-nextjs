@@ -42,45 +42,39 @@ export default function ApiKeysTab({ userId }) {
     }
   };
 
-  const generateApiKey = () => {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let key = 'sk_';
-    for (let i = 0; i < 48; i++) {
-      key += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    return key;
-  };
-
   const createApiKey = async () => {
     if (!newKeyName.trim()) return;
+    if (creating) return; // Debounce: prevent duplicate requests
 
     setCreating(true);
     try {
-      const newKey = generateApiKey();
-      const { data, error } = await supabase
-        .from('api_keys')
-        .insert([
-          {
-            user_id: userId,
-            name: newKeyName,
-            key: newKey,
-            is_active: true,
-          },
-        ])
-        .select()
-        .single();
+      // Call server-side API to generate key
+      const response = await fetch('/api/playground/keys', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: newKeyName.trim(),
+        }),
+      });
 
-      if (error) throw error;
+      const result = await response.json();
 
-      setApiKeys([data, ...apiKeys]);
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to create API key');
+      }
+
+      // Use functional update to avoid array spreading issues
+      setApiKeys(prev => [result.data, ...prev]);
       setNewKeyName('');
       setShowCreateForm(false);
       
       // Show the newly created key
-      setVisibleKeys({ ...visibleKeys, [data.id]: true });
+      setVisibleKeys(prev => ({ ...prev, [result.data.id]: true }));
     } catch (error) {
       console.error('Error creating API key:', error);
-      alert('Failed to create API key');
+      alert(error.message || 'Failed to create API key');
     } finally {
       setCreating(false);
     }
