@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
-import { Bell, Check, Trash2, ExternalLink } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { createClient } from '@/lib/supabase/client';
-import { useRouter } from 'next/navigation';
-import { cn } from '@/lib/utils';
+import { useState, useEffect, useRef, useMemo, useCallback } from "react";
+import { Bell, Check, Trash2, ExternalLink } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { createClient } from "@/lib/supabase/client";
+import { useRouter } from "next/navigation";
+import { cn } from "@/lib/utils";
 
 export function NotificationBell({ userId }) {
   const [notifications, setNotifications] = useState([]);
@@ -15,95 +15,110 @@ export function NotificationBell({ userId }) {
   const [isOpen, setIsOpen] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [isMounted, setIsMounted] = useState(false);
   const dropdownRef = useRef(null);
   const bellRef = useRef(null);
   const tooltipTimeout = useRef(null);
   const router = useRouter();
-  
-  // Memoize supabase client
-  const supabase = useMemo(() => createClient(), []);
+
+  // Memoize supabase client - only create after mount
+  const supabase = useMemo(() => {
+    if (!isMounted) return null;
+    return createClient();
+  }, [isMounted]);
+
+  // Set mounted state
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const fetchNotifications = useCallback(async () => {
+    if (!supabase || !userId) return;
+
     try {
       const { data, error } = await supabase
-        .from('notifications')
-        .select('*')
-        .eq('user_id', userId)
-        .order('created_at', { ascending: false })
+        .from("notifications")
+        .select("*")
+        .eq("user_id", userId)
+        .order("created_at", { ascending: false })
         .limit(20);
 
       if (error) throw error;
 
       setNotifications(data || []);
-      setUnreadCount(data?.filter(n => !n.is_read).length || 0);
+      setUnreadCount(data?.filter((n) => !n.is_read).length || 0);
     } catch (error) {
-      console.error('Error fetching notifications:', error);
+      console.error("Error fetching notifications:", error);
     } finally {
       setLoading(false);
     }
   }, [userId, supabase]);
 
   const handleRealtimeUpdate = useCallback((payload) => {
-    if (payload.eventType === 'INSERT') {
-      setNotifications(prev => [payload.new, ...prev]);
+    if (payload.eventType === "INSERT") {
+      setNotifications((prev) => [payload.new, ...prev]);
       if (!payload.new.is_read) {
-        setUnreadCount(prev => prev + 1);
+        setUnreadCount((prev) => prev + 1);
       }
-    } else if (payload.eventType === 'UPDATE') {
-      setNotifications(prev =>
-        prev.map(n => (n.id === payload.new.id ? payload.new : n))
+    } else if (payload.eventType === "UPDATE") {
+      setNotifications((prev) =>
+        prev.map((n) => (n.id === payload.new.id ? payload.new : n))
       );
       if (payload.old.is_read !== payload.new.is_read) {
-        setUnreadCount(prev => payload.new.is_read ? prev - 1 : prev + 1);
+        setUnreadCount((prev) => (payload.new.is_read ? prev - 1 : prev + 1));
       }
-    } else if (payload.eventType === 'DELETE') {
-      setNotifications(prev => prev.filter(n => n.id !== payload.old.id));
+    } else if (payload.eventType === "DELETE") {
+      setNotifications((prev) => prev.filter((n) => n.id !== payload.old.id));
       if (!payload.old.is_read) {
-        setUnreadCount(prev => prev - 1);
+        setUnreadCount((prev) => prev - 1);
       }
     }
   }, []);
 
   useEffect(() => {
-    if (userId) {
-      fetchNotifications();
-      
-      // Set up real-time subscription
-      const channel = supabase
-        .channel('notifications')
-        .on(
-          'postgres_changes',
-          {
-            event: '*',
-            schema: 'public',
-            table: 'notifications',
-            filter: `user_id=eq.${userId}`,
-          },
-          handleRealtimeUpdate
-        )
-        .subscribe();
+    if (!isMounted || !supabase || !userId) return;
 
-      return () => {
-        supabase.removeChannel(channel);
-      };
-    }
-  }, [userId, supabase, fetchNotifications, handleRealtimeUpdate]);
+    fetchNotifications();
+
+    // Set up real-time subscription
+    const channel = supabase
+      .channel("notifications")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "notifications",
+          filter: `user_id=eq.${userId}`,
+        },
+        handleRealtimeUpdate
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [isMounted, userId, supabase, fetchNotifications, handleRealtimeUpdate]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
     function handleClickOutside(event) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target) &&
-          bellRef.current && !bellRef.current.contains(event.target)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target) &&
+        bellRef.current &&
+        !bellRef.current.contains(event.target)
+      ) {
         setIsOpen(false);
       }
     }
 
     if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener("mousedown", handleClickOutside);
     }
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [isOpen]);
 
@@ -131,81 +146,93 @@ export function NotificationBell({ userId }) {
     }
   }, [isOpen]);
 
-  const markAsRead = useCallback(async (notificationId) => {
-    try {
-      const { error } = await supabase
-        .from('notifications')
-        .update({ is_read: true })
-        .eq('id', notificationId);
+  const markAsRead = useCallback(
+    async (notificationId) => {
+      if (!supabase) return;
+      try {
+        const { error } = await supabase
+          .from("notifications")
+          .update({ is_read: true })
+          .eq("id", notificationId);
 
-      if (error) throw error;
-    } catch (error) {
-      console.error('Error marking notification as read:', error);
-    }
-  };
-
-  const markAllAsRead = async () => {
-    try {
-      const { error } = await supabase
-        .from('notifications')
-        .update({ is_read: true })
-        .eq('user_id', userId)
-        .eq('is_read', false);
-
-      if (error) throw error;
-    } catch (error) {
-      console.error('Error marking all as read:', error);
-    }
-  };
-
-  const deleteNotification = async (notificationId, event) => {
-    event.stopPropagation();
-    try {
-      const { error } = await supabase
-        .from('notifications')
-        .delete()
-        .eq('id', notificationId);
-
-      if (error) throw error;
-    } catch (error) {
-      console.error('Error deleting notification:', error);
-    }
-  }, [supabase]);
-
-  const handleNotificationClick = useCallback(async (notification) => {
-    if (!notification.is_read) {
-      await markAsRead(notification.id);
-    }
-    
-    if (notification.link) {
-      setIsOpen(false);
-      router.push(notification.link);
-    }
-  }, [markAsRead, router]);
-
-  const getNotificationIcon = useCallback((type) => {
+        if (error) throw error;
+      } catch (error) {
+        console.error("Error marking notification as read:", error);
+      }
+    },
+    [supabase]
+  );
 
   const markAllAsRead = useCallback(async () => {
-        return '✓';
-      case 'warning':
-        return '⚠';
-      case 'error':
-        return '✕';
+    if (!supabase) return;
+    try {
+      const { error } = await supabase
+        .from("notifications")
+        .update({ is_read: true })
+        .eq("user_id", userId)
+        .eq("is_read", false);
+
+      if (error) throw error;
+    } catch (error) {
+      console.error("Error marking all as read:", error);
+    }
+  }, [supabase, userId]);
+
+  const deleteNotification = useCallback(
+    async (notificationId, event) => {
+      if (!supabase) return;
+      event.stopPropagation();
+      try {
+        const { error } = await supabase
+          .from("notifications")
+          .delete()
+          .eq("id", notificationId);
+
+        if (error) throw error;
+      } catch (error) {
+        console.error("Error deleting notification:", error);
+      }
+    },
+    [supabase]
+  );
+
+  const handleNotificationClick = useCallback(
+    async (notification) => {
+      if (!notification.is_read) {
+        await markAsRead(notification.id);
+      }
+
+      if (notification.link) {
+        setIsOpen(false);
+        router.push(notification.link);
+      }
+    },
+    [markAsRead, router]
+  );
+
+  const getNotificationIcon = useCallback((type) => {
+    switch (type) {
+      case "success":
+        return "✓";
+      case "warning":
+        return "⚠";
+      case "error":
+        return "✕";
       default:
-        return 'ℹ';
+        return "ℹ";
     }
   }, []);
 
   const getNotificationColor = useCallback((type) => {
     switch (type) {
-      case 'success':
-        return 'text-green-500 bg-green-500/10';
-      case 'warning':
-        return 'text-yellow-500 bg-yellow-500/10';
-      case 'error':
-        return 'text-red-500 bg-red-500/10';
+      case "success":
+        return "text-green-500 bg-green-500/10";
+      case "warning":
+        return "text-yellow-500 bg-yellow-500/10";
+      case "error":
+        return "text-red-500 bg-red-500/10";
       default:
-        return 'text-blue-500 bg-blue-500/10';
+        return "text-blue-500 bg-blue-500/10";
     }
   }, []);
 
@@ -217,26 +244,26 @@ export function NotificationBell({ userId }) {
     const diffHours = Math.floor(diffMs / 3600000);
     const diffDays = Math.floor(diffMs / 86400000);
 
-    if (diffMins < 1) return 'Just now';
+    if (diffMins < 1) return "Just now";
     if (diffMins < 60) return `${diffMins}m ago`;
     if (diffHours < 24) return `${diffHours}h ago`;
     if (diffDays < 7) return `${diffDays}d ago`;
-    
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
+    return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
   }, []);
 
   const formatTimestamp = useCallback((timestamp) => {
     const date = new Date(timestamp);
-    return date.toLocaleString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
+    return date.toLocaleString("en-US", {
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   }, []);
 
   const latestNotification = useMemo(
-    () => notifications.find(n => !n.is_read) || notifications[0],
+    () => notifications.find((n) => !n.is_read) || notifications[0],
     [notifications]
   );
 
@@ -259,7 +286,7 @@ export function NotificationBell({ userId }) {
               variant="destructive"
               className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs animate-in fade-in zoom-in duration-300"
             >
-              {unreadCount > 9 ? '9+' : unreadCount}
+              {unreadCount > 9 ? "9+" : unreadCount}
             </Badge>
           )}
         </Button>
@@ -272,7 +299,7 @@ export function NotificationBell({ userId }) {
             <div className="flex items-start gap-3">
               <div
                 className={cn(
-                  'flex-shrink-0 h-8 w-8 rounded-full flex items-center justify-center text-sm font-semibold',
+                  "flex-shrink-0 h-8 w-8 rounded-full flex items-center justify-center text-sm font-semibold",
                   getNotificationColor(latestNotification.type)
                 )}
               >
@@ -301,7 +328,7 @@ export function NotificationBell({ userId }) {
 
       {/* Full Dropdown - Toggle on Click */}
       {isOpen && (
-        <div 
+        <div
           ref={dropdownRef}
           className="absolute right-0 mt-2 w-96 max-w-[calc(100vw-2rem)] rounded-2xl bg-background/98 backdrop-blur-xl border border-border shadow-2xl z-50 animate-in fade-in slide-in-from-top-2 duration-200"
         >
@@ -310,7 +337,7 @@ export function NotificationBell({ userId }) {
             <div>
               <h3 className="font-semibold text-lg">Notifications</h3>
               <p className="text-xs text-muted-foreground">
-                {unreadCount > 0 ? `${unreadCount} unread` : 'All caught up!'}
+                {unreadCount > 0 ? `${unreadCount} unread` : "All caught up!"}
               </p>
             </div>
             {unreadCount > 0 && (
@@ -335,7 +362,9 @@ export function NotificationBell({ userId }) {
             ) : notifications.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
                 <Bell className="h-12 w-12 text-muted-foreground/50 mb-4" />
-                <p className="text-muted-foreground font-medium">No notifications yet</p>
+                <p className="text-muted-foreground font-medium">
+                  No notifications yet
+                </p>
                 <p className="text-xs text-muted-foreground mt-1">
                   We'll notify you when something important happens
                 </p>
@@ -347,17 +376,17 @@ export function NotificationBell({ userId }) {
                     key={notification.id}
                     onClick={() => handleNotificationClick(notification)}
                     className={cn(
-                      'group relative p-3 rounded-xl mb-2 transition-all cursor-pointer',
+                      "group relative p-3 rounded-xl mb-2 transition-all cursor-pointer",
                       notification.is_read
-                        ? 'bg-muted/30 hover:bg-muted/50'
-                        : 'bg-primary/5 hover:bg-primary/10 border border-primary/20'
+                        ? "bg-muted/30 hover:bg-muted/50"
+                        : "bg-primary/5 hover:bg-primary/10 border border-primary/20"
                     )}
                   >
                     <div className="flex items-start gap-3">
                       {/* Icon */}
                       <div
                         className={cn(
-                          'flex-shrink-0 h-8 w-8 rounded-full flex items-center justify-center text-sm font-semibold',
+                          "flex-shrink-0 h-8 w-8 rounded-full flex items-center justify-center text-sm font-semibold",
                           getNotificationColor(notification.type)
                         )}
                       >
@@ -373,7 +402,9 @@ export function NotificationBell({ userId }) {
                           <Button
                             variant="ghost"
                             size="icon"
-                            onClick={(e) => deleteNotification(notification.id, e)}
+                            onClick={(e) =>
+                              deleteNotification(notification.id, e)
+                            }
                             className="opacity-0 group-hover:opacity-100 h-6 w-6 flex-shrink-0 transition-opacity"
                           >
                             <Trash2 className="h-3 w-3" />
@@ -411,7 +442,7 @@ export function NotificationBell({ userId }) {
                 size="sm"
                 onClick={() => {
                   setIsOpen(false);
-                  router.push('/notifications');
+                  router.push("/notifications");
                 }}
                 className="text-xs w-full hover:bg-primary/10"
               >

@@ -1,37 +1,37 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { useAuth } from '@/contexts/AuthContext';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { Checkbox } from '@/components/ui/checkbox';
-import { createClient } from '@/lib/supabase/client';
-import { 
-  Bell, 
-  Check, 
-  CheckCheck, 
-  Trash2, 
-  ExternalLink, 
+import { useState, useEffect, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useAuth } from "@/contexts/AuthContext";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
+import { createClient } from "@/lib/supabase/client";
+import {
+  Bell,
+  Check,
+  CheckCheck,
+  Trash2,
+  ExternalLink,
   Search,
   Inbox,
   Bookmark,
   CheckCircle2,
   Clock,
   MoreHorizontal,
-  X
-} from 'lucide-react';
-import { cn } from '@/lib/utils';
+  X,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
 
-export default function NotificationsPage() {
+function NotificationsContent() {
   const { user, loading } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
   const [notifications, setNotifications] = useState([]);
-  const [filter, setFilter] = useState('inbox'); // 'inbox', 'saved', 'done'
-  const [readFilter, setReadFilter] = useState('all'); // 'all', 'unread'
-  const [searchQuery, setSearchQuery] = useState('');
+  const [filter, setFilter] = useState("inbox"); // 'inbox', 'saved', 'done'
+  const [readFilter, setReadFilter] = useState("all"); // 'all', 'unread'
+  const [searchQuery, setSearchQuery] = useState("");
   const [selectedIds, setSelectedIds] = useState([]);
   const [savedIds, setSavedIds] = useState([]);
   const [doneIds, setDoneIds] = useState([]);
@@ -40,7 +40,7 @@ export default function NotificationsPage() {
 
   useEffect(() => {
     if (!loading && !user) {
-      router.push('/login');
+      router.push("/login");
     }
   }, [user, loading, router]);
 
@@ -58,21 +58,21 @@ export default function NotificationsPage() {
       if (saved) setSavedIds(JSON.parse(saved));
       if (done) setDoneIds(JSON.parse(done));
     } catch (error) {
-      console.error('Error loading saved state:', error);
+      console.error("Error loading saved state:", error);
     }
   };
 
   const fetchNotifications = async () => {
     try {
       let query = supabase
-        .from('notifications')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false });
+        .from("notifications")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false });
 
       // Apply read filter
-      if (readFilter === 'unread') {
-        query = query.eq('is_read', false);
+      if (readFilter === "unread") {
+        query = query.eq("is_read", false);
       }
 
       const { data, error } = await query;
@@ -82,55 +82,61 @@ export default function NotificationsPage() {
       let filteredData = data || [];
 
       // Apply category filter
-      if (filter === 'saved') {
-        filteredData = filteredData.filter(n => savedIds.includes(n.id));
-      } else if (filter === 'done') {
-        filteredData = filteredData.filter(n => doneIds.includes(n.id));
+      if (filter === "saved") {
+        filteredData = filteredData.filter((n) => savedIds.includes(n.id));
+      } else if (filter === "done") {
+        filteredData = filteredData.filter((n) => doneIds.includes(n.id));
       } else {
         // Inbox - exclude done
-        filteredData = filteredData.filter(n => !doneIds.includes(n.id));
+        filteredData = filteredData.filter((n) => !doneIds.includes(n.id));
       }
 
       // Apply search
       if (searchQuery) {
-        filteredData = filteredData.filter(n =>
-          n.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          n.message.toLowerCase().includes(searchQuery.toLowerCase())
+        filteredData = filteredData.filter(
+          (n) =>
+            n.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            n.message.toLowerCase().includes(searchQuery.toLowerCase())
         );
       }
 
       setNotifications(filteredData);
     } catch (error) {
-      console.error('Error fetching notifications:', error);
+      console.error("Error fetching notifications:", error);
     } finally {
       setLoadingNotifications(false);
     }
   };
 
   const saveToLocalStorage = (key, value) => {
-    localStorage.setItem(`notifications_${key}_${user.id}`, JSON.stringify(value));
+    localStorage.setItem(
+      `notifications_${key}_${user.id}`,
+      JSON.stringify(value)
+    );
   };
 
   const markAsRead = async (notificationIds) => {
-    const ids = Array.isArray(notificationIds) ? notificationIds : [notificationIds];
+    const ids = Array.isArray(notificationIds)
+      ? notificationIds
+      : [notificationIds];
     try {
       const { error } = await supabase
-        .from('notifications')
+        .from("notifications")
         .update({ is_read: true })
-        .in('id', ids);
+        .in("id", ids);
 
       if (error) throw error;
 
-      setNotifications(prev =>
-        prev.map(n => (ids.includes(n.id) ? { ...n, is_read: true } : n))
+      setNotifications((prev) =>
+        prev.map((n) => (ids.includes(n.id) ? { ...n, is_read: true } : n))
       );
     } catch (error) {
-      console.error('Error marking as read:', error);
+      console.error("Error marking as read:", error);
     }
   };
 
   const markAllAsRead = async () => {
-    const unreadIds = notifications.filter(n => !n.is_read).map(n => n.id);
+    const unreadIds = notifications.filter((n) => !n.is_read).map((n) => n.id);
     if (unreadIds.length > 0) {
       await markAsRead(unreadIds);
     }
@@ -139,34 +145,34 @@ export default function NotificationsPage() {
   const deleteNotification = async (notificationId) => {
     try {
       const { error } = await supabase
-        .from('notifications')
+        .from("notifications")
         .delete()
-        .eq('id', notificationId);
+        .eq("id", notificationId);
 
       if (error) throw error;
 
-      setNotifications(prev => prev.filter(n => n.id !== notificationId));
-      setSelectedIds(prev => prev.filter(id => id !== notificationId));
+      setNotifications((prev) => prev.filter((n) => n.id !== notificationId));
+      setSelectedIds((prev) => prev.filter((id) => id !== notificationId));
     } catch (error) {
-      console.error('Error deleting notification:', error);
+      console.error("Error deleting notification:", error);
     }
   };
 
   const toggleSaved = (notificationId) => {
     const newSaved = savedIds.includes(notificationId)
-      ? savedIds.filter(id => id !== notificationId)
+      ? savedIds.filter((id) => id !== notificationId)
       : [...savedIds, notificationId];
     setSavedIds(newSaved);
-    saveToLocalStorage('saved', newSaved);
+    saveToLocalStorage("saved", newSaved);
   };
 
   const toggleDone = (notificationId) => {
     const newDone = doneIds.includes(notificationId)
-      ? doneIds.filter(id => id !== notificationId)
+      ? doneIds.filter((id) => id !== notificationId)
       : [...doneIds, notificationId];
     setDoneIds(newDone);
-    saveToLocalStorage('done', newDone);
-    
+    saveToLocalStorage("done", newDone);
+
     // Auto mark as read when marking done
     if (!doneIds.includes(notificationId)) {
       markAsRead(notificationId);
@@ -177,26 +183,26 @@ export default function NotificationsPage() {
     if (selectedIds.length === notifications.length) {
       setSelectedIds([]);
     } else {
-      setSelectedIds(notifications.map(n => n.id));
+      setSelectedIds(notifications.map((n) => n.id));
     }
   };
 
   const handleBulkAction = (action) => {
     switch (action) {
-      case 'read':
+      case "read":
         markAsRead(selectedIds);
         setSelectedIds([]);
         break;
-      case 'done':
-        selectedIds.forEach(id => {
+      case "done":
+        selectedIds.forEach((id) => {
           if (!doneIds.includes(id)) {
             toggleDone(id);
           }
         });
         setSelectedIds([]);
         break;
-      case 'delete':
-        selectedIds.forEach(id => deleteNotification(id));
+      case "delete":
+        selectedIds.forEach((id) => deleteNotification(id));
         setSelectedIds([]);
         break;
     }
@@ -204,23 +210,27 @@ export default function NotificationsPage() {
 
   const getNotificationIcon = (type) => {
     switch (type) {
-      case 'success': return '✓';
-      case 'warning': return '⚠';
-      case 'error': return '✕';
-      default: return 'ℹ';
+      case "success":
+        return "✓";
+      case "warning":
+        return "⚠";
+      case "error":
+        return "✕";
+      default:
+        return "ℹ";
     }
   };
 
   const getNotificationColor = (type) => {
     switch (type) {
-      case 'success':
-        return 'text-green-500 bg-green-500/10 border-green-500/20';
-      case 'warning':
-        return 'text-yellow-500 bg-yellow-500/10 border-yellow-500/20';
-      case 'error':
-        return 'text-red-500 bg-red-500/10 border-red-500/20';
+      case "success":
+        return "text-green-500 bg-green-500/10 border-green-500/20";
+      case "warning":
+        return "text-yellow-500 bg-yellow-500/10 border-yellow-500/20";
+      case "error":
+        return "text-red-500 bg-red-500/10 border-red-500/20";
       default:
-        return 'text-blue-500 bg-blue-500/10 border-blue-500/20';
+        return "text-blue-500 bg-blue-500/10 border-blue-500/20";
     }
   };
 
@@ -232,12 +242,12 @@ export default function NotificationsPage() {
     const diffHours = Math.floor(diffMs / 3600000);
     const diffDays = Math.floor(diffMs / 86400000);
 
-    if (diffMins < 1) return 'Just now';
+    if (diffMins < 1) return "Just now";
     if (diffMins < 60) return `${diffMins}m ago`;
     if (diffHours < 24) return `${diffHours}h ago`;
     if (diffDays < 7) return `${diffDays}d ago`;
-    
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
+    return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
   };
 
   if (loading || !user) {
@@ -248,8 +258,10 @@ export default function NotificationsPage() {
     );
   }
 
-  const unreadCount = notifications.filter(n => !n.is_read).length;
-  const inboxCount = notifications.filter(n => !doneIds.includes(n.id)).length;
+  const unreadCount = notifications.filter((n) => !n.is_read).length;
+  const inboxCount = notifications.filter(
+    (n) => !doneIds.includes(n.id)
+  ).length;
   const savedCount = savedIds.length;
   const doneCount = doneIds.length;
 
@@ -271,9 +283,9 @@ export default function NotificationsPage() {
 
         {/* Filters */}
         <Button
-          variant={filter === 'inbox' ? 'default' : 'ghost'}
+          variant={filter === "inbox" ? "default" : "ghost"}
           className="w-full justify-start"
-          onClick={() => setFilter('inbox')}
+          onClick={() => setFilter("inbox")}
         >
           <Inbox className="h-4 w-4 mr-2" />
           Inbox
@@ -285,9 +297,9 @@ export default function NotificationsPage() {
         </Button>
 
         <Button
-          variant={filter === 'saved' ? 'default' : 'ghost'}
+          variant={filter === "saved" ? "default" : "ghost"}
           className="w-full justify-start"
-          onClick={() => setFilter('saved')}
+          onClick={() => setFilter("saved")}
         >
           <Bookmark className="h-4 w-4 mr-2" />
           Saved
@@ -299,9 +311,9 @@ export default function NotificationsPage() {
         </Button>
 
         <Button
-          variant={filter === 'done' ? 'default' : 'ghost'}
+          variant={filter === "done" ? "default" : "ghost"}
           className="w-full justify-start"
-          onClick={() => setFilter('done')}
+          onClick={() => setFilter("done")}
         >
           <CheckCircle2 className="h-4 w-4 mr-2" />
           Done
@@ -335,7 +347,7 @@ export default function NotificationsPage() {
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => handleBulkAction('read')}
+                    onClick={() => handleBulkAction("read")}
                   >
                     <Check className="h-4 w-4 mr-2" />
                     Mark read
@@ -343,7 +355,7 @@ export default function NotificationsPage() {
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => handleBulkAction('done')}
+                    onClick={() => handleBulkAction("done")}
                   >
                     <CheckCircle2 className="h-4 w-4 mr-2" />
                     Done
@@ -351,7 +363,7 @@ export default function NotificationsPage() {
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => handleBulkAction('delete')}
+                    onClick={() => handleBulkAction("delete")}
                   >
                     <Trash2 className="h-4 w-4 mr-2" />
                     Delete
@@ -367,11 +379,7 @@ export default function NotificationsPage() {
               )}
 
               {unreadCount > 0 && selectedIds.length === 0 && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={markAllAsRead}
-                >
+                <Button variant="outline" size="sm" onClick={markAllAsRead}>
                   <CheckCheck className="h-4 w-4 mr-2" />
                   Mark all read
                 </Button>
@@ -381,16 +389,16 @@ export default function NotificationsPage() {
             {/* Tabs */}
             <div className="flex items-center gap-4">
               <Button
-                variant={readFilter === 'all' ? 'default' : 'ghost'}
+                variant={readFilter === "all" ? "default" : "ghost"}
                 size="sm"
-                onClick={() => setReadFilter('all')}
+                onClick={() => setReadFilter("all")}
               >
                 All
               </Button>
               <Button
-                variant={readFilter === 'unread' ? 'default' : 'ghost'}
+                variant={readFilter === "unread" ? "default" : "ghost"}
                 size="sm"
-                onClick={() => setReadFilter('unread')}
+                onClick={() => setReadFilter("unread")}
               >
                 Unread
                 {unreadCount > 0 && (
@@ -413,15 +421,20 @@ export default function NotificationsPage() {
             <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
               <Bell className="h-16 w-16 text-muted-foreground/50 mb-4" />
               <h3 className="text-xl font-semibold mb-2">
-                {filter === 'saved' ? 'No saved notifications' : 
-                 filter === 'done' ? 'No completed notifications' : 
-                 'No notifications'}
+                {filter === "saved"
+                  ? "No saved notifications"
+                  : filter === "done"
+                  ? "No completed notifications"
+                  : "No notifications"}
               </h3>
               <p className="text-muted-foreground max-w-md">
-                {searchQuery ? 'No notifications match your search.' :
-                 filter === 'saved' ? 'Save important notifications to access them later.' :
-                 filter === 'done' ? 'Mark notifications as done to keep your inbox clean.' :
-                 'You\'re all caught up! Check back later for updates.'}
+                {searchQuery
+                  ? "No notifications match your search."
+                  : filter === "saved"
+                  ? "Save important notifications to access them later."
+                  : filter === "done"
+                  ? "Mark notifications as done to keep your inbox clean."
+                  : "You're all caught up! Check back later for updates."}
               </p>
             </div>
           ) : (
@@ -430,8 +443,9 @@ export default function NotificationsPage() {
                 <div
                   key={notification.id}
                   className={cn(
-                    'p-4 hover:bg-muted/50 transition-colors group',
-                    !notification.is_read && 'bg-primary/5 border-l-2 border-l-primary'
+                    "p-4 hover:bg-muted/50 transition-colors group",
+                    !notification.is_read &&
+                      "bg-primary/5 border-l-2 border-l-primary"
                   )}
                 >
                   <div className="flex items-start gap-3">
@@ -442,7 +456,9 @@ export default function NotificationsPage() {
                         if (checked) {
                           setSelectedIds([...selectedIds, notification.id]);
                         } else {
-                          setSelectedIds(selectedIds.filter(id => id !== notification.id));
+                          setSelectedIds(
+                            selectedIds.filter((id) => id !== notification.id)
+                          );
                         }
                       }}
                       className="mt-1"
@@ -451,7 +467,7 @@ export default function NotificationsPage() {
                     {/* Icon */}
                     <div
                       className={cn(
-                        'flex-shrink-0 h-8 w-8 rounded-full flex items-center justify-center text-sm font-semibold border',
+                        "flex-shrink-0 h-8 w-8 rounded-full flex items-center justify-center text-sm font-semibold border",
                         getNotificationColor(notification.type)
                       )}
                     >
@@ -503,26 +519,36 @@ export default function NotificationsPage() {
                             variant="ghost"
                             size="sm"
                             onClick={() => toggleSaved(notification.id)}
-                            title={savedIds.includes(notification.id) ? 'Unsave' : 'Save'}
+                            title={
+                              savedIds.includes(notification.id)
+                                ? "Unsave"
+                                : "Save"
+                            }
                           >
-                            <Bookmark 
+                            <Bookmark
                               className={cn(
-                                'h-4 w-4',
-                                savedIds.includes(notification.id) && 'fill-current text-primary'
-                              )} 
+                                "h-4 w-4",
+                                savedIds.includes(notification.id) &&
+                                  "fill-current text-primary"
+                              )}
                             />
                           </Button>
                           <Button
                             variant="ghost"
                             size="sm"
                             onClick={() => toggleDone(notification.id)}
-                            title={doneIds.includes(notification.id) ? 'Unmark done' : 'Mark done'}
+                            title={
+                              doneIds.includes(notification.id)
+                                ? "Unmark done"
+                                : "Mark done"
+                            }
                           >
-                            <CheckCircle2 
+                            <CheckCircle2
                               className={cn(
-                                'h-4 w-4',
-                                doneIds.includes(notification.id) && 'fill-current text-green-500'
-                              )} 
+                                "h-4 w-4",
+                                doneIds.includes(notification.id) &&
+                                  "fill-current text-green-500"
+                              )}
                             />
                           </Button>
                           <Button
@@ -545,5 +571,23 @@ export default function NotificationsPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+// Loading fallback component
+function NotificationsLoading() {
+  return (
+    <div className="flex items-center justify-center min-h-screen">
+      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+    </div>
+  );
+}
+
+// Wrap the page with Suspense boundary for useSearchParams
+export default function NotificationsPage() {
+  return (
+    <Suspense fallback={<NotificationsLoading />}>
+      <NotificationsContent />
+    </Suspense>
   );
 }

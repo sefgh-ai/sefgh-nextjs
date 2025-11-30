@@ -1,22 +1,22 @@
-'use client'
+"use client";
 
-import { usePathname } from "next/navigation"
-import { useSettings } from "@/contexts/SettingsContext"
-import { 
-  Home, 
-  Search, 
-  MessageSquare, 
-  TrendingUp, 
-  Star, 
-  Code, 
-  Users, 
-  Filter, 
-  Clock, 
-  Settings, 
+import { usePathname } from "next/navigation";
+import { useSettings } from "@/contexts/SettingsContext";
+import {
+  Home,
+  Search,
+  MessageSquare,
+  TrendingUp,
+  Star,
+  Code,
+  Users,
+  Filter,
+  Clock,
+  Settings,
   Lock,
   Upload,
-  Key
-} from "lucide-react"
+  Key,
+} from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -26,21 +26,24 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
 
 export function SearchSidebar({ user }) {
-  const pathname = usePathname()
-  const { openSettings } = useSettings()
+  const pathname = usePathname();
+  const { openSettings } = useSettings();
   return (
-    <Sidebar 
-      suppressHydrationWarning 
+    <Sidebar
+      suppressHydrationWarning
       className="glass-premium border-r-0 shadow-premium overflow-hidden group-data-[state=collapsed]:m-0 m-4 rounded-2xl max-h-[calc(100vh-2rem)] group-data-[state=collapsed]:h-screen group-data-[state=collapsed]:rounded-none"
       style={{ "--sidebar-width": "14rem" }}
     >
       <SidebarContent className="gap-0 overflow-auto">
         {/* Logo Section */}
         <div className="flex h-16 items-center border-b border-white/5 px-6 backdrop-blur-xl rounded-t-2xl">
-          <a href="/home" className="flex items-center gap-2 font-bold text-lg transition-smooth hover:scale-105">
+          <a
+            href="/home"
+            className="flex items-center gap-2 font-bold text-lg transition-smooth hover:scale-105"
+          >
             <span className="bg-gradient-to-r from-blue-500 via-blue-400 to-slate-400 bg-clip-text text-transparent">
               SEFGH
             </span>
@@ -54,12 +57,12 @@ export function SearchSidebar({ user }) {
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton 
-                  asChild 
+                <SidebarMenuButton
+                  asChild
                   className={`rounded-xl transition-smooth ${
-                    pathname === '/home' 
-                      ? 'bg-gradient-to-r from-blue-500/20 to-slate-500/20 glow-border-blue' 
-                      : 'hover:bg-white/10 hover:shadow-soft'
+                    pathname === "/home"
+                      ? "bg-gradient-to-r from-blue-500/20 to-slate-500/20 glow-border-blue"
+                      : "hover:bg-white/10 hover:shadow-soft"
                   }`}
                 >
                   <a href="/home">
@@ -69,12 +72,12 @@ export function SearchSidebar({ user }) {
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton 
-                  asChild 
+                <SidebarMenuButton
+                  asChild
                   className={`rounded-xl transition-smooth ${
-                    pathname === '/search' 
-                      ? 'bg-gradient-to-r from-blue-500/20 to-slate-500/20 glow-border-blue' 
-                      : 'hover:bg-white/10 hover:shadow-soft'
+                    pathname === "/search"
+                      ? "bg-gradient-to-r from-blue-500/20 to-slate-500/20 glow-border-blue"
+                      : "hover:bg-white/10 hover:shadow-soft"
                   }`}
                 >
                   <a href="/search">
@@ -84,12 +87,12 @@ export function SearchSidebar({ user }) {
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton 
-                  asChild 
+                <SidebarMenuButton
+                  asChild
                   className={`rounded-xl transition-smooth ${
-                    pathname === '/chat' 
-                      ? 'bg-gradient-to-r from-blue-500/20 to-slate-500/20 glow-border-blue' 
-                      : 'hover:bg-white/10 hover:shadow-soft'
+                    pathname === "/chat"
+                      ? "bg-gradient-to-r from-blue-500/20 to-slate-500/20 glow-border-blue"
+                      : "hover:bg-white/10 hover:shadow-soft"
                   }`}
                 >
                   <a href="/chat">
@@ -99,12 +102,12 @@ export function SearchSidebar({ user }) {
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton 
-                  asChild 
+                <SidebarMenuButton
+                  asChild
                   className={`rounded-xl transition-smooth ${
-                    pathname === '/trending' 
-                      ? 'bg-gradient-to-r from-blue-500/20 to-slate-500/20 glow-border-blue' 
-                      : 'hover:bg-white/10 hover:glow-border-slate'
+                    pathname === "/trending"
+                      ? "bg-gradient-to-r from-blue-500/20 to-slate-500/20 glow-border-blue"
+                      : "hover:bg-white/10 hover:glow-border-slate"
                   }`}
                 >
                   <a href="/trending">
@@ -159,12 +162,12 @@ export function SearchSidebar({ user }) {
             <SidebarGroupContent>
               <SidebarMenu>
                 <SidebarMenuItem>
-                  <SidebarMenuButton 
-                    asChild 
+                  <SidebarMenuButton
+                    asChild
                     className={`rounded-xl transition-smooth ${
-                      pathname === '/playground' 
-                        ? 'bg-gradient-to-r from-blue-500/20 to-slate-500/20 glow-border-blue' 
-                        : 'hover:bg-accent'
+                      pathname === "/playground"
+                        ? "bg-gradient-to-r from-blue-500/20 to-slate-500/20 glow-border-blue"
+                        : "hover:bg-accent"
                     }`}
                   >
                     <a href="/playground">
@@ -174,12 +177,12 @@ export function SearchSidebar({ user }) {
                   </SidebarMenuButton>
                 </SidebarMenuItem>
                 <SidebarMenuItem>
-                  <SidebarMenuButton 
-                    asChild 
+                  <SidebarMenuButton
+                    asChild
                     className={`rounded-xl transition-smooth ${
-                      pathname === '/submissions' 
-                        ? 'bg-gradient-to-r from-blue-500/20 to-slate-500/20 glow-border-blue' 
-                        : 'hover:bg-accent'
+                      pathname === "/submissions"
+                        ? "bg-gradient-to-r from-blue-500/20 to-slate-500/20 glow-border-blue"
+                        : "hover:bg-accent"
                     }`}
                   >
                     <a href="/submissions">
@@ -195,7 +198,10 @@ export function SearchSidebar({ user }) {
                   </SidebarMenuButton>
                 </SidebarMenuItem>
                 <SidebarMenuItem>
-                  <SidebarMenuButton onClick={openSettings} className="hover:bg-accent cursor-pointer">
+                  <SidebarMenuButton
+                    onClick={openSettings}
+                    className="hover:bg-accent cursor-pointer"
+                  >
                     <Settings className="h-4 w-4" />
                     <span>Settings</span>
                   </SidebarMenuButton>
@@ -220,12 +226,13 @@ export function SearchSidebar({ user }) {
                 </SidebarMenuItem>
               </SidebarMenu>
               <div className="px-3 py-2 text-xs text-muted-foreground">
-                Sign in to access your history, bookmarks, and personalized features.
+                Sign in to access your history, bookmarks, and personalized
+                features.
               </div>
             </SidebarGroupContent>
           </SidebarGroup>
         )}
       </SidebarContent>
     </Sidebar>
-  )
+  );
 }

@@ -1,15 +1,32 @@
-'use client'
+"use client";
 
-import React, { useState } from 'react';
-import { Eye, EyeOff } from 'lucide-react';
+import React, { useState } from "react";
+import Image from "next/image";
+import { Eye, EyeOff } from "lucide-react";
 
 // --- GOOGLE ICON COMPONENT ---
 const GoogleIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 48 48">
-    <path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z" />
-    <path fill="#FF3D00" d="M6.306 14.691l6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 16.318 4 9.656 8.337 6.306 14.691z" />
-    <path fill="#4CAF50" d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238C29.211 35.091 26.715 36 24 36c-5.202 0-9.619-3.317-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z" />
-    <path fill="#1976D2" d="M43.611 20.083H42V20H24v8h11.303c-.792 2.237-2.231 4.166-4.087 5.571l6.19 5.238C42.023 35.025 44 30.038 44 24c0-1.341-.138-2.65-.389-3.917z" />
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    className="h-5 w-5"
+    viewBox="0 0 48 48"
+  >
+    <path
+      fill="#FFC107"
+      d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"
+    />
+    <path
+      fill="#FF3D00"
+      d="M6.306 14.691l6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 16.318 4 9.656 8.337 6.306 14.691z"
+    />
+    <path
+      fill="#4CAF50"
+      d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238C29.211 35.091 26.715 36 24 36c-5.202 0-9.619-3.317-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z"
+    />
+    <path
+      fill="#1976D2"
+      d="M43.611 20.083H42V20H24v8h11.303c-.792 2.237-2.231 4.166-4.087 5.571l6.19 5.238C42.023 35.025 44 30.038 44 24c0-1.341-.138-2.65-.389-3.917z"
+    />
   </svg>
 );
 
@@ -21,8 +38,16 @@ const GlassInputWrapper = ({ children }) => (
 );
 
 const TestimonialCard = ({ testimonial, delay }) => (
-  <div className={`animate-testimonial ${delay} flex items-start gap-3 rounded-3xl bg-card/40 dark:bg-zinc-800/40 backdrop-blur-xl border border-white/10 p-5 w-64`}>
-    <img src={testimonial.avatarSrc} className="h-10 w-10 object-cover rounded-2xl" alt="avatar" />
+  <div
+    className={`animate-testimonial ${delay} flex items-start gap-3 rounded-3xl bg-card/40 dark:bg-zinc-800/40 backdrop-blur-xl border border-white/10 p-5 w-64`}
+  >
+    <Image
+      src={testimonial.avatarSrc}
+      width={40}
+      height={40}
+      className="h-10 w-10 object-cover rounded-2xl"
+      alt="avatar"
+    />
     <div className="text-sm leading-snug">
       <p className="flex items-center gap-1 font-medium">{testimonial.name}</p>
       <p className="text-muted-foreground">{testimonial.handle}</p>
@@ -33,7 +58,9 @@ const TestimonialCard = ({ testimonial, delay }) => (
 
 // --- MAIN COMPONENT ---
 export const SignUpPage = ({
-  title = <span className="font-light text-foreground tracking-tighter">Join Us</span>,
+  title = (
+    <span className="font-light text-foreground tracking-tighter">Join Us</span>
+  ),
   description = "Create your account and start your journey with us",
   heroImageSrc,
   testimonials = [],
@@ -55,50 +82,60 @@ export const SignUpPage = ({
       <section className="flex-1 flex items-center justify-center p-8">
         <div className="w-full max-w-md">
           <div className="flex flex-col gap-6">
-            <h1 className="animate-element animate-delay-100 text-4xl md:text-5xl font-semibold leading-tight">{title}</h1>
-            <p className="animate-element animate-delay-200 text-muted-foreground">{description}</p>
+            <h1 className="animate-element animate-delay-100 text-4xl md:text-5xl font-semibold leading-tight">
+              {title}
+            </h1>
+            <p className="animate-element animate-delay-200 text-muted-foreground">
+              {description}
+            </p>
 
             <form className="space-y-5" onSubmit={onSignUp}>
               <div className="animate-element animate-delay-300">
-                <label className="text-sm font-medium text-muted-foreground">Full Name</label>
+                <label className="text-sm font-medium text-muted-foreground">
+                  Full Name
+                </label>
                 <GlassInputWrapper>
-                  <input 
-                    name="name" 
-                    type="text" 
-                    placeholder="Enter your full name" 
-                    className="w-full bg-transparent text-sm p-4 rounded-2xl focus:outline-none" 
+                  <input
+                    name="name"
+                    type="text"
+                    placeholder="Enter your full name"
+                    className="w-full bg-transparent text-sm p-4 rounded-2xl focus:outline-none"
                     required
                   />
                 </GlassInputWrapper>
               </div>
 
               <div className="animate-element animate-delay-400">
-                <label className="text-sm font-medium text-muted-foreground">Email Address</label>
+                <label className="text-sm font-medium text-muted-foreground">
+                  Email Address
+                </label>
                 <GlassInputWrapper>
-                  <input 
-                    name="email" 
-                    type="email" 
-                    placeholder="Enter your email address" 
-                    className="w-full bg-transparent text-sm p-4 rounded-2xl focus:outline-none" 
+                  <input
+                    name="email"
+                    type="email"
+                    placeholder="Enter your email address"
+                    className="w-full bg-transparent text-sm p-4 rounded-2xl focus:outline-none"
                     required
                   />
                 </GlassInputWrapper>
               </div>
 
               <div className="animate-element animate-delay-500">
-                <label className="text-sm font-medium text-muted-foreground">Password</label>
+                <label className="text-sm font-medium text-muted-foreground">
+                  Password
+                </label>
                 <GlassInputWrapper>
                   <div className="relative">
-                    <input 
-                      name="password" 
-                      type={showPassword ? 'text' : 'password'} 
-                      placeholder="Create a password" 
-                      className="w-full bg-transparent text-sm p-4 pr-12 rounded-2xl focus:outline-none" 
+                    <input
+                      name="password"
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Create a password"
+                      className="w-full bg-transparent text-sm p-4 pr-12 rounded-2xl focus:outline-none"
                       required
                     />
-                    <button 
-                      type="button" 
-                      onClick={() => setShowPassword(!showPassword)} 
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
                       className="absolute inset-y-0 right-3 flex items-center"
                     >
                       {showPassword ? (
@@ -112,19 +149,23 @@ export const SignUpPage = ({
               </div>
 
               <div className="animate-element animate-delay-600">
-                <label className="text-sm font-medium text-muted-foreground">Confirm Password</label>
+                <label className="text-sm font-medium text-muted-foreground">
+                  Confirm Password
+                </label>
                 <GlassInputWrapper>
                   <div className="relative">
-                    <input 
-                      name="confirmPassword" 
-                      type={showConfirmPassword ? 'text' : 'password'} 
-                      placeholder="Confirm your password" 
-                      className="w-full bg-transparent text-sm p-4 pr-12 rounded-2xl focus:outline-none" 
+                    <input
+                      name="confirmPassword"
+                      type={showConfirmPassword ? "text" : "password"}
+                      placeholder="Confirm your password"
+                      className="w-full bg-transparent text-sm p-4 pr-12 rounded-2xl focus:outline-none"
                       required
                     />
-                    <button 
-                      type="button" 
-                      onClick={() => setShowConfirmPassword(!showConfirmPassword)} 
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setShowConfirmPassword(!showConfirmPassword)
+                      }
                       className="absolute inset-y-0 right-3 flex items-center"
                     >
                       {showConfirmPassword ? (
@@ -139,12 +180,21 @@ export const SignUpPage = ({
 
               <div className="animate-element animate-delay-700">
                 <label className="flex items-center gap-3 cursor-pointer text-sm">
-                  <input type="checkbox" name="terms" className="custom-checkbox" required />
+                  <input
+                    type="checkbox"
+                    name="terms"
+                    className="custom-checkbox"
+                    required
+                  />
                   <span className="text-foreground/90">
-                    I agree to the{' '}
-                    <a href="#" className="text-violet-400 hover:underline">Terms of Service</a>
-                    {' '}and{' '}
-                    <a href="#" className="text-violet-400 hover:underline">Privacy Policy</a>
+                    I agree to the{" "}
+                    <a href="#" className="text-violet-400 hover:underline">
+                      Terms of Service
+                    </a>{" "}
+                    and{" "}
+                    <a href="#" className="text-violet-400 hover:underline">
+                      Privacy Policy
+                    </a>
                   </span>
                 </label>
               </div>
@@ -157,39 +207,52 @@ export const SignUpPage = ({
 
               {success && (
                 <div className="animate-element p-3 text-sm text-green-600 bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 rounded-md">
-                  Account created successfully! Check your email to verify. Redirecting to login...
+                  Account created successfully! Check your email to verify.
+                  Redirecting to login...
                 </div>
               )}
 
-              <button 
-                type="submit" 
+              <button
+                type="submit"
                 className="animate-element animate-delay-800 w-full rounded-2xl bg-primary py-4 font-medium text-primary-foreground hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 disabled={loading}
               >
-                {loading ? 'Creating account...' : 'Create Account'}
+                {loading ? "Creating account..." : "Create Account"}
               </button>
             </form>
 
             <div className="animate-element animate-delay-900 relative flex items-center justify-center">
               <span className="w-full border-t border-border"></span>
-              <span className="px-4 text-sm text-muted-foreground bg-background absolute">Or continue with</span>
+              <span className="px-4 text-sm text-muted-foreground bg-background absolute">
+                Or continue with
+              </span>
             </div>
 
             <div className="animate-element animate-delay-1000 grid grid-cols-2 gap-4">
-              <button 
-                onClick={onGoogleSignUp} 
+              <button
+                onClick={onGoogleSignUp}
                 className="w-full flex items-center justify-center gap-3 border border-border rounded-2xl py-4 hover:bg-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 disabled={loading}
               >
                 <GoogleIcon />
                 Google
               </button>
-              
+
               {GithubButton && GithubButton}
             </div>
 
             <p className="animate-element animate-delay-1100 text-center text-sm text-muted-foreground">
-              Already have an account? <a href="#" onClick={(e) => { e.preventDefault(); onSignIn?.(); }} className="text-violet-400 hover:underline transition-colors">Sign in</a>
+              Already have an account?{" "}
+              <a
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  onSignIn?.();
+                }}
+                className="text-violet-400 hover:underline transition-colors"
+              >
+                Sign in
+              </a>
             </p>
           </div>
         </div>
@@ -198,21 +261,30 @@ export const SignUpPage = ({
       {/* Right column: hero image + testimonials */}
       {heroImageSrc && (
         <section className="hidden md:block flex-1 relative p-4">
-          <div 
-            className="animate-slide-right animate-delay-300 absolute inset-4 rounded-3xl bg-cover bg-center" 
+          <div
+            className="animate-slide-right animate-delay-300 absolute inset-4 rounded-3xl bg-cover bg-center"
             style={{ backgroundImage: `url(${heroImageSrc})` }}
           ></div>
           {testimonials.length > 0 && (
             <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-4 px-8 w-full justify-center">
-              <TestimonialCard testimonial={testimonials[0]} delay="animate-delay-1000" />
+              <TestimonialCard
+                testimonial={testimonials[0]}
+                delay="animate-delay-1000"
+              />
               {testimonials[1] && (
                 <div className="hidden xl:flex">
-                  <TestimonialCard testimonial={testimonials[1]} delay="animate-delay-1200" />
+                  <TestimonialCard
+                    testimonial={testimonials[1]}
+                    delay="animate-delay-1200"
+                  />
                 </div>
               )}
               {testimonials[2] && (
                 <div className="hidden 2xl:flex">
-                  <TestimonialCard testimonial={testimonials[2]} delay="animate-delay-1400" />
+                  <TestimonialCard
+                    testimonial={testimonials[2]}
+                    delay="animate-delay-1400"
+                  />
                 </div>
               )}
             </div>

@@ -1,42 +1,68 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from 'react'
-import { useAuth } from '@/contexts/AuthContext'
-import { needsOnboarding, skipOnboarding } from '@/lib/supabase/onboarding'
-import { X, Sparkles } from 'lucide-react'
-import Link from 'next/link'
+import { useState, useEffect } from "react";
+import { useAuth } from "@/contexts/AuthContext";
+import { X, Sparkles } from "lucide-react";
+import Link from "next/link";
 
 export default function OnboardingBanner() {
-  const { user } = useAuth()
-  const [showBanner, setShowBanner] = useState(false)
-  const [isLoading, setIsLoading] = useState(true)
+  const { user } = useAuth();
+  const [showBanner, setShowBanner] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    async function checkOnboarding() {
-      if (user?.id) {
-        const requiresOnboarding = await needsOnboarding(user.id)
-        setShowBanner(requiresOnboarding)
-      }
-      setIsLoading(false)
+    // Only run on client-side and when user is available
+    if (!user?.id) {
+      setIsLoading(false);
+      return;
     }
 
-    checkOnboarding()
-  }, [user])
+    // Check localStorage first (fast) - skip DB call during SSG
+    const dismissed = localStorage.getItem(`onboarding_dismissed_${user.id}`);
+    if (dismissed) {
+      setShowBanner(false);
+      setIsLoading(false);
+      return;
+    }
+
+    // Lazy load the DB check only when needed
+    const checkOnboarding = async () => {
+      try {
+        const { needsOnboarding } = await import("@/lib/supabase/onboarding");
+        const requiresOnboarding = await needsOnboarding(user.id);
+        setShowBanner(requiresOnboarding);
+      } catch (error) {
+        // Silently fail - don't block rendering
+        console.error("Onboarding check failed:", error);
+        setShowBanner(false);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    checkOnboarding();
+  }, [user?.id]);
 
   const handleDismiss = async () => {
-    setShowBanner(false)
+    setShowBanner(false);
     if (user?.id) {
-      await skipOnboarding(user.id)
-    }
-  }
+      // Save to localStorage immediately (fast)
+      localStorage.setItem(`onboarding_dismissed_${user.id}`, "true");
 
-  if (isLoading || !showBanner) return null
+      // Then update DB in background (don't await)
+      import("@/lib/supabase/onboarding").then(({ skipOnboarding }) => {
+        skipOnboarding(user.id).catch(console.error);
+      });
+    }
+  };
+
+  if (isLoading || !showBanner) return null;
 
   return (
     <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-pink-500/10 border border-blue-500/20 p-6 mb-6">
       {/* Animated background gradient */}
       <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-purple-500/5 to-pink-500/5 animate-pulse" />
-      
+
       <div className="relative flex items-start justify-between gap-4">
         <div className="flex items-start gap-4 flex-1">
           {/* Icon */}
@@ -50,7 +76,9 @@ export default function OnboardingBanner() {
               Complete Your Profile
             </h3>
             <p className="text-sm text-gray-400 mb-4">
-              Help us personalize your experience! Tell us about your role, tech stack, and goals to get tailored repository recommendations and features.
+              Help us personalize your experience! Tell us about your role, tech
+              stack, and goals to get tailored repository recommendations and
+              features.
             </p>
 
             {/* CTA Buttons */}
@@ -62,7 +90,7 @@ export default function OnboardingBanner() {
                 <Sparkles className="w-4 h-4" />
                 Complete Profile
               </Link>
-              
+
               <button
                 onClick={handleDismiss}
                 className="px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-gray-300 text-sm font-medium transition-all border border-white/10"
@@ -86,5 +114,5 @@ export default function OnboardingBanner() {
       {/* Bottom decorative border */}
       <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 opacity-50" />
     </div>
-  )
+  );
 }

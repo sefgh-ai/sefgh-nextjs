@@ -1,6 +1,7 @@
-'use client';
+"use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
 import dynamic from "next/dynamic";
@@ -8,12 +9,21 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/contexts/AuthContext";
 import LanguageDropdown from "@/components/LanguageDropdown";
 import { useTheme } from "next-themes";
-import { Search, Sparkles, Code, Gem, Brain, Twitter, Sun, Moon, User, Home as HomeIcon } from "lucide-react";
+import {
+  Search,
+  Sparkles,
+  Code,
+  Gem,
+  Brain,
+  Twitter,
+  Sun,
+  Moon,
+  User,
+  Home as HomeIcon,
+} from "lucide-react";
 import SearchComponent from "@/components/ui/animated-glowing-search-bar";
 import AppFooter from "@/components/ui/app-footer";
 import { AnimatedNavbar } from "@/components/AnimatedNavbar";
-
-
 
 // Dynamically import ParticleText with no SSR (canvas needs browser)
 const ParticleText = dynamic(
@@ -39,39 +49,49 @@ export default function Home() {
 
   const getUserInitials = () => {
     if (user?.user_metadata?.full_name) {
-      const names = user.user_metadata.full_name.split(' ');
-      return names.map(n => n[0]).join('').toUpperCase().slice(0, 2);
+      const names = user.user_metadata.full_name.split(" ");
+      return names
+        .map((n) => n[0])
+        .join("")
+        .toUpperCase()
+        .slice(0, 2);
     }
-    return user?.email?.[0]?.toUpperCase() || 'U';
+    return user?.email?.[0]?.toUpperCase() || "U";
   };
 
   const getUserDisplayName = () => {
-    return user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User';
+    return (
+      user?.user_metadata?.full_name || user?.email?.split("@")[0] || "User"
+    );
   };
 
   useEffect(() => {
     setMounted(true);
-    if (typeof window !== 'undefined') {
-      reducedMotionQuery.current = window.matchMedia('(prefers-reduced-motion: reduce)');
-      const onChange = () => setAllowMotion(!reducedMotionQuery.current.matches);
+    if (typeof window !== "undefined") {
+      reducedMotionQuery.current = window.matchMedia(
+        "(prefers-reduced-motion: reduce)"
+      );
+      const onChange = () =>
+        setAllowMotion(!reducedMotionQuery.current.matches);
       onChange();
-      reducedMotionQuery.current.addEventListener?.('change', onChange);
-      return () => reducedMotionQuery.current?.removeEventListener?.('change', onChange);
+      reducedMotionQuery.current.addEventListener?.("change", onChange);
+      return () =>
+        reducedMotionQuery.current?.removeEventListener?.("change", onChange);
     }
   }, []);
 
   // Force dark mode on landing page only
   useEffect(() => {
-    document.documentElement.classList.add('dark');
-    document.documentElement.style.colorScheme = 'dark';
-    
+    document.documentElement.classList.add("dark");
+    document.documentElement.style.colorScheme = "dark";
+
     // Cleanup when leaving the page
     return () => {
       // Let ThemeProvider take over on other pages
-      const theme = localStorage.getItem('theme') || 'dark';
-      if (theme === 'light') {
-        document.documentElement.classList.remove('dark');
-        document.documentElement.style.colorScheme = 'light';
+      const theme = localStorage.getItem("theme") || "dark";
+      if (theme === "light") {
+        document.documentElement.classList.remove("dark");
+        document.documentElement.style.colorScheme = "light";
       }
     };
   }, []);
@@ -80,21 +100,28 @@ export default function Home() {
   useEffect(() => {
     if (!messages) return;
     const interval = setInterval(() => {
-      setSearchPlaceholder((prev) => (prev + 1) % messages.hero.searchPlaceholders.length);
+      setSearchPlaceholder(
+        (prev) => (prev + 1) % messages.hero.searchPlaceholders.length
+      );
     }, 3000);
     return () => clearInterval(interval);
   }, [messages]);
 
   if (!messages || !mounted) {
-    return <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center">
-      <div className="text-blue-400">Loading...</div>
-    </div>;
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center">
+        <div className="text-blue-400">Loading...</div>
+      </div>
+    );
   }
 
   return (
     <main className="relative min-h-screen overflow-x-hidden bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
       {/* Skip to content for accessibility */}
-      <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 bg-black/80 text-white px-4 py-2 rounded">
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 bg-black/80 text-white px-4 py-2 rounded"
+      >
         Skip to content
       </a>
       {/* Three.js 3D Background */}
@@ -104,31 +131,33 @@ export default function Home() {
       <header className="relative z-10 bg-transparent">
         <div className="w-full px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between gap-4">
           <Link href="/" className="flex items-center gap-3 flex-shrink-0">
-            {mounted && <ParticleText text={t('header.logo')} />}
+            {mounted && <ParticleText text={t("header.logo")} />}
             <span className="px-2.5 py-1 glass-premium rounded-md text-blue-400/80 text-xs font-medium border border-blue-500/20">
               v2.8.5
             </span>
           </Link>
-          
+
           {/* Animated Navbar - Centered with max space */}
           <div className="flex-1 flex justify-center max-w-5xl mx-auto">
             {mounted && <AnimatedNavbar />}
           </div>
-          
+
           <div className="flex items-center gap-6 flex-shrink-0">
             {/* Language Selector (Dropdown) */}
             <LanguageDropdown />
-            
+
             {/* Show Profile or Sign Up based on auth status */}
             {user ? (
               <button
-                onClick={() => router.push('/profile')}
+                onClick={() => router.push("/profile")}
                 className="flex items-center gap-2 px-3 py-2 glass-premium text-white rounded-md transition-colors hover:shadow-glow-blue"
               >
                 {user?.user_metadata?.avatar_url ? (
-                  <img 
-                    src={user.user_metadata.avatar_url} 
+                  <Image
+                    src={user.user_metadata.avatar_url}
                     alt={getUserDisplayName()}
+                    width={24}
+                    height={24}
                     className="w-6 h-6 rounded-full"
                   />
                 ) : (
@@ -140,7 +169,7 @@ export default function Home() {
               </button>
             ) : (
               <button
-                onClick={() => router.push('/signup')}
+                onClick={() => router.push("/signup")}
                 className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white font-medium rounded-md transition-all shadow-glow-blue"
               >
                 Sign up
@@ -150,15 +179,19 @@ export default function Home() {
         </div>
       </header>
 
-  {/* Hero Section */}
-  <section id="main-content" className="relative px-4 sm:px-6 lg:px-8 pt-20 pb-32">
+      {/* Hero Section */}
+      <section
+        id="main-content"
+        className="relative px-4 sm:px-6 lg:px-8 pt-20 pb-32"
+      >
         <div className="max-w-6xl mx-auto text-center">
-          
           {/* Search Box */}
           <div className="max-w-3xl mx-auto mb-12">
-            <SearchComponent 
+            <SearchComponent
               placeholder={messages.hero.searchPlaceholders[searchPlaceholder]}
-              onSearch={(query) => router.push(`/search?q=${encodeURIComponent(query)}`)}
+              onSearch={(query) =>
+                router.push(`/search?q=${encodeURIComponent(query)}`)
+              }
             />
           </div>
           {/* Action Buttons - Conditional based on auth status */}
@@ -166,7 +199,7 @@ export default function Home() {
             {!user ? (
               /* Not logged in: Show large centered signup button */
               <button
-                onClick={() => router.push('/signup')}
+                onClick={() => router.push("/signup")}
                 className="px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white text-lg font-semibold rounded-lg transition-all shadow-glow-blue hover:shadow-premium-lg transform hover:scale-105"
               >
                 <Sparkles className="w-5 h-5 inline-block mr-2" />
@@ -176,14 +209,14 @@ export default function Home() {
               /* Logged in: Show Home and Explore Search buttons */
               <>
                 <button
-                  onClick={() => router.push('/home')}
+                  onClick={() => router.push("/home")}
                   className="px-6 py-3 glass-premium text-white font-medium rounded-md transition-all hover:shadow-glow-blue"
                 >
                   <HomeIcon className="w-4 h-4 inline-block mr-2" />
                   Home
                 </button>
                 <button
-                  onClick={() => router.push('/search')}
+                  onClick={() => router.push("/search")}
                   className="px-6 py-3 glass-premium text-white font-medium rounded-md transition-all hover:shadow-glow-blue"
                 >
                   <Search className="w-4 h-4 inline-block mr-2" />
@@ -195,26 +228,27 @@ export default function Home() {
         </div>
       </section>
 
-
-
       {/* Features Section */}
       <section className="relative px-4 sm:px-6 lg:px-8 py-20 border-t border-slate-800/50">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl sm:text-5xl font-bold text-white mb-4">
-              {t('features.title')}
+              {t("features.title")}
             </h2>
             <p className="text-xl text-slate-400 max-w-3xl mx-auto">
-              {t('features.subtitle')}
+              {t("features.subtitle")}
             </p>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {messages.features.items.map((feature, index) => {
               const icons = [Brain, Gem, Code];
               const Icon = icons[index];
               return (
-                <div key={index} className="p-6 glass-premium rounded-lg hover:border-blue-500 transition-all hover:shadow-glow-blue">
+                <div
+                  key={index}
+                  className="p-6 glass-premium rounded-lg hover:border-blue-500 transition-all hover:shadow-glow-blue"
+                >
                   <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-blue-600 to-teal-600 flex items-center justify-center mb-4 shadow-glow-blue">
                     <Icon className="h-6 w-6 text-white" />
                   </div>
@@ -235,9 +269,9 @@ export default function Home() {
       <section className="relative px-4 sm:px-6 lg:px-8 py-20 border-t border-slate-800/50">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-4xl sm:text-5xl font-bold text-white text-center mb-16">
-            {t('howItWorks.title')}
+            {t("howItWorks.title")}
           </h2>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
             {messages.howItWorks.steps.map((step, index) => (
               <div key={index} className="text-center">
@@ -260,14 +294,12 @@ export default function Home() {
       <section className="relative px-4 sm:px-6 lg:px-8 py-32 border-t border-slate-800/50">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-4xl sm:text-5xl font-bold text-white mb-6">
-            {t('cta.title')}
+            {t("cta.title")}
           </h2>
-          <p className="text-xl text-slate-400 mb-10">
-            {t('cta.subtitle')}
-          </p>
+          <p className="text-xl text-slate-400 mb-10">{t("cta.subtitle")}</p>
           {!user && (
             <button
-              onClick={() => router.push('/signup')}
+              onClick={() => router.push("/signup")}
               className="px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white text-lg font-semibold rounded-lg transition-all shadow-glow-blue hover:shadow-premium-lg"
             >
               Sign up free

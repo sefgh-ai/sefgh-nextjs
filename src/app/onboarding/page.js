@@ -1,77 +1,116 @@
-'use client'
+"use client";
 
-import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { useAuth } from '@/contexts/AuthContext'
-import { OnboardingModal } from '@/components/onboarding/OnboardingModal'
-import { 
-  getOnboardingData, 
-  createOnboardingData 
-} from '@/lib/supabase/onboarding'
-import { Loader2, AlertCircle, Database, ArrowRight } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { useEffect, useState, useRef } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/contexts/AuthContext";
+import { OnboardingModal } from "@/components/onboarding/OnboardingModal";
+import {
+  getOnboardingData,
+  createOnboardingData,
+} from "@/lib/supabase/onboarding";
+import { Loader2, AlertCircle, Database, ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 export default function OnboardingPage() {
-  const { user, loading: authLoading } = useAuth()
-  const router = useRouter()
-  const [loading, setLoading] = useState(true)
-  const [onboardingData, setOnboardingData] = useState(null)
-  const [error, setError] = useState(null)
+  const { user, loading: authLoading } = useAuth();
+  const router = useRouter();
+  const [loading, setLoading] = useState(true);
+  const [onboardingData, setOnboardingData] = useState(null);
+  const [error, setError] = useState(null);
+  const initRef = useRef(false);
 
   useEffect(() => {
+    // Prevent double initialization in strict mode
+    if (initRef.current) return;
+
+    let isMounted = true;
+
     async function initOnboarding() {
-      if (authLoading) return
-      
+      // Wait for auth to finish loading
+      if (authLoading) return;
+
+      // Redirect if not logged in
       if (!user) {
-        router.push('/login')
-        return
+        router.push("/login");
+        return;
       }
+
+      initRef.current = true;
 
       try {
         // Check if onboarding data exists
-        let data = await getOnboardingData(user.id)
-        
+        let data = await getOnboardingData(user.id);
+
+        // If component unmounted, don't update state
+        if (!isMounted) return;
+
         // If no data, create initial record
         if (!data) {
-          data = await createOnboardingData(user.id)
-        }
-        
-        // If already completed, redirect to home
-        if (data.completed) {
-          router.push('/home')
-          return
+          data = await createOnboardingData(user.id);
         }
 
-        setOnboardingData(data)
-        setError(null)
-      } catch (error) {
-        console.error('Error initializing onboarding:', error)
-        
-        // Check if it's a database setup error
-        if (error.message?.includes('does not exist') || error.message?.includes('table')) {
-          setError('database_setup')
+        if (!isMounted) return;
+
+        // If already completed, redirect to home
+        if (data?.completed) {
+          router.push("/home");
+          return;
+        }
+
+        setOnboardingData(data);
+        setError(null);
+      } catch (err) {
+        if (!isMounted) return;
+
+        console.error("Error initializing onboarding:", err);
+
+        // Check if it's a database setup error (multiple ways to detect)
+        const errorMessage = err?.message?.toLowerCase() || "";
+        const errorCode = err?.code || "";
+
+        const isDatabaseError =
+          errorCode === "42P01" || // PostgreSQL table doesn't exist
+          errorMessage.includes("does not exist") ||
+          errorMessage.includes("relation") ||
+          errorMessage.includes("table") ||
+          errorMessage.includes("onboarding_data");
+
+        if (isDatabaseError) {
+          setError("database_setup");
         } else {
-          setError('general')
+          setError("general");
         }
       } finally {
-        setLoading(false)
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     }
 
-    initOnboarding()
-  }, [user, authLoading, router])
+    initOnboarding();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [user, authLoading]); // Removed router from deps - it's stable enough
 
   if (authLoading || loading) {
     return (
       <div className="min-h-screen bg-[#0d1117] flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-[#58a6ff]" />
       </div>
-    )
+    );
   }
 
   // Show database setup error
-  if (error === 'database_setup') {
+  if (error === "database_setup") {
     return (
       <div className="min-h-screen bg-[#0d1117] flex items-center justify-center p-4">
         <Card className="max-w-2xl w-full glass-premium border-[#30363d]">
@@ -81,7 +120,9 @@ export default function OnboardingPage() {
                 <Database className="h-6 w-6 text-yellow-500" />
               </div>
               <div>
-                <CardTitle className="text-xl text-white">Database Setup Required</CardTitle>
+                <CardTitle className="text-xl text-white">
+                  Database Setup Required
+                </CardTitle>
                 <CardDescription className="text-[#8b949e]">
                   The onboarding table needs to be created in Supabase
                 </CardDescription>
@@ -96,19 +137,36 @@ export default function OnboardingPage() {
               </h3>
               <ol className="space-y-2 text-sm text-[#8b949e]">
                 <li className="flex items-start gap-2">
-                  <span className="flex-shrink-0 w-6 h-6 rounded-full bg-[#238636] text-white flex items-center justify-center text-xs font-semibold">1</span>
-                  <span>Open your <strong className="text-white">Supabase Dashboard</strong> → SQL Editor</span>
+                  <span className="flex-shrink-0 w-6 h-6 rounded-full bg-[#238636] text-white flex items-center justify-center text-xs font-semibold">
+                    1
+                  </span>
+                  <span>
+                    Open your{" "}
+                    <strong className="text-white">Supabase Dashboard</strong> →
+                    SQL Editor
+                  </span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="flex-shrink-0 w-6 h-6 rounded-full bg-[#238636] text-white flex items-center justify-center text-xs font-semibold">2</span>
-                  <span>Copy all contents from <code className="px-1.5 py-0.5 bg-[#0d1117] rounded text-[#58a6ff] font-mono text-xs">supabase/onboarding-schema.sql</code></span>
+                  <span className="flex-shrink-0 w-6 h-6 rounded-full bg-[#238636] text-white flex items-center justify-center text-xs font-semibold">
+                    2
+                  </span>
+                  <span>
+                    Copy all contents from{" "}
+                    <code className="px-1.5 py-0.5 bg-[#0d1117] rounded text-[#58a6ff] font-mono text-xs">
+                      supabase/onboarding-schema.sql
+                    </code>
+                  </span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="flex-shrink-0 w-6 h-6 rounded-full bg-[#238636] text-white flex items-center justify-center text-xs font-semibold">3</span>
+                  <span className="flex-shrink-0 w-6 h-6 rounded-full bg-[#238636] text-white flex items-center justify-center text-xs font-semibold">
+                    3
+                  </span>
                   <span>Paste and run the SQL in the editor</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="flex-shrink-0 w-6 h-6 rounded-full bg-[#238636] text-white flex items-center justify-center text-xs font-semibold">4</span>
+                  <span className="flex-shrink-0 w-6 h-6 rounded-full bg-[#238636] text-white flex items-center justify-center text-xs font-semibold">
+                    4
+                  </span>
                   <span>Refresh this page</span>
                 </li>
               </ol>
@@ -123,7 +181,7 @@ export default function OnboardingPage() {
                 I've Run the Migration - Refresh
               </Button>
               <Button
-                onClick={() => router.push('/home')}
+                onClick={() => router.push("/home")}
                 variant="outline"
                 className="flex-1 border-[#30363d] hover:bg-[#21262d] text-[#8b949e] hover:text-white"
               >
@@ -133,16 +191,20 @@ export default function OnboardingPage() {
             </div>
 
             <p className="text-xs text-[#8b949e] text-center">
-              See <code className="px-1.5 py-0.5 bg-[#21262d] rounded text-[#58a6ff] font-mono">ONBOARDING_SETUP.md</code> for detailed instructions
+              See{" "}
+              <code className="px-1.5 py-0.5 bg-[#21262d] rounded text-[#58a6ff] font-mono">
+                ONBOARDING_SETUP.md
+              </code>{" "}
+              for detailed instructions
             </p>
           </CardContent>
         </Card>
       </div>
-    )
+    );
   }
 
   // Show general error
-  if (error === 'general') {
+  if (error === "general") {
     return (
       <div className="min-h-screen bg-[#0d1117] flex items-center justify-center p-4">
         <Card className="max-w-md w-full glass-premium border-[#30363d]">
@@ -157,7 +219,7 @@ export default function OnboardingPage() {
           </CardHeader>
           <CardContent>
             <Button
-              onClick={() => router.push('/home')}
+              onClick={() => router.push("/home")}
               variant="outline"
               className="w-full border-[#30363d] hover:bg-[#21262d] text-[#8b949e] hover:text-white"
             >
@@ -166,21 +228,21 @@ export default function OnboardingPage() {
           </CardContent>
         </Card>
       </div>
-    )
+    );
   }
 
   if (!user || !onboardingData) {
-    return null
+    return null;
   }
 
   return (
     <div className="min-h-screen bg-[#0d1117]">
-      <OnboardingModal 
+      <OnboardingModal
         userId={user.id}
         initialStep={onboardingData.current_step}
-        onComplete={() => router.push('/home')}
-        onSkip={() => router.push('/home')}
+        onComplete={() => router.push("/home")}
+        onSkip={() => router.push("/home")}
       />
     </div>
-  )
+  );
 }

@@ -3,7 +3,7 @@
  * CRUD operations for user onboarding flow
  */
 
-import { createClient } from '@/lib/supabase/client'
+import { createClient } from "@/lib/supabase/client";
 
 /**
  * Get user's onboarding data
@@ -11,34 +11,41 @@ import { createClient } from '@/lib/supabase/client'
  * @returns {Promise<Object|null>} - Onboarding data or null
  */
 export async function getOnboardingData(userId) {
-  const supabase = createClient()
-  
+  const supabase = createClient();
+
   const { data, error } = await supabase
-    .from('onboarding_data')
-    .select('*')
-    .eq('user_id', userId)
-    .single()
+    .from("onboarding_data")
+    .select("*")
+    .eq("user_id", userId)
+    .single();
 
   if (error) {
-    if (error.code === 'PGRST116') {
+    if (error.code === "PGRST116") {
       // No rows found - user hasn't started onboarding
-      return null
+      return null;
     }
-    
-    if (error.code === '42P01') {
-      console.error('Onboarding table does not exist. Please run: supabase/onboarding-schema.sql')
-      return null
+
+    if (error.code === "42P01") {
+      // Table doesn't exist - throw so caller can handle
+      console.error(
+        "Onboarding table does not exist. Please run: supabase/onboarding-schema.sql"
+      );
+      const dbError = new Error(
+        "Onboarding table does not exist. Please run the database migration."
+      );
+      dbError.code = "42P01";
+      throw dbError;
     }
-    
-    console.error('Error fetching onboarding data:', {
+
+    console.error("Error fetching onboarding data:", {
       message: error.message,
       code: error.code,
-      details: error.details
-    })
-    throw error
+      details: error.details,
+    });
+    throw error;
   }
 
-  return data
+  return data;
 }
 
 /**
@@ -47,42 +54,44 @@ export async function getOnboardingData(userId) {
  * @returns {Promise<Object>} - Created onboarding data
  */
 export async function createOnboardingData(userId) {
-  const supabase = createClient()
-  
+  const supabase = createClient();
+
   const { data, error } = await supabase
-    .from('onboarding_data')
+    .from("onboarding_data")
     .insert([
       {
         user_id: userId,
-        current_step: 1
-      }
+        current_step: 1,
+      },
     ])
     .select()
-    .single()
+    .single();
 
   if (error) {
-    console.error('Error creating onboarding data:', {
+    console.error("Error creating onboarding data:", {
       message: error.message,
       details: error.details,
       hint: error.hint,
-      code: error.code
-    })
-    
+      code: error.code,
+    });
+
     // Provide helpful error messages
-    if (error.code === '42P01') {
-      throw new Error('Onboarding table does not exist. Please run the database migration in supabase/onboarding-schema.sql')
+    if (error.code === "42P01") {
+      throw new Error(
+        "Onboarding table does not exist. Please run the database migration in supabase/onboarding-schema.sql"
+      );
     }
-    
-    if (error.code === '23505') {
+
+    if (error.code === "23505") {
       // Unique constraint violation - user already has onboarding data
-      console.log('User already has onboarding data, fetching existing...')
-      return getOnboardingData(userId)
+      console.log("User already has onboarding data, fetching existing...");
+      return getOnboardingData(userId);
     }
-    
-    throw error
+
+    throw error;
   }
 
-  return data
+  return data;
 }
 
 /**
@@ -92,31 +101,33 @@ export async function createOnboardingData(userId) {
  * @returns {Promise<Object>} - Updated onboarding data
  */
 export async function updateOnboardingData(userId, updates) {
-  const supabase = createClient()
-  
+  const supabase = createClient();
+
   const { data, error } = await supabase
-    .from('onboarding_data')
+    .from("onboarding_data")
     .update(updates)
-    .eq('user_id', userId)
+    .eq("user_id", userId)
     .select()
-    .single()
+    .single();
 
   if (error) {
-    console.error('Error updating onboarding data:', {
+    console.error("Error updating onboarding data:", {
       message: error.message,
       code: error.code,
       details: error.details,
-      updates
-    })
-    
-    if (error.code === '42P01') {
-      throw new Error('Onboarding table does not exist. Please run the database migration in supabase/onboarding-schema.sql')
+      updates,
+    });
+
+    if (error.code === "42P01") {
+      throw new Error(
+        "Onboarding table does not exist. Please run the database migration in supabase/onboarding-schema.sql"
+      );
     }
-    
-    throw error
+
+    throw error;
   }
 
-  return data
+  return data;
 }
 
 /**
@@ -126,7 +137,7 @@ export async function updateOnboardingData(userId, updates) {
  * @returns {Promise<Object>} - Updated data
  */
 export async function updateOnboardingStep(userId, step) {
-  return updateOnboardingData(userId, { current_step: step })
+  return updateOnboardingData(userId, { current_step: step });
 }
 
 /**
@@ -137,8 +148,8 @@ export async function updateOnboardingStep(userId, step) {
 export async function completeOnboarding(userId) {
   return updateOnboardingData(userId, {
     completed: true,
-    completed_at: new Date().toISOString()
-  })
+    completed_at: new Date().toISOString(),
+  });
 }
 
 /**
@@ -149,8 +160,8 @@ export async function completeOnboarding(userId) {
 export async function skipOnboarding(userId) {
   return updateOnboardingData(userId, {
     skipped: true,
-    skipped_at: new Date().toISOString()
-  })
+    skipped_at: new Date().toISOString(),
+  });
 }
 
 /**
@@ -160,12 +171,12 @@ export async function skipOnboarding(userId) {
  * @returns {Promise<boolean>}
  */
 export async function needsOnboarding(userId) {
-  const data = await getOnboardingData(userId)
-  
+  const data = await getOnboardingData(userId);
+
   // Needs onboarding if:
   // - No data exists, OR
   // - Data exists but not completed and not skipped
-  return !data || (!data.completed && !data.skipped)
+  return !data || (!data.completed && !data.skipped);
 }
 
 /**
@@ -179,8 +190,8 @@ export async function saveStepRole(userId, role, experienceLevel) {
   return updateOnboardingData(userId, {
     role,
     experience_level: experienceLevel,
-    current_step: 2
-  })
+    current_step: 2,
+  });
 }
 
 /**
@@ -194,8 +205,8 @@ export async function saveStepTechStack(userId, techStack, primaryLanguage) {
   return updateOnboardingData(userId, {
     tech_stack: techStack,
     primary_language: primaryLanguage,
-    current_step: 3
-  })
+    current_step: 3,
+  });
 }
 
 /**
@@ -207,8 +218,8 @@ export async function saveStepTechStack(userId, techStack, primaryLanguage) {
 export async function saveStepGoals(userId, goals) {
   return updateOnboardingData(userId, {
     goals,
-    current_step: 4
-  })
+    current_step: 4,
+  });
 }
 
 /**
@@ -222,8 +233,8 @@ export async function saveStepGitHub(userId, connected, username = null) {
   return updateOnboardingData(userId, {
     github_connected: connected,
     github_username: username,
-    current_step: 5
-  })
+    current_step: 5,
+  });
 }
 
 /**
@@ -239,8 +250,8 @@ export async function saveStepPreferences(userId, notificationPref, language) {
     preferred_language: language,
     current_step: 5,
     completed: true,
-    completed_at: new Date().toISOString()
-  })
+    completed_at: new Date().toISOString(),
+  });
 }
 
 /**
@@ -249,17 +260,17 @@ export async function saveStepPreferences(userId, notificationPref, language) {
  * @returns {Promise<Object>}
  */
 export async function resetOnboarding(userId) {
-  const supabase = createClient()
-  
+  const supabase = createClient();
+
   const { error } = await supabase
-    .from('onboarding_data')
+    .from("onboarding_data")
     .delete()
-    .eq('user_id', userId)
+    .eq("user_id", userId);
 
   if (error) {
-    console.error('Error resetting onboarding:', error)
-    throw error
+    console.error("Error resetting onboarding:", error);
+    throw error;
   }
 
-  return createOnboardingData(userId)
+  return createOnboardingData(userId);
 }
