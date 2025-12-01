@@ -1,19 +1,26 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
+import { logError } from '@/lib/error-tracking'
 
 /**
- * Custom hook for managing profile data
+ * Custom hook for managing profile data with rate limiting
  * @param {Object} user - Current user from auth context
  * @param {Function} refreshUser - Function to refresh user data
- * @returns {Object} Profile data and update functions
+ * @returns {Object} result
+ * @returns {Object} result.formData - Form data object {fullName, email, bio, website, avatarUrl}
+ * @returns {boolean} result.loading - Loading state indicator
+ * @returns {Function} result.updateProfile - Update profile in database (async, rate-limited 3s)
+ * @returns {Function} result.updateFormData - Update form data state
+ * @returns {Function} result.handleAvatarUpload - Handle avatar file upload (async)
  */
 export const useProfileData = (user, refreshUser) => {
-  const supabase = createClient()
+  const [supabase] = useState(() => createClient())
   const [profile, setProfile] = useState(null)
   const [loading, setLoading] = useState(false)
+  const [lastUpdate, setLastUpdate] = useState(0)
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -23,35 +30,36 @@ export const useProfileData = (user, refreshUser) => {
   })
 
   // Fetch profile data from profiles table
-  useEffect(() => {
-    const fetchProfile = async () => {
-      if (!user) return
+  const fetchProfile = useCallback(async () => {
+    if (!user) return
 
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', user.id)
-        .single()
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', user.id)
+      .single()
 
-      if (error) {
-        console.error('Error fetching profile:', error)
-        return
-      }
-
-      if (data) {
-        setProfile(data)
-        setFormData({
-          fullName: data.full_name || '',
-          email: data.email || '',
-          bio: data.bio || '',
-          website: data.website || '',
-          avatarUrl: data.avatar_url || ''
-        })
-      }
+    if (error) {
+      console.error('Error fetching profile:', error)
+      logError('profile_fetch_failed', error, { userId: user?.id })
+      return
     }
 
-    fetchProfile()
+    if (data) {
+      setProfile(data)
+      setFormData({
+        fullName: data.full_name || '',
+        email: data.email || '',
+        bio: data.bio || '',
+        website: data.website || '',
+        avatarUrl: data.avatar_url || ''
+      })
+    }
   }, [user, supabase])
+
+  useEffect(() => {
+    fetchProfile()
+  }, [fetchProfile])
 
   // Update avatar URL when user changes
   useEffect(() => {
@@ -68,6 +76,15 @@ export const useProfileData = (user, refreshUser) => {
    * @param {Object} updates - Fields to update
    */
   const updateProfile = async (updates) => {
+    // Rate limiting: 3 second cooldown
+    const now = Date.now()
+    if (now - lastUpdate < 3000) {
+      toast.error("Please wait before updating again", {
+        description: "Wait a few seconds between updates"
+      })
+      return false
+    }
+
     setLoading(true)
 
     try {
@@ -79,6 +96,8 @@ export const useProfileData = (user, refreshUser) => {
       })
 
       if (authError) throw authError
+
+      setLastUpdate(now)
 
       // Update profiles table
       const { error: profileError } = await supabase
@@ -101,6 +120,8 @@ export const useProfileData = (user, refreshUser) => {
 
       return true
     } catch (error) {
+      console.error('Profile update failed:', error)
+      logError('profile_update_failed', error, { userId: user?.id, updates })
       toast.error("Update failed", {
         description: error.message,
       })

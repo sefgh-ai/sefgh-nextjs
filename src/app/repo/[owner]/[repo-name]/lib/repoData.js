@@ -1,3 +1,5 @@
+import { logError } from '@/lib/error-tracking'
+
 /**
  * Fetch repository data from GitHub API
  * @param {string} owner - Repository owner
@@ -18,14 +20,32 @@ export async function fetchRepoFromGitHub(owner, repo) {
 
     if (!response.ok) {
       if (response.status === 404) {
+        console.log(`Repository not found: ${owner}/${repo}`)
         return null
       }
-      throw new Error('Failed to fetch repository data')
+      
+      if (response.status === 403) {
+        // Rate limit exceeded
+        console.error('GitHub API rate limit exceeded')
+        logError('github_rate_limit', new Error('Rate limit exceeded'), { owner, repo })
+        return null
+      }
+
+      // Log other errors but don't throw
+      const errorMessage = `GitHub API error: ${response.status} ${response.statusText}`
+      console.error(errorMessage, { owner, repo })
+      logError('github_api_error', new Error(errorMessage), { 
+        owner, 
+        repo, 
+        status: response.status 
+      })
+      return null
     }
 
     return await response.json()
   } catch (error) {
     console.error('Error fetching repo data:', error)
+    logError('repo_fetch_failed', error, { owner, repo })
     return null
   }
 }

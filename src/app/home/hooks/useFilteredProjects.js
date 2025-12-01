@@ -4,8 +4,8 @@ import { useMemo } from "react"
  * Custom hook to filter projects by category and user preferences
  * @param {Array} allProjects - All available projects
  * @param {string} selectedCategory - Currently selected category filter
- * @param {Object} userPreferences - User's preference settings {tags, mode}
- * @returns {Array} Filtered projects
+ * @param {Object} userPreferences - User's preference settings {tags: Array, mode: 'OR'|'AND'}
+ * @returns {Array} Filtered projects based on category and preferences (memoized)
  */
 export function useFilteredProjects(allProjects, selectedCategory, userPreferences) {
   return useMemo(() => {

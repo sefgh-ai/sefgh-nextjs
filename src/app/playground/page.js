@@ -5,11 +5,6 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import { PageLoadingSpinner } from '@/components/shared/PageLoadingSpinner';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import ApiKeysTab from '@/components/playground/ApiKeysTab';
-import UsageTab from '@/components/playground/UsageTab';
-import LimitsTab from '@/components/playground/LimitsTab';
-import MonitoringTab from '@/components/playground/MonitoringTab';
-import TestingTab from '@/components/playground/TestingTab';
 import PlaygroundHeader from './components/PlaygroundHeader';
 import { playgroundTabs } from './utils/tabConfig';
 
@@ -40,25 +35,11 @@ export default function PlaygroundPage() {
           ))}
         </TabsList>
 
-        <TabsContent value="keys" className="space-y-4">
-          <ApiKeysTab userId={user.id} />
-        </TabsContent>
-
-        <TabsContent value="usage" className="space-y-4">
-          <UsageTab userId={user.id} />
-        </TabsContent>
-
-        <TabsContent value="limits" className="space-y-4">
-          <LimitsTab userId={user.id} />
-        </TabsContent>
-
-        <TabsContent value="monitoring" className="space-y-4">
-          <MonitoringTab userId={user.id} />
-        </TabsContent>
-
-        <TabsContent value="testing" className="space-y-4">
-          <TestingTab userId={user.id} />
-        </TabsContent>
+        {playgroundTabs.map(({ value, component: Component }) => (
+          <TabsContent key={value} value={value} className="space-y-4">
+            <Component userId={user.id} />
+          </TabsContent>
+        ))}
       </Tabs>
     </div>
   );

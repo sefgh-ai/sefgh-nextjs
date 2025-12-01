@@ -1,19 +1,22 @@
-import { useState, useEffect, useMemo } from "react"
+import { useState, useEffect } from "react"
 import { createClient } from "@/lib/supabase/client"
 import { mockProjects } from "@/data/mockProjects"
+import { logError } from "@/lib/error-tracking"
 
 /**
  * Custom hook to fetch and manage projects data from Supabase
  * @param {string} selectedTab - Currently selected tab (e.g., "latest")
- * @returns {Object} Projects data and loading state
+ * @returns {Object} result
+ * @returns {Array} result.allProjects - Array of all project objects (starts with mock data)
+ * @returns {boolean} result.loading - Loading state indicator
  */
 export function useProjects(selectedTab) {
   // Initialize with mock data immediately - no loading delay for better UX
   const [allProjects, setAllProjects] = useState(mockProjects)
   const [loading, setLoading] = useState(false) // Start as false - we have data!
 
-  // Create Supabase client
-  const supabase = useMemo(() => createClient(), [])
+  // Create Supabase client once
+  const [supabase] = useState(() => createClient())
 
   // Fetch projects from Supabase in background (doesn't block UI)
   useEffect(() => {
@@ -32,6 +35,7 @@ export function useProjects(selectedTab) {
         // Otherwise keep using mockProjects (already set as initial state)
       } catch (error) {
         console.error("Error fetching projects:", error)
+        logError('projects_fetch_failed', error, { selectedTab })
       }
     }
 

@@ -30,6 +30,10 @@ export default function HomePage() {
   const handlePreferencesSave = useCallback((preferences) => {
     setUserPreferences(preferences);
     setSelectedCategory("All");
+    // Persist to localStorage
+    if (typeof window !== "undefined") {
+      localStorage.setItem("projectPreferences", JSON.stringify(preferences));
+    }
   }, []);
 
   const handleClearFilters = useCallback(() => {
