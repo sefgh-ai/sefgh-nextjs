@@ -1,12 +1,16 @@
 "use client";
 
+import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Star, GitFork, Code } from "lucide-react";
 
-export function TrendingRepositoryCard({ repo, index, onNavigate, getHeatIndicator }) {
+/**
+ * Repository card component (memoized for performance)
+ */
+export const TrendingRepositoryCard = React.memo(function TrendingRepositoryCard({ repo, index, onNavigate, getHeatIndicator }) {
   return (
     <Card className="bg-slate-900/50 border-slate-800 hover:border-slate-700 transition-all duration-300 hover:shadow-xl hover:shadow-slate-900/50 backdrop-blur-sm group">
       <CardContent className="p-6">
@@ -134,4 +138,4 @@ export function TrendingRepositoryCard({ repo, index, onNavigate, getHeatIndicat
       </CardContent>
     </Card>
   );
-}
+});

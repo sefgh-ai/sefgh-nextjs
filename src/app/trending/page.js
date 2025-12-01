@@ -16,8 +16,9 @@ import {
   SPOKEN_LANGUAGES,
   SORT_OPTIONS,
   sortRepositories,
-  getHeatIndicator,
 } from "./utils/trendingHelpers";
+import { getHeatIndicator } from "@/lib/utils/colors";
+import { useMemo } from "react";
 
 export default function TrendingPage() {
   const router = useRouter();
@@ -86,10 +87,12 @@ export default function TrendingPage() {
     fetchProgrammingLanguages();
   }, []);
 
-  // Merge and sort repositories
-  const customRepos = getCustomTrendingRepos();
-  const allRepos = [...customRepos, ...repositories];
-  const displayRepos = sortRepositories(allRepos, sortBy);
+  // Merge and sort repositories (memoized for performance)
+  const displayRepos = useMemo(() => {
+    const customRepos = getCustomTrendingRepos();
+    const allRepos = [...customRepos, ...repositories];
+    return sortRepositories(allRepos, sortBy);
+  }, [repositories, sortBy, getCustomTrendingRepos]);
 
   return (
     <SidebarProvider>

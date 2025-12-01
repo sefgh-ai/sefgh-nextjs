@@ -1,11 +1,15 @@
 "use client";
 
+import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Flame, Code } from "lucide-react";
 
-export function TrendingDeveloperCard({ dev, onNavigate }) {
+/**
+ * Developer card component (memoized for performance)
+ */
+export const TrendingDeveloperCard = React.memo(function TrendingDeveloperCard({ dev, onNavigate }) {
   return (
     <Card className="glass-premium border-border hover:border-primary/50 transition-all duration-300 hover:shadow-xl backdrop-blur-sm">
       <CardContent className="p-6">
@@ -67,4 +71,4 @@ export function TrendingDeveloperCard({ dev, onNavigate }) {
       </CardContent>
     </Card>
   );
-}
+});

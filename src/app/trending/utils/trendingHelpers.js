@@ -1,34 +1,5 @@
-// Language color mapping
-export const getLanguageColor = (language) => {
-  const colors = {
-    JavaScript: "#f1e05a",
-    TypeScript: "#3178c6",
-    Python: "#3572A5",
-    Java: "#b07219",
-    Go: "#00ADD8",
-    Rust: "#dea584",
-    "C++": "#f34b7d",
-    "C#": "#178600",
-    PHP: "#4F5D95",
-    Ruby: "#701516",
-    Swift: "#ffac45",
-    Kotlin: "#A97BFF",
-    Shell: "#89e051",
-    Dart: "#00B4AB",
-    R: "#198CE7",
-  };
-  return colors[language] || "#8b949e";
-};
-
-// Heat level indicator
-export const getHeatIndicator = (level) => {
-  const indicators = {
-    1: "🔥",
-    2: "🔥🔥",
-    3: "🔥🔥🔥",
-  };
-  return indicators[level] || "🔥";
-};
+// Re-export from shared utilities
+export { getLanguageColor, getHeatIndicator } from "@/lib/utils/colors";
 
 // Sort repositories by different criteria
 export const sortRepositories = (repos, sortBy) => {

@@ -28,9 +28,14 @@ import { GitHubSearchDialog } from "./components/GitHubSearchDialog";
 import { useChatConversations } from "./hooks/useChatConversations";
 import { useChatMessages } from "./hooks/useChatMessages";
 import { useVoiceInput } from "./hooks/useVoiceInput";
+import { useAuthGuard } from "@/hooks/useAuthGuard";
+import { PageLoadingSpinner } from "@/components/shared/LoadingSpinner";
+import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
+import ErrorBoundary from "@/components/shared/ErrorBoundary";
 
-export default function ChatPage() {
+function ChatPageContent() {
   const { user, loading: authLoading } = useAuth();
+  const { isAuthenticated, isLoading } = useAuthGuard({ user, loading: authLoading });
   const { openSettings } = useSettings();
   const router = useRouter();
   const isMobile = useIsMobile();
@@ -91,16 +96,6 @@ export default function ChatPage() {
   } = useChatMessages(user, currentConversation, refreshConversations);
 
   const { isRecording, handleVoiceInput } = useVoiceInput();
-
-  // Redirect if not authenticated
-  useEffect(() => {
-    if (!authLoading && !user) {
-      toast.error("Please login first", {
-        description: "You need to be logged in to use AI chat",
-      });
-      router.push("/login");
-    }
-  }, [user, authLoading, router]);
 
   // Load user profile
   useEffect(() => {
@@ -225,12 +220,8 @@ export default function ChatPage() {
     });
   };
 
-  if (authLoading || loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    );
+  if (isLoading || !isAuthenticated || loading) {
+    return <PageLoadingSpinner message="Loading chat..." />;
   }
 
   if (!user) return null;
@@ -258,29 +249,18 @@ export default function ChatPage() {
         />
 
         {/* Clear All Dialog */}
-        <AlertDialog open={clearDialogOpen} onOpenChange={setClearDialogOpen}>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Clear All Conversations?</AlertDialogTitle>
-              <AlertDialogDescription>
-                This will permanently delete all your conversations. This action
-                cannot be undone.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction
-                onClick={() => {
-                  handleClearAll();
-                  setClearDialogOpen(false);
-                }}
-                className="bg-destructive hover:bg-destructive/90"
-              >
-                Clear All
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+        <ConfirmDialog
+          open={clearDialogOpen}
+          onOpenChange={setClearDialogOpen}
+          title="Clear All Conversations?"
+          description="This will permanently delete all your conversations. This action cannot be undone."
+          onConfirm={() => {
+            handleClearAll();
+            setClearDialogOpen(false);
+          }}
+          confirmText="Clear All"
+          variant="destructive"
+        />
 
         {/* Main Chat Area */}
         <div
@@ -400,5 +380,14 @@ export default function ChatPage() {
         )}
       </div>
     </div>
+  );
+}
+
+// Wrap with error boundary
+export default function ChatPage() {
+  return (
+    <ErrorBoundary>
+      <ChatPageContent />
+    </ErrorBoundary>
   );
 }
