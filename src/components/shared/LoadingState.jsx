@@ -2,15 +2,20 @@
 
 import { Skeleton } from "@/components/ui/skeleton"
 import { Card } from "@/components/ui/card"
+import { memo } from "react"
 
 /**
  * Generic loading skeleton component
  * Used across multiple pages for consistent loading states
+ * @param {Object} props
+ * @param {"card"|"list"|"table"|"default"} [props.type="default"] - Skeleton layout type
+ * @param {number} [props.count=1] - Number of skeleton items to display
+ * @returns {JSX.Element}
  */
-export function LoadingState({ type = "default", count = 1 }) {
+export const LoadingState = memo(function LoadingState({ type = "default", count = 1 }) {
   if (type === "card") {
     return (
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3" role="status" aria-label="Loading content">
         {Array.from({ length: count }).map((_, i) => (
           <Card key={i} className="p-6">
             <Skeleton className="h-6 w-3/4 mb-4" />
@@ -28,7 +33,7 @@ export function LoadingState({ type = "default", count = 1 }) {
 
   if (type === "list") {
     return (
-      <div className="space-y-4">
+      <div className="space-y-4" role="status" aria-label="Loading list items">
         {Array.from({ length: count }).map((_, i) => (
           <Card key={i} className="p-4">
             <div className="flex items-center gap-4">
@@ -46,7 +51,7 @@ export function LoadingState({ type = "default", count = 1 }) {
 
   if (type === "table") {
     return (
-      <div className="space-y-3">
+      <div className="space-y-3" role="status" aria-label="Loading table rows">
         {Array.from({ length: count }).map((_, i) => (
           <div key={i} className="flex items-center gap-4 p-4 border rounded-lg">
             <Skeleton className="h-10 w-10 rounded" />
@@ -63,7 +68,7 @@ export function LoadingState({ type = "default", count = 1 }) {
 
   // Default skeleton
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" role="status" aria-label="Loading content">
       {Array.from({ length: count }).map((_, i) => (
         <div key={i}>
           <Skeleton className="h-8 w-1/3 mb-2" />
@@ -73,26 +78,32 @@ export function LoadingState({ type = "default", count = 1 }) {
       ))}
     </div>
   )
-}
+})
 
 /**
  * Page-level loading state with centered spinner
+ * @param {Object} props
+ * @param {string} [props.message="Loading..."] - Loading message to display
+ * @returns {JSX.Element}
  */
-export function PageLoadingState({ message = "Loading..." }) {
+export const PageLoadingState = memo(function PageLoadingState({ message = "Loading..." }) {
   return (
-    <div className="flex items-center justify-center min-h-[400px]">
+    <div className="flex items-center justify-center min-h-[400px]" role="status" aria-live="polite">
       <div className="text-center space-y-4">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto" aria-hidden="true"></div>
         <p className="text-muted-foreground">{message}</p>
       </div>
     </div>
   )
-}
+})
 
 /**
  * Compact loading spinner for inline use
+ * @param {Object} props
+ * @param {"sm"|"md"|"lg"} [props.size="md"] - Spinner size
+ * @returns {JSX.Element}
  */
-export function InlineLoadingState({ size = "md" }) {
+export const InlineLoadingState = memo(function InlineLoadingState({ size = "md" }) {
   const sizeClasses = {
     sm: "h-4 w-4 border",
     md: "h-6 w-6 border-2",
@@ -100,6 +111,10 @@ export function InlineLoadingState({ size = "md" }) {
   }
 
   return (
-    <div className={`animate-spin rounded-full border-primary border-t-transparent ${sizeClasses[size]}`} />
+    <div 
+      className={`animate-spin rounded-full border-primary border-t-transparent ${sizeClasses[size]}`} 
+      role="status" 
+      aria-label="Loading"
+    />
   )
-}
+})

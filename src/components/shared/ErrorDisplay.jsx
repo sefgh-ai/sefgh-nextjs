@@ -3,18 +3,29 @@
 import { AlertCircle, XCircle, AlertTriangle, RefreshCw } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { memo } from "react"
 
 /**
  * Full-page error display with retry option
+ * @param {Object} props
+ * @param {string} [props.title="Something went wrong"] - Error title
+ * @param {string} [props.message="An error occurred while loading this page."] - Error message
+ * @param {Function} [props.onRetry] - Retry handler function
+ * @param {boolean} [props.showRetry=true] - Show retry button
+ * @returns {JSX.Element}
  */
-export function ErrorDisplay({
+export const ErrorDisplay = memo(function ErrorDisplay({
   title = "Something went wrong",
   message = "An error occurred while loading this page.",
   onRetry,
   showRetry = true
 }) {
   return (
-    <div className="flex flex-col items-center justify-center min-h-[400px] text-center px-4">
+    <div 
+      className="flex flex-col items-center justify-center min-h-[400px] text-center px-4"
+      role="alert"
+      aria-live="assertive"
+    >
       <div className="rounded-full bg-destructive/10 p-6 mb-6">
         <XCircle className="h-12 w-12 text-destructive" />
       </div>
@@ -33,12 +44,18 @@ export function ErrorDisplay({
       )}
     </div>
   )
-}
+})
 
 /**
  * Inline error alert (non-blocking)
+ * @param {Object} props
+ * @param {string} [props.title="Error"] - Alert title
+ * @param {string} props.message - Alert message
+ * @param {string} [props.variant="destructive"] - Alert variant
+ * @param {Function} [props.onDismiss] - Dismiss handler
+ * @returns {JSX.Element}
  */
-export function ErrorAlert({
+export const ErrorAlert = memo(function ErrorAlert({
   title = "Error",
   message,
   variant = "destructive",
@@ -63,12 +80,16 @@ export function ErrorAlert({
       </AlertDescription>
     </Alert>
   )
-}
+})
 
 /**
  * Warning alert for non-critical issues
+ * @param {Object} props
+ * @param {string} [props.title="Warning"] - Warning title
+ * @param {string} props.message - Warning message
+ * @returns {JSX.Element}
  */
-export function WarningAlert({ title = "Warning", message }) {
+export const WarningAlert = memo(function WarningAlert({ title = "Warning", message }) {
   return (
     <Alert variant="default" className="mb-4 border-yellow-500/50 bg-yellow-500/10">
       <AlertTriangle className="h-4 w-4 text-yellow-500" />
@@ -78,16 +99,19 @@ export function WarningAlert({ title = "Warning", message }) {
       </AlertDescription>
     </Alert>
   )
-}
+})
 
 /**
  * Compact inline error message
+ * @param {Object} props
+ * @param {string} props.message - Error message text
+ * @returns {JSX.Element}
  */
-export function InlineError({ message }) {
+export const InlineError = memo(function InlineError({ message }) {
   return (
-    <div className="flex items-center gap-2 text-sm text-destructive py-2">
-      <AlertCircle className="h-4 w-4" />
+    <div className="flex items-center gap-2 text-sm text-destructive py-2" role="alert">
+      <AlertCircle className="h-4 w-4" aria-hidden="true" />
       <span>{message}</span>
     </div>
   )
-}
+})

@@ -3,11 +3,20 @@
 import { Button } from "@/components/ui/button"
 import { ArrowLeft } from "lucide-react"
 import { useRouter } from "next/navigation"
+import { memo, useCallback } from "react"
 
 /**
  * Standard page header with title, description, and optional back button
+ * @param {Object} props
+ * @param {string} props.title - Page title
+ * @param {string} [props.description] - Page description
+ * @param {boolean} [props.showBack=false] - Show back button
+ * @param {string} [props.backHref] - Back navigation path (uses router.back() if not provided)
+ * @param {React.ReactNode} [props.action] - Action button or element
+ * @param {React.ReactNode} [props.children] - Additional content
+ * @returns {JSX.Element}
  */
-export function PageHeader({ 
+export const PageHeader = memo(function PageHeader({ 
   title, 
   description, 
   showBack = false, 
@@ -17,13 +26,13 @@ export function PageHeader({
 }) {
   const router = useRouter()
 
-  const handleBack = () => {
+  const handleBack = useCallback(() => {
     if (backHref) {
       router.push(backHref)
     } else {
       router.back()
     }
-  }
+  }, [backHref, router])
 
   return (
     <div className="mb-8">
@@ -53,12 +62,19 @@ export function PageHeader({
       {children}
     </div>
   )
-}
+})
 
 /**
  * Section with title and optional action button
+ * @param {Object} props
+ * @param {string} [props.title] - Section title
+ * @param {string} [props.description] - Section description
+ * @param {React.ReactNode} [props.action] - Action button or element
+ * @param {React.ReactNode} props.children - Section content
+ * @param {string} [props.className=""] - Additional CSS classes
+ * @returns {JSX.Element}
  */
-export function Section({ title, description, action, children, className = "" }) {
+export const Section = memo(function Section({ title, description, action, children, className = "" }) {
   return (
     <section className={`mb-8 ${className}`}>
       {(title || action) && (
@@ -75,12 +91,17 @@ export function Section({ title, description, action, children, className = "" }
       {children}
     </section>
   )
-}
+})
 
 /**
  * Container with max width and padding
+ * @param {Object} props
+ * @param {React.ReactNode} props.children - Container content
+ * @param {"sm"|"md"|"lg"|"xl"|"2xl"|"7xl"|"full"} [props.maxWidth="7xl"] - Maximum width
+ * @param {string} [props.className=""] - Additional CSS classes
+ * @returns {JSX.Element}
  */
-export function Container({ children, maxWidth = "7xl", className = "" }) {
+export const Container = memo(function Container({ children, maxWidth = "7xl", className = "" }) {
   const maxWidthClasses = {
     sm: "max-w-screen-sm",
     md: "max-w-screen-md",
@@ -96,12 +117,17 @@ export function Container({ children, maxWidth = "7xl", className = "" }) {
       {children}
     </div>
   )
-}
+})
 
 /**
  * Two-column layout (sidebar + main content)
+ * @param {Object} props
+ * @param {React.ReactNode} props.sidebar - Sidebar content
+ * @param {React.ReactNode} props.children - Main content
+ * @param {"left"|"right"} [props.sidebarPosition="left"] - Sidebar position
+ * @returns {JSX.Element}
  */
-export function TwoColumnLayout({ sidebar, children, sidebarPosition = "left" }) {
+export const TwoColumnLayout = memo(function TwoColumnLayout({ sidebar, children, sidebarPosition = "left" }) {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
       {sidebarPosition === "left" && (
@@ -117,4 +143,4 @@ export function TwoColumnLayout({ sidebar, children, sidebarPosition = "left" })
       )}
     </div>
   )
-}
+})
