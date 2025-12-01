@@ -7,15 +7,25 @@ const __dirname = dirname(__filename);
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   /* config options here */
-  reactCompiler: true,
+  reactCompiler: false, // Disabled - causing 50s+ compile times
 
   // Performance optimizations
   compress: true,
   poweredByHeader: false,
+  
+  // Speed up compilation (modularizeImports for tree-shaking)
+  modularizeImports: {
+    'lucide-react': {
+      transform: 'lucide-react/dist/esm/icons/{{kebabCase member}}',
+    },
+  },
 
-  // Set turbopack root to this project directory (absolute path)
-  turbopack: {
-    root: __dirname,
+  // Experimental: Use turbo for faster builds
+  experimental: {
+    turbo: {
+      root: __dirname,
+    },
+    optimizePackageImports: ['lucide-react', 'recharts', '@radix-ui/react-icons'],
   },
 
   // Optimize images
