@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from "react"
-import { toast } from "sonner"
 import { useAuth } from "@/contexts/AuthContext"
 import { CodeExplorer } from "@/components/CodeExplorer"
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar"
@@ -12,61 +11,26 @@ import { SearchBox } from "@/components/search/SearchBox"
 import { SearchFilters } from "@/components/search/SearchFilters"
 import { SearchResults } from "@/components/search/SearchResults"
 import { PopularSearches } from "@/components/search/PopularSearches"
-import { ActivityLogger } from "@/lib/activity-logger"
+import { useGitHubSearch } from "./hooks/useGitHubSearch"
 
 export default function SearchPage() {
-  const [searchQuery, setSearchQuery] = useState("")
-  const [searchResults, setSearchResults] = useState([])
-  const [loading, setLoading] = useState(false)
   const [selectedRepo, setSelectedRepo] = useState(null)
-  const [language, setLanguage] = useState("")
-  const [sort, setSort] = useState("best-match")
-  const [stars, setStars] = useState("")
   const { user } = useAuth()
-
-  const handleSearch = async (e) => {
-    e?.preventDefault()
-    
-    if (!searchQuery.trim()) {
-      toast.error("Please enter a search query")
-      return
-    }
-
-    setLoading(true)
-    try {
-      const params = new URLSearchParams({
-        q: searchQuery,
-        sort: sort,
-      })
-      
-      if (language) params.append('language', language)
-      if (stars) params.append('stars', stars)
-
-      const response = await fetch(`/api/github/search?${params}`)
-      const data = await response.json()
-
-      if (response.ok) {
-        setSearchResults(data.items || [])
-        toast.success(`Found ${data.total_count} repositories`)
-        
-        // Log search activity
-        ActivityLogger.search(searchQuery)
-      } else {
-        throw new Error(data.error || 'Search failed')
-      }
-    } catch (error) {
-      console.error('Search error:', error)
-      toast.error(error.message || "Failed to search repositories")
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const handleClearFilters = () => {
-    setLanguage("")
-    setSort("best-match")
-    setStars("")
-  }
+  
+  const {
+    searchQuery,
+    setSearchQuery,
+    searchResults,
+    loading,
+    language,
+    setLanguage,
+    sort,
+    setSort,
+    stars,
+    setStars,
+    handleSearch,
+    handleClearFilters
+  } = useGitHubSearch()
 
   return (
     <SidebarProvider>
