@@ -1,0 +1,1950 @@
+================================================================================
+                            TABLE OF CONTENTS
+================================================================================
+
+S.No. | Chapter | Title                                                    | Page
+------|---------|----------------------------------------------------------|------
+1.    |         | Acknowledgement                                          | 3
+2.    |         | Abstract                                                 | 4
+3.    |         | List of Figures and Tables                              | 6
+4.    | 1       | Introduction                                             | 8
+      | 1.1     | Background and Motivation                                | 9
+      | 1.2     | Problem Statement                                        | 10
+      | 1.3     | Scope of the Project                                     | 11
+      | 1.4     | Objectives                                               | 12
+      | 1.5     | Literature Survey                                        | 14
+      | 1.6     | Proposed Solution                                        | 16
+      | 1.7     | Benefits and Advantages                                  | 17
+      | 1.8     | Organization of the Report                               | 18
+5.    | 2       | AI-Powered GitHub Repository Discovery System            | 12
+      | 2.1     | Proposed System Architecture                             | 12
+      | 2.2     | Working Methodology                                      | 13
+      | 2.3     | Technology Stack and Standards                           | 14
+      | 2.4     | System Components and Implementation                     | 15
+      | 2.4.1   | Frontend Architecture (Next.js 16 & React 19)           | 15
+      | 2.4.2   | Backend and Database (Supabase PostgreSQL)              | 18
+      | 2.4.3   | AI Integration (GitHub Models API)                       | 21
+      | 2.4.4   | Authentication and Security (Supabase Auth & RLS)       | 23
+      | 2.4.5   | User Interface Components (shadcn/ui & Tailwind CSS)    | 25
+      | 2.4.6   | Real-time Notification System                            | 27
+      | 2.4.7   | API Playground and Testing Dashboard                     | 29
+      | 2.4.8   | Canvas Editor for Code Manipulation                      | 31
+      | 2.4.9   | Internationalization System (8 Languages)                | 33
+      | 2.4.10  | Repository Search and Discovery Engine                   | 35
+6.    | 3       | Database Schema and Architecture                         | 37
+      | 3.1     | Core Database Tables                                     | 37
+      | 3.2     | Row Level Security Policies                              | 39
+      | 3.3     | Data Relationships and Indexing                          | 40
+7.    | 4       | Key Features and Functionality                           | 42
+      | 4.1     | AI-Powered Chat Interface                                | 42
+      | 4.2     | Semantic Repository Search                               | 44
+      | 4.3     | Trending and Curated Repositories                        | 46
+      | 4.4     | User Onboarding and Personalization                      | 48
+      | 4.5     | Repository Submission System                             | 50
+      | 4.6     | Profile Management and Analytics                         | 52
+8.    | 5       | Implementation Details and Code Analysis                 | 54
+      | 5.1     | Server vs Client Component Pattern                       | 54
+      | 5.2     | Context Provider Hierarchy                               | 56
+      | 5.3     | Custom Hooks and State Management                        | 58
+      | 5.4     | Performance Optimization Techniques                      | 60
+      | 5.5     | Error Handling and Security Measures                     | 62
+9.    | 6       | Testing and Quality Assurance                            | 64
+      | 6.1     | Manual Testing Procedures                                | 64
+      | 6.2     | Performance Metrics                                      | 65
+      | 6.3     | Security Audit                                           | 66
+10.   | 7       | Results and Discussion                                   | 68
+      | 7.1     | System Performance Analysis                              | 68
+      | 7.2     | User Experience Evaluation                               | 70
+      | 7.3     | Comparison with Existing Solutions                       | 72
+11.   | 8       | Conclusion and Future Works                              | 74
+      | 8.1     | Project Summary                                          | 74
+      | 8.2     | Limitations                                              | 75
+      | 8.3     | Future Enhancements                                      | 76
+12.   | 9       | Appendix                                                 | 78
+      | 9.1     | Source Code Structure                                    | 78
+      | 9.2     | API Documentation                                        | 80
+      | 9.3     | Database Schemas                                         | 82
+      | 9.4     | Configuration Files                                      | 84
+13.   | 10      | References                                               | 86
+
+================================================================================
+
+
+================================================================================
+                          CHAPTER 1: INTRODUCTION
+================================================================================
+
+The rapid growth of open-source software development has transformed the landscape of modern software engineering. GitHub, as the world's largest code hosting platform, hosts over 100 million repositories spanning diverse domains, programming languages, and use cases. However, this exponential growth presents a significant challenge: efficiently discovering relevant repositories that match specific development needs, learning objectives, or research requirements.
+
+Traditional keyword-based search mechanisms often fall short in understanding developer intent and context. A developer searching for "machine learning library" may receive thousands of results, but identifying which repositories are actively maintained, well-documented, suitable for their skill level, and compatible with their technology stack remains a time-consuming manual process. This information asymmetry creates barriers to productivity, knowledge sharing, and collaborative innovation within the developer community.
+
+The SEFGH (Search Engine For GitHub) platform addresses these challenges by introducing an intelligent, AI-powered repository discovery system that goes beyond simple keyword matching. By leveraging advanced natural language processing through the GitHub Models API (GPT-4o), the platform understands user intent, contextualizes queries, and provides curated repository suggestions with comprehensive metadata and insights.
+
+Unlike conventional search engines that merely return lists of matching repositories, SEFGH provides an interactive, conversational interface where developers can describe their requirements in natural language and receive contextually relevant recommendations. The system combines real-time GitHub API integration with a curated database of high-quality repositories, ensuring both comprehensive coverage and quality curation.
+
+
+1.1 BACKGROUND AND MOTIVATION
+------------------------------
+
+The open-source software ecosystem has experienced unprecedented growth over the past decade. GitHub, founded in 2008, has evolved from a simple code hosting platform to the world's largest developer community with over 100 million repositories and 100+ million developers worldwide. This massive repository of code represents an invaluable resource for software development, education, research, and innovation.
+
+However, this abundance of resources creates significant challenges:
+
+Information Overload: With millions of repositories covering similar functionalities, developers struggle to identify which projects are most suitable for their specific needs. A search for "web framework" returns thousands of results across dozens of programming languages, each with varying levels of documentation, community support, and maintenance status.
+
+Time-Consuming Manual Evaluation: Assessing repository quality requires examining multiple factors: code quality, documentation completeness, community activity, recent commits, issue resolution time, contributor diversity, and compatibility with existing technology stacks. This evaluation process can take hours or days for each potential repository.
+
+Discovery Friction: Developers often rely on word-of-mouth recommendations, curated "awesome lists," or Stack Overflow discussions to discover repositories. These methods, while valuable, lack personalization and may not reflect current project status or emerging alternatives.
+
+Context Gap: Generic search tools cannot understand the nuanced context of a developer's query. A beginner looking for a "machine learning library" has fundamentally different needs than an experienced researcher seeking the same thing, yet traditional search systems treat both queries identically.
+
+Fragmented Information: Information about repositories is scattered across multiple sources—GitHub pages, documentation sites, community forums, package registries, and blog posts. Developers must manually aggregate this information to make informed decisions.
+
+The motivation for SEFGH stems from personal experiences and observations within the developer community. During software development projects, significant time is often spent not on writing code, but on searching for, evaluating, and integrating appropriate libraries and tools. This inefficiency multiplies across millions of developers globally, representing a substantial opportunity for productivity improvement.
+
+Furthermore, the advent of Large Language Models (LLMs) and conversational AI has demonstrated new paradigms for information retrieval and human-computer interaction. These technologies enable natural language understanding, contextual reasoning, and interactive dialogue—capabilities that align perfectly with the challenges of repository discovery.
+
+
+1.2 PROBLEM STATEMENT
+10. **Modern Web Standards**: Demonstrate implementation of cutting-edge web technologies including Next.js 16, React 19, Server Components, streaming, and progressive enhancement to showcase best practices in modern full-stack development.
+
+
+1.5 LITERATURE SURVEY
+---------------------
+
+The evolution of code search and repository discovery systems has progressed through several distinct phases:and contextual meaning. Query "lightweight authentication library for microservices" gets treated as discrete keywords rather than a cohesive requirement.
+
+2. **Quality Assessment Overhead**: Developers must manually evaluate multiple dimensions of repository quality including code maintainability, documentation quality, community responsiveness, security practices, and long-term viability.
+
+3. **Personalization Absence**: Search results are generic and do not adapt to user expertise level, preferred programming languages, technology stack constraints, or learning objectives.
+
+4. **Static Information Presentation**: Traditional search interfaces provide static lists of results without supporting exploratory discovery, iterative refinement, or contextual follow-up questions.
+
+5. **Code Exploration Barrier**: Examining repository code requires cloning locally or navigating GitHub's interface, creating friction in the evaluation process and preventing quick experimentation.
+
+6. **Trend and Emergence Blindness**: Identifying emerging projects, trending technologies, and community-curated recommendations requires monitoring multiple sources and staying constantly updated.
+
+7. **Integration Complexity**: Developers need programmatic access to repository discovery capabilities for integration into development workflows, CI/CD pipelines, and internal tools, which existing platforms don't readily support.
+
+8. **Global Accessibility**: Language barriers limit access to international developers who may not be fluent in English, the predominant language in software development documentation.
+
+**Impact of the Problem:**
+
+- **Productivity Loss**: Developers spend 15-30% of development time on tool and library discovery and evaluation
+- **Missed Opportunities**: High-quality but lesser-known repositories remain undiscovered while popular alternatives dominate despite potential drawbacks
+- **Learning Curve**: Beginners struggle to find appropriate resources matching their skill level, hindering learning progress
+- **Decision Fatigue**: Overwhelming number of options leads to paralysis and suboptimal choices
+- **Redundant Work**: Developers build functionality that existing open-source solutions already provide
+
+This problem statement establishes the need for an intelligent, AI-powered repository discovery platform that addresses these multifaceted challenges through semantic understanding, personalization, interactive exploration, and comprehensive information aggregation.
+
+
+1.3 SCOPE OF THE PROJECT
+-------------------------
+
+The SEFGH platform encompasses the following scope:
+
+Included in Scope:
+
+1. AI-Powered Conversational Search: Natural language query understanding and contextual response generation using GPT-4o via GitHub Models API for repository discovery and recommendations.
+
+2. Hybrid Data Architecture: Integration of curated Supabase PostgreSQL database containing large, high-quality repositories combined with real-time GitHub REST API access for comprehensive coverage.
+
+3. Interactive Chat Interface: ChatGPT-style conversational UI with conversation history, message editing, regeneration capabilities, and multi-turn dialogue support for iterative repository discovery.
+
+4. Repository Insights Dashboard: Comprehensive repository information display including README rendering, language statistics, contributor analysis, activity metrics, and code quality indicators.
+
+5. Canvas Code Editor: Integrated code manipulation environment (inspired by Claude Artifacts) for viewing, editing, and experimenting with code snippets in 16+ programming languages with syntax highlighting.
+
+6. User Authentication and Personalization: Secure authentication system using Supabase Auth with multi-step onboarding to capture user preferences, skill levels, technology stacks, and goals for personalized recommendations.
+
+7. Real-Time Notification System: Push notifications for repository updates, trending projects, community activities, and system alerts using Supabase Realtime subscriptions.
+
+8. Repository Submission Platform: Community-driven content curation allowing authenticated users to submit, tag, and share repositories with duplicate prevention and auto-validation.
+
+9. Trending and Curated Collections: Admin-managed trending repositories organized by categories (AI/ML, Web Development, Mobile, DevOps, Data Science, Security) with automated freshness detection.
+
+10. API Playground and Management: Enterprise-grade API testing dashboard with key generation, usage analytics, rate limiting, monitoring, request logging, and code generation in multiple languages.
+
+11. Internationalization: Multi-language support for 8 languages (English, Spanish, French, German, Japanese, Chinese, Hindi, Telugu) with dynamic locale loading and persistent preference storage.
+
+12. Responsive Design: Mobile-first UI design with adaptive layouts, touch-optimized interactions, and progressive enhancement for various device sizes and capabilities.
+
+Excluded from Scope:
+
+1. Code Hosting: SEFGH does not host repository code; it aggregates and presents information from GitHub
+2. Version Control Operations: No git operations (commit, push, pull, merge) within the platform
+3. IDE Integration: No direct integration with development environments (VS Code, IntelliJ, etc.)
+4. Build and Deployment: No CI/CD pipeline execution or deployment capabilities
+5. Code Review and Collaboration: No pull request management or code review features
+6. Package Management: No package installation or dependency resolution functionality
+7. Automated Testing: No execution of repository tests or quality gates within the platform
+
+Target Audience:
+
+- Software developers (beginner to expert levels)
+- Computer science students and educators
+- Technical researchers and academic professionals
+- DevOps engineers and system architects
+- Open-source contributors and maintainers
+- Technology decision-makers and CTOs
+
+Technical Boundaries:
+
+- Frontend: Next.js 16 with React 19, deployed as web application (no native mobile apps)
+- Database: Supabase PostgreSQL with Row Level Security
+- AI Model: GitHub Models API (GPT-4o), no local model inference
+- External APIs: GitHub REST API v3, no GraphQL API integration
+- Deployment: Cloud-hosted on Vercel platform
+
+
+1.4 OBJECTIVES
+---------------
+
+The primary objectives of developing the SEFGH platform are:
+
+1. Intelligent Repository Discovery: Develop an AI-powered search system that understands natural language queries and provides contextually relevant GitHub repository recommendations, moving beyond simple keyword matching to semantic understanding of developer needs.
+
+2. Enhanced Developer Experience: Create an intuitive, ChatGPT-style conversational interface that allows developers to interact naturally with the system, ask follow-up questions, and receive personalized suggestions based on their requirements and context.
+
+3. Comprehensive Repository Insights: Provide detailed information about repositories including README documentation, language breakdowns, contributor statistics, activity metrics, and code quality indicators to enable informed decision-making.
+
+4. Real-Time Information Integration: Implement a hybrid data architecture combining a curated Supabase database of large, high-quality repositories with real-time GitHub API integration to ensure comprehensive coverage and up-to-date information.
+
+5. Code Exploration and Manipulation: Integrate a Canvas editor (inspired by Claude Artifacts) that allows developers to view, edit, and experiment with code snippets directly within the platform, facilitating rapid prototyping and learning.
+
+6. Personalized User Experience: Build a multi-step onboarding system that captures user preferences, skill levels, technology stacks, and goals to deliver personalized repository recommendations and notifications.
+
+7. Community Contribution: Enable users to submit and curate repositories through a user-friendly submission system, fostering community-driven content curation and discovery of emerging projects.
+
+8. Global Accessibility: Implement comprehensive internationalization supporting 8 languages (English, Spanish, French, German, Japanese, Chinese, Hindi, Telugu) to make the platform accessible to developers worldwide.
+
+9. API Ecosystem: Develop a robust API playground with key management, usage analytics, rate limiting, and monitoring capabilities to enable third-party integrations and programmatic access.
+
+10. Modern Web Standards: Demonstrate implementation of cutting-edge web technologies including Next.js 16, React 19, Server Components, streaming, and progressive enhancement to showcase best practices in modern full-stack development.
+
+
+1.2 BACKGROUND AND LITERATURE SURVEY
+-------------------------------------
+
+The evolution of code search and repository discovery systems has progressed through several distinct phases:
+
+Traditional Search Engines:
+Early attempts at code search relied on basic keyword matching and boolean operators. Tools like Google Code Search (discontinued) and Krugle provided text-based search across codebases but lacked semantic understanding and contextual relevance.
+
+GitHub's Native Search:
+GitHub's built-in search functionality offers filters for programming languages, stars, forks, and dates. While functional, it requires users to know exactly what they're looking for and provides limited guidance for exploration and discovery. The search is repository-centric rather than problem-centric.
+
+Code Search Engines:
+Platforms like Sourcegraph and grep.app introduced more sophisticated code search capabilities with regex support, cross-repository search, and code intelligence features. However, these tools focus primarily on searching within code rather than discovering suitable repositories for specific use cases.
+
+AI-Powered Development Tools:
+Recent advancements in Large Language Models (LLMs) have enabled new paradigms in developer assistance:
+
+- GitHub Copilot: Provides AI-powered code completion within IDEs but doesn't assist with repository discovery
+- ChatGPT for Developers: Can suggest repositories when asked but lacks integration with GitHub data and cannot provide real-time, verified information
+- Phind & Perplexity: AI search engines that can provide coding assistance but don't specialize in repository discovery with comprehensive metadata
+
+Conversational Interfaces for Software Development:
+The emergence of conversational AI interfaces has demonstrated effectiveness in reducing cognitive load and improving user engagement. Studies show that natural language interfaces can significantly reduce the time required for information discovery compared to traditional form-based searches.
+
+Limitations of Existing Solutions:
+
+1. Lack of Semantic Understanding: Most tools require exact keyword matches and cannot interpret intent
+2. No Contextual Curation: Results lack personalization based on user skill level, project context, or preferences
+3. Fragmented Information: Users must visit multiple pages/sites to gather comprehensive information about repositories
+4. No Interactive Exploration: Static search results without conversational follow-up or refinement
+5. Missing Code Experimentation: No built-in capability to view, edit, or test code samples from repositories
+6. Limited Metadata: Insufficient information about repository health, maintenance status, and community activity
+
+The SEFGH platform addresses these gaps by combining AI-powered natural language understanding, comprehensive repository metadata, interactive chat interface, code manipulation capabilities, and community curation into a unified discovery experience.
+
+
+1.6 PROPOSED SOLUTION
+----------------------
+
+SEFGH (Search Engine For GitHub) offers a comprehensive solution to repository discovery challenges through an integrated platform that combines artificial intelligence, modern web technologies, and user-centric design.
+
+Core Solution Architecture:
+
+The platform employs a multi-layered architecture that addresses each identified problem:
+
+1. AI-Powered Semantic Understanding:
+Instead of keyword matching, SEFGH uses GPT-4o through the GitHub Models API to understand natural language queries semantically. When a user asks "What's the best React library for building dashboards with real-time data?", the AI comprehends:
+- Technology constraint (React)
+- Use case (dashboards)
+- Requirement (real-time data)
+- Implicit need (quality and recommendations)
+
+The system then generates contextually appropriate repository suggestions with explanations of why each recommendation fits the query.
+
+2. Hybrid Data Strategy:
+SEFGH combines two complementary data sources:
+- Curated Database: Supabase PostgreSQL stores vetted, large-scale repositories with rich metadata, ensuring quality baseline
+- Real-Time API Integration: GitHub REST API provides up-to-date information, comprehensive coverage, and emerging projects
+
+This hybrid approach ensures both quality curation and comprehensive coverage.
+
+3. Conversational Discovery Interface:
+Unlike static search results, SEFGH provides a ChatGPT-style chat interface where users can:
+- Ask follow-up questions
+- Refine requirements iteratively
+- Request comparisons between options
+- Seek explanations and guidance
+- View code examples and documentation
+
+Conversations are saved, allowing users to resume discovery sessions and reference previous discussions.
+
+4. Integrated Code Exploration:
+The Canvas editor eliminates context-switching by allowing developers to:
+- View repository code snippets directly
+- Edit and experiment with examples
+- Test modifications in real-time
+- Download customized code samples
+- Support for 16+ programming languages
+
+5. Personalized Experience:
+Multi-step onboarding captures:
+- User role (student, professional, researcher, hobbyist)
+- Experience level (beginner, intermediate, expert)
+- Technology stack and primary languages
+- Learning goals and project objectives
+- Notification preferences
+
+This profile enables personalized recommendations, difficulty-appropriate suggestions, and relevant notifications.
+
+6. Community-Driven Curation:
+Authenticated users can:
+- Submit repositories with URLs
+- System auto-validates and extracts metadata
+- Community submissions feed into trending and search results
+- Prevents duplicate submissions via unique constraints
+
+7. Trending Intelligence:
+Admin-curated trending repositories organized by categories:
+- AI/ML, Web Development, Mobile, DevOps, Data Science, Security
+- Automated staleness detection (3-day refresh cycle)
+- Community activity indicators
+- Manual curation for quality control
+
+8. Developer API Ecosystem:
+API Playground provides:
+- Self-service API key generation
+- Usage analytics with charts (requests, success rate, response time)
+- Configurable rate limits per user
+- Real-time monitoring and logs
+- Code generation (cURL, JavaScript, Python)
+
+9. Global Accessibility:
+8-language internationalization:
+- Dynamic locale loading
+- Persistent language preferences
+- RTL support preparation
+- Community translation contributions
+
+Technical Implementation Highlights:
+
+- Framework: Next.js 16 App Router with React 19 for modern SSR and streaming
+- Database: Supabase PostgreSQL with Row Level Security for secure multi-tenancy
+- Authentication: Supabase Auth with session management and middleware refresh
+- UI Library: shadcn/ui components with Radix primitives for accessibility
+- Styling: Tailwind CSS with custom design system and dark mode
+- Real-Time: Supabase Realtime for live notifications and updates
+- Performance: Code splitting, image optimization, memoization, caching strategies
+
+
+1.7 BENEFITS AND ADVANTAGES
+----------------------------
+
+The SEFGH platform provides significant benefits to various stakeholders:
+
+For Individual Developers:
+
+1. Time Savings: Reduce repository discovery time from hours to minutes through AI-powered recommendations
+2. Better Decisions: Access comprehensive metadata and insights for informed technology choices
+3. Learning Acceleration: Receive skill-appropriate suggestions that match learning progression
+4. Code Experimentation: Test repository examples immediately without local setup
+5. Stay Updated: Automated notifications about trending projects and relevant updates
+
+For Development Teams:
+
+1. Standardization: Discover and evaluate libraries consistently across team members
+2. Knowledge Sharing: Share repository conversations and recommendations internally
+3. API Integration: Programmatic access for internal tools and workflows
+4. Quality Assurance: Pre-vetted, curated repositories reduce security and maintenance risks
+5. Productivity: Minimize time spent in evaluation phase of technology adoption
+
+For Open-Source Maintainers:
+
+1. Discovery: Increase visibility for quality projects regardless of current popularity
+2. Feedback Loop: Community submissions and trending metrics provide validation
+3. User Acquisition: AI recommendations direct users to appropriate projects
+4. Documentation: Comprehensive README rendering showcases project quality
+
+For Educators and Students:
+
+1. Learning Resources: Discover tutorials, examples, and projects matching skill level
+2. Project Ideas: Explore trending repositories for inspiration and learning
+3. Technology Exploration: Safely investigate new technologies through guided discovery
+4. Multi-Language: Access in native language reduces learning barriers
+
+Technical Advantages:
+
+1. Semantic Understanding: NLP-based query interpretation vs. keyword matching
+2. Contextual Intelligence: Personalized results based on user profile and history
+3. Real-Time Data: Always current information from GitHub API
+4. Comprehensive Insights: Aggregated information from multiple sources in one place
+5. Interactive Exploration: Conversational interface vs. static search results
+6. Code Manipulation: Built-in editor vs. external tool switching
+7. Enterprise Features: API management, rate limiting, usage analytics
+8. Security: Row Level Security, authentication, input validation
+9. Performance: Optimized loading, caching, lazy loading, code splitting
+10. Accessibility: WCAG compliance through Radix UI primitives
+11. Internationalization: Native support for global developer community
+12. Modern Architecture: Latest web technologies demonstrating best practices
+
+Competitive Advantages over Existing Solutions:
+
+| Feature | GitHub Search | Sourcegraph | ChatGPT | SEFGH |
+|---------|---------------|-------------|---------|-------|
+| Semantic Search | ❌ | ⚠️ | ✅ | ✅ |
+| Conversational UI | ❌ | ❌ | ✅ | ✅ |
+| Repository Metadata | ⚠️ | ⚠️ | ❌ | ✅ |
+| Code Editor | ❌ | ✅ | ❌ | ✅ |
+| Personalization | ❌ | ❌ | ⚠️ | ✅ |
+| Real-Time Data | ✅ | ✅ | ❌ | ✅ |
+| API Management | ⚠️ | ❌ | ❌ | ✅ |
+| Multi-Language | ❌ | ❌ | ✅ | ✅ |
+| Trending Curation | ⚠️ | ❌ | ❌ | ✅ |
+
+Long-Term Impact:
+
+1. Democratization: Make high-quality open-source accessible to developers regardless of network or experience
+2. Efficiency: Collective time savings across global developer community
+3. Quality Elevation: Promote well-maintained, documented projects through intelligent discovery
+4. Knowledge Transfer: Facilitate learning and skill development through appropriate resource matching
+5. Innovation Acceleration: Reduce barriers to adopting new technologies and methodologies
+
+
+1.8 ORGANIZATION OF THE REPORT
+-------------------------------
+
+This report is structured into ten chapters, each addressing specific aspects of the SEFGH platform's design, implementation, and evaluation:
+
+**Chapter 1 - Introduction** provides the foundational context, motivation, and objectives of the project. It outlines the challenges in repository discovery and positions SEFGH as a solution to these challenges.
+
+**Chapter 2 - AI-Powered GitHub Repository Discovery System** presents the complete system architecture, working methodology, technology stack, and detailed implementation of all major components including frontend, backend, AI integration, authentication, UI components, notifications, API playground, Canvas editor, internationalization, and search engine.
+
+**Chapter 3 - Database Schema and Architecture** describes the PostgreSQL database design, table structures, relationships, indexing strategies, and Row Level Security (RLS) policies that ensure data integrity and user privacy.
+
+**Chapter 4 - Key Features and Functionality** explores the major features of the platform including the AI-powered chat interface, semantic repository search, trending repositories, user onboarding, submission system, and profile management with detailed explanations of user workflows.
+
+**Chapter 5 - Implementation Details and Code Analysis** examines critical implementation patterns including server vs. client component architecture, context provider hierarchy, custom hooks, state management, performance optimizations, and security measures.
+
+**Chapter 6 - Testing and Quality Assurance** documents the testing methodologies, manual testing procedures, performance metrics, and security audit processes employed to ensure platform reliability and robustness.
+
+**Chapter 7 - Results and Discussion** presents the performance analysis, user experience evaluation, and comparative analysis with existing solutions, supported by metrics and user feedback.
+
+**Chapter 8 - Conclusion and Future Works** summarizes the project achievements, acknowledges current limitations, and outlines potential enhancements and future development directions.
+
+**Chapter 9 - Appendix** provides supplementary materials including source code structure, API documentation, complete database schemas, and configuration files for reference.
+
+Chapter 10 - References lists all academic papers, technical documentation, libraries, frameworks, and resources consulted during the development of this platform.
+
+================================================================================
+
+
+================================================================================
+              CHAPTER 2: SYSTEM DESIGN AND ARCHITECTURE
+================================================================================
+
+This chapter presents a comprehensive analysis of the system design and architecture employed in the development of the SEFGH (Search Engine For GitHub) platform. The discussion encompasses both the high-level architectural patterns and the detailed implementation strategies that enable the platform to deliver intelligent, AI-powered repository discovery services. The architecture represents a modern full-stack approach, integrating cutting-edge web technologies including Next.js 16 for the frontend presentation layer, Supabase PostgreSQL for robust data persistence, GitHub Models API for artificial intelligence capabilities, and various supporting technologies that collectively form a cohesive ecosystem for repository discovery and exploration.
+
+The architectural design philosophy emphasizes modularity, scalability, security, and performance optimization. Each component has been carefully selected and integrated to address specific functional requirements while maintaining loose coupling and high cohesion. This chapter is organized into multiple sections that progressively dive deeper into the technical implementation details, beginning with the overall system architecture and culminating in specific implementation patterns for frontend components, backend services, database schemas, security mechanisms, and performance optimization strategies.
+
+
+2.1 SYSTEM ARCHITECTURE OVERVIEW
+---------------------------------
+
+The SEFGH platform is architected following the well-established three-tier architecture pattern, which provides clear separation of concerns and facilitates independent scaling, maintenance, and evolution of different system components. This architectural pattern divides the system into three distinct layers: the presentation layer, the application layer, and the data layer. Each layer encapsulates specific responsibilities and communicates with adjacent layers through well-defined interfaces, promoting modularity and reducing coupling between components.
+
+
+2.1.1 Presentation Layer
+
+The presentation layer constitutes the frontend interface through which users interact with the SEFGH platform. This layer is built using Next.js 16, a React-based framework that provides server-side rendering, static site generation, and hybrid rendering capabilities. The framework leverages React 19, which introduces several performance enhancements and developer experience improvements over previous versions. The App Router paradigm, a relatively recent addition to the Next.js ecosystem, enables file-system based routing with support for layouts, nested routes, loading states, and error boundaries.
+
+Within the presentation layer, the architecture distinguishes between two types of React components: Server Components and Client Components. Server Components execute on the server and render HTML that is sent to the client, reducing the amount of JavaScript that needs to be downloaded and executed in the browser. These components are ideal for static content, data fetching operations, and scenarios where direct database access is beneficial. Client Components, conversely, are marked with the "use client" directive and execute in the browser environment. They are necessary for interactive elements that require access to browser APIs, event handlers, or React hooks such as useState and useEffect.
+
+The presentation layer handles all aspects of user interaction, including form submissions, button clicks, navigation events, and real-time updates. It also manages client-side state through React Context API and custom hooks, ensuring that application state remains consistent and synchronized across different components. The styling system utilizes Tailwind CSS, a utility-first CSS framework that promotes rapid development and consistent design through predefined utility classes and custom design tokens.
+
+[DIAGRAM SPACE: Three-Tier Architecture Diagram showing Presentation Layer, Application Layer, and Data Layer with bidirectional communication arrows]
+
+
+2.1.2 Application Layer
+
+The application layer serves as the intermediary between the presentation layer and the data layer, containing the core business logic that drives the platform's functionality. This layer encompasses API route handlers, authentication middleware, AI integration services, data processing utilities, and orchestration logic that coordinates operations across multiple services and data sources.
+
+API route handlers, implemented using Next.js API Routes, expose RESTful endpoints that the frontend can invoke to perform various operations such as creating conversations, sending chat messages, managing notifications, uploading files, and querying repository information. These handlers validate incoming requests, authenticate users, execute business logic, interact with the database and external APIs, and return appropriate responses to the client.
+
+Authentication middleware intercepts every incoming request to the application, validates the user's session by verifying JWT tokens stored in HTTP-only cookies, and refreshes expired tokens to maintain seamless user sessions. This middleware ensures that authenticated state is available to both Server Components and API routes, enabling consistent authorization checks across the application.
+
+The AI integration service represents a critical component of the application layer, responsible for communicating with the GitHub Models API to leverage GPT-4o's natural language understanding capabilities. This service formats user queries into appropriate prompt structures, manages conversation context by maintaining message history, parses AI responses to extract repository recommendations, and enriches those recommendations with additional metadata fetched from the GitHub REST API.
+
+Data processing utilities provide helper functions for common operations such as formatting dates, parsing markdown content, extracting repository information from URLs, calculating statistics, and transforming data between different formats required by various parts of the application. These utilities promote code reuse and maintain consistency in how data is processed throughout the system.
+
+[DIAGRAM SPACE: Application Layer Component Diagram showing API Routes, Middleware, AI Service, and Utility Modules]
+
+
+2.1.3 Data Layer
+
+The data layer encompasses all mechanisms for data persistence and retrieval, including the primary Supabase PostgreSQL database and integrations with external APIs such as the GitHub REST API. This layer is responsible for storing user data, conversation history, notifications, repository information, and other persistent state required by the application.
+
+Supabase PostgreSQL serves as the primary relational database, providing robust data storage with support for complex queries, transactions, triggers, and stored procedures. The database schema is designed following normalization principles to minimize data redundancy while strategically employing denormalization techniques, such as JSONB columns, where flexibility and query performance benefits outweigh the costs of data duplication. Row Level Security (RLS) policies are implemented at the database level to enforce multi-tenant data isolation, ensuring that users can only access their own data regardless of how queries are constructed in the application code.
+
+The GitHub REST API integration provides access to real-time repository information, including metadata, statistics, README content, contributor lists, and other data that is authoritative at the source. While some repository data is cached in the local database to reduce API calls and improve response times, the system maintains a hybrid approach that balances between local caching and real-time API queries based on data freshness requirements and rate limiting considerations.
+
+Row Level Security policies represent a critical security mechanism implemented in the data layer. These policies are defined as PostgreSQL rules that automatically filter query results based on the authenticated user's identity. Every table that contains user-specific data includes RLS policies that compare the user_id column with the currently authenticated user's ID, obtained through the auth.uid() function provided by Supabase. This approach ensures that data access controls cannot be bypassed through application-level vulnerabilities, as the security enforcement occurs at the database level.
+
+[DIAGRAM SPACE: Data Layer Architecture showing PostgreSQL Database, RLS Policies, External API Integrations, and Caching Strategy]
+
+
+2.1.4 Key Architectural Components
+
+The following subsections detail the major architectural components that constitute the SEFGH system, describing their responsibilities, interactions, and implementation details.
+
+
+Next.js Application Server
+
+The Next.js application server forms the runtime environment for the entire frontend application and backend API routes. It handles incoming HTTP requests, routes them to appropriate handlers based on URL patterns, executes Server Components to generate HTML on the server, serves API routes that implement backend logic, manages session state through middleware, and delivers static assets such as images, fonts, and client-side JavaScript bundles.
+
+The server supports both server-side rendering (SSR) and static site generation (SSG), allowing different pages to be rendered using the most appropriate strategy based on their content characteristics. Pages that display user-specific data utilize SSR to generate personalized content on each request, while pages with static content can be pre-rendered at build time and served from a CDN for optimal performance. The server also implements streaming, a feature that allows HTML to be sent to the client progressively as it is generated, improving perceived performance by displaying content incrementally rather than waiting for the entire page to be rendered.
+
+
+Supabase Backend Services
+
+Supabase provides a comprehensive suite of backend services that eliminate the need for custom backend infrastructure. The platform includes a PostgreSQL database with extensions such as uuid-ossp for generating UUID primary keys and pgcrypto for cryptographic functions. The authentication service handles user registration, login, password resets, and OAuth integration with providers such as GitHub and Google, issuing JWT tokens that are validated on subsequent requests.
+
+The Realtime service enables WebSocket connections between clients and the database, broadcasting changes to subscribed clients whenever data is inserted, updated, or deleted in watched tables. This capability powers the notification system, allowing new notifications to appear instantly without requiring the user to refresh the page. The Storage service provides S3-compatible object storage for user-uploaded files such as avatars, with support for public and private buckets, automatic image transformations, and CDN delivery.
+
+[DIAGRAM SPACE: Supabase Services Integration Diagram showing Database, Auth, Realtime, Storage, and their connections to the Application]
+
+
+GitHub Models API Integration
+
+The GitHub Models API integration provides access to GPT-4o, a large language model developed by OpenAI and hosted on Azure infrastructure. The API accepts conversational inputs formatted as arrays of message objects, where each message has a role (system, user, or assistant) and content. The system message provides instructions to the model about how to respond, the user messages contain queries from the end user, and assistant messages represent previous responses in the conversation history.
+
+The integration layer constructs appropriate prompts that instruct the model to suggest GitHub repositories in response to user queries, formats responses to include repository metadata in a structured format, handles errors such as rate limiting or API timeouts gracefully, and implements retry logic for transient failures. The model's responses are parsed to extract repository suggestions, which are then enriched with additional information fetched from the GitHub REST API to provide comprehensive details including star counts, fork counts, primary programming language, topic tags, and descriptions.
+
+
+GitHub REST API Integration
+
+The GitHub REST API provides programmatic access to repository data hosted on GitHub's platform. The SEFGH platform utilizes this API to fetch repository details, README files rendered as HTML, contributor statistics, language breakdowns, and search results. API requests include authentication tokens to increase rate limits from 60 requests per hour for unauthenticated requests to 5000 requests per hour for authenticated requests.
+
+To manage rate limits effectively, the system implements a caching strategy where repository data fetched from the API is stored in the local database with a timestamp. Subsequent requests for the same repository check the cache first and only query the API if the cached data is stale, defined as being older than seven days. This approach significantly reduces API consumption while ensuring that displayed information remains reasonably current.
+
+
+External Services and Infrastructure
+
+The SEFGH platform is deployed on Vercel, a cloud platform optimized for Next.js applications. Vercel provides automatic deployments triggered by Git commits, global CDN distribution for static assets and server-rendered pages, automatic HTTPS certificate provisioning and renewal, environment variable management, and built-in analytics for monitoring performance metrics such as Core Web Vitals.
+
+DNS services route user requests to the appropriate Vercel edge servers based on geographic proximity, minimizing latency. SSL/TLS certificates ensure that all communication between clients and servers is encrypted, protecting sensitive data such as authentication tokens and personal information from interception.
+
+[DIAGRAM SPACE: Deployment Architecture showing Vercel Edge Network, CDN Distribution, and User Access Patterns]
+
+
+2.2 WORKING METHODOLOGY AND SYSTEM WORKFLOWS
+---------------------------------------------
+
+The operational methodology of the SEFGH platform encompasses a series of sophisticated workflows that orchestrate interactions between multiple technologies, services, and architectural components. This section describes the end-to-end processes that occur when users interact with the platform, detailing the sequence of operations, data flows, and system behaviors that collectively deliver the platform's core functionality. Understanding these workflows is essential for comprehending how individual architectural components collaborate to achieve the system's objectives.
+
+
+2.2.1 User Authentication and Session Management Workflow
+
+The authentication workflow represents the foundational security mechanism that governs access to the platform's resources and ensures that user-specific data remains isolated and protected. When a user attempts to access the SEFGH platform, a sophisticated multi-stage authentication process is initiated to verify their identity and establish a secure session.
+
+The workflow begins when the user navigates to any page within the application. The Next.js middleware, which intercepts every incoming HTTP request before it reaches the application code, examines the request for the presence of authentication cookies. These cookies contain JWT (JSON Web Token) tokens issued by Supabase Auth during the login process. The middleware extracts the token and forwards it to Supabase Auth's verification service, which validates the token's signature, expiration time, and authenticity.
+
+If the token is valid but approaching expiration, the middleware proactively requests a token refresh from Supabase Auth. This refresh process involves exchanging a refresh token, which has a longer lifespan than the access token, for a new set of access and refresh tokens. The new tokens are then stored in HTTP-only cookies, which are inaccessible to client-side JavaScript and thus protected from XSS (Cross-Site Scripting) attacks. This automatic refresh mechanism ensures that users experience seamless, uninterrupted sessions without being forced to log in repeatedly.
+
+If the token is invalid, expired, or absent, the middleware redirects unauthenticated users to the login page while allowing access to public routes such as the landing page, about page, and signup page. For authenticated users, the middleware enriches the request context with user identity information, making it available to Server Components and API routes that need to make authorization decisions or fetch user-specific data.
+
+Once authentication is confirmed, the system loads additional user metadata from the profiles table in the database, including the user's full name, avatar URL, bio, and preferences. This metadata is made available to the frontend through the AuthContext, a React Context provider that exposes authentication state and helper functions to all components in the application tree. Components can access the current user object, loading state, and functions to refresh user data or sign out by consuming this context through the useAuth custom hook.
+
+[DIAGRAM SPACE: User Authentication Flow Diagram showing the sequence from initial request through middleware validation, token refresh, database queries, and context population]
+
+
+2.2.2 Conversational Search Workflow
+
+The conversational search workflow represents the core functionality that differentiates SEFGH from traditional keyword-based search engines. This workflow leverages artificial intelligence to understand natural language queries and generate contextually appropriate repository recommendations through an interactive, dialogue-based interface.
+
+The workflow is initiated when a user types a query into the chat interface and submits it. The query, along with the complete conversation history, is sent to an API route handler located at /api/chat. The frontend includes all previous messages in the request to provide context to the AI model, enabling it to understand follow-up questions and maintain conversation coherence across multiple exchanges.
+
+Upon receiving the request, the API route handler performs several preliminary operations. It verifies that the request originates from an authenticated user by examining the session information embedded in the request cookies. It validates the input to ensure that the message content is not empty and does not exceed length limitations. It then constructs a messages array that will be sent to the GitHub Models API, beginning with a carefully crafted system message.
+
+The system message serves as an instruction set that guides the AI model's behavior. It explicitly instructs the model to act as a GitHub repository discovery assistant, to understand user queries semantically rather than literally, to suggest repositories that match the described requirements, and to format suggestions in a specific structure that facilitates programmatic parsing. The system message defines two acceptable formats for repository suggestions: a JSON code block containing structured repository objects, or natural language responses that include GitHub URLs which can be automatically detected and enhanced.
+
+After constructing the messages array, the API route handler invokes the GitHub Models API by sending an HTTP POST request to the Azure-hosted endpoint. The request includes the messages array, along with optional parameters such as temperature (controlling response randomness), max_tokens (limiting response length), and model identifier (specifying GPT-4o). The API processes the request using the specified language model, which analyzes the conversation history and generates an appropriate response based on its training data and the instructions provided in the system message.
+
+When the API response is received, the handler parses the content to identify repository suggestions. If the response contains a repos-json code block, the handler extracts and parses the JSON array to obtain structured repository objects. If the response contains GitHub URLs in natural language text, a regular expression pattern identifies these URLs and extracts the repository owner and name components.
+
+For each identified repository, the system enhances the suggestion with additional metadata fetched from the GitHub REST API. This enhancement step queries the GitHub API for detailed information including the repository description, star count, fork count, primary programming language, topic tags, creation date, last update date, open issues count, and whether the repository is archived. This metadata enrichment ensures that users receive comprehensive information about suggested repositories without needing to visit GitHub directly.
+
+The complete response, including both the AI-generated text and the enriched repository objects, is then returned to the frontend as a JSON payload. The frontend receives this response, adds it to the conversation state, stores it in the Supabase database for persistence, and renders it in the chat interface. Repository suggestions are displayed as interactive cards that users can click to explore further details.
+
+[DIAGRAM SPACE: Conversational Search Workflow Diagram showing the flow from user query through API handling, AI processing, repository enhancement, and response rendering]
+
+
+2.2.3 Repository Data Retrieval and Caching Strategy
+
+The repository data retrieval workflow implements an intelligent caching strategy that balances the need for current information with the constraints imposed by API rate limits and performance requirements. This workflow is invoked whenever the system needs detailed information about a specific GitHub repository, whether in response to an AI suggestion, a user search, or an explicit repository lookup.
+
+The workflow begins by querying the local Supabase database to check whether information about the requested repository is already cached. The query searches for a record in the repository cache table where the full_name field (formatted as "owner/repo") matches the requested repository. If a matching record is found, the system examines the fetched_at timestamp to determine data freshness.
+
+If the cached data is recent, defined as having been fetched within the last seven days, the system returns the cached record immediately without making any external API calls. This cache-hit scenario provides optimal performance and conserves API rate limit quota. If the cached data is stale, defined as being older than seven days, the system proceeds to fetch fresh data from the GitHub REST API while still retaining the cached version as a fallback in case the API request fails.
+
+When no cached data exists or the cached data is determined to be stale, the system initiates an HTTP GET request to the GitHub REST API's repositories endpoint. The request includes an authentication token in the Authorization header to benefit from the authenticated rate limit of 5000 requests per hour, significantly higher than the 60 requests per hour limit for unauthenticated requests. The API responds with a comprehensive JSON object containing all available repository metadata.
+
+The system extracts relevant fields from the API response, including the repository name, description, owner information, star count, fork count, watchers count, primary programming language, list of topic tags, creation and update timestamps, open issues count, license information, and archive status. This extracted data is then structured into a standardized repository object format used throughout the application.
+
+Before returning the data to the calling function, the system updates the cache by either inserting a new record (for previously unseen repositories) or updating the existing record (for stale cached data). The upsert operation uses a conflict resolution strategy that updates all fields except the creation timestamp when a record with the same full_name already exists. This cache update ensures that subsequent requests for the same repository will benefit from the cache-hit scenario.
+
+The workflow includes comprehensive error handling to address various failure modes. If the GitHub API request fails due to network errors, the system falls back to serving stale cached data if available, ensuring graceful degradation rather than complete failure. If the API returns a 404 Not Found status, indicating that the repository does not exist or has been deleted, the system returns an appropriate error response to the user. If the API returns a 403 Forbidden status due to rate limit exhaustion, the system queues the request for retry after the rate limit reset time and serves cached data in the interim.
+
+[DIAGRAM SPACE: Repository Data Retrieval Flow Diagram illustrating cache check, freshness evaluation, API fetching, cache update, and error handling paths]
+
+
+2.2.4 Real-Time Notification Delivery Workflow
+
+The real-time notification workflow demonstrates the platform's ability to push updates to users instantly without requiring page refreshes or polling mechanisms. This workflow leverages Supabase Realtime, which provides WebSocket-based subscriptions to database changes, enabling reactive user interfaces that respond immediately to backend events.
+
+The workflow is established when the NotificationBell component, rendered in the application header, mounts in the user's browser. During the mount lifecycle phase, the component creates a subscription to the notifications table in the Supabase database, specifically filtered to changes that affect rows where the user_id matches the currently authenticated user's ID. This subscription establishes a WebSocket connection between the client and the Supabase Realtime server.
+
+When a backend process creates a new notification—triggered by events such as repository submissions being approved, trending repositories being updated, API rate limits being approached, or administrative announcements—the notification is inserted into the notifications table with the appropriate user_id, title, message, type, and optional link. The database INSERT operation completes normally, storing the notification persistently.
+
+Simultaneously with the database INSERT, Supabase Realtime's change data capture mechanism detects the new row and broadcasts an INSERT event to all active subscriptions that match the affected row's user_id. The WebSocket connection maintained by the NotificationBell component receives this broadcast message in real-time, typically within milliseconds of the database insertion.
+
+Upon receiving the INSERT event, the component executes a callback function that updates the local notifications state by adding the new notification to the existing array. This state update triggers a React re-render, causing the notification bell icon to update its badge counter to reflect the new unread notification count. If the notification dropdown is currently open, the new notification appears immediately in the list without any user interaction.
+
+Users can interact with notifications by clicking to mark them as read or to delete them. These interactions trigger database UPDATE or DELETE operations respectively, which propagate through the same Realtime mechanism, ensuring that the UI remains synchronized with the database state even if the user has multiple browser tabs open simultaneously.
+
+The workflow includes connection state management to handle network interruptions gracefully. If the WebSocket connection is lost due to network problems, the Realtime client automatically attempts to reconnect using exponential backoff. Once reconnected, the component fetches the latest notifications from the database to synchronize any changes that occurred during the disconnection period.
+
+[DIAGRAM SPACE: Real-Time Notification Workflow showing database insertion, Realtime broadcast, WebSocket delivery, and UI update sequence]
+
+
+2.2.5 Canvas Code Editor Workflow
+
+The Canvas code editor workflow enables users to view, edit, and download code snippets directly within the SEFGH platform without context-switching to external editors or tools. This workflow enhances the platform's utility as a learning and experimentation environment for developers exploring new repositories and code examples.
+
+The workflow is initiated when a user encounters a code block in the chat interface, typically included in an AI response that provides code examples or demonstrates repository usage. Each code block is rendered with syntax highlighting and includes an "Open in Canvas" button in its header. When the user clicks this button, the frontend extracts the code content and programming language identifier from the code block and passes this information to the Canvas component.
+
+The Canvas component renders in a modal overlay that covers the viewport, providing a distraction-free editing environment. On desktop devices with sufficient screen width, the Canvas displays in a side-by-side layout with the main chat interface visible alongside it, allowing users to reference the conversation while editing code. On mobile devices or narrow viewports, the Canvas expands to fullscreen to maximize the available space for code editing.
+
+The Canvas interface consists of three tabs: Edit, Preview, and Notes. The Edit tab presents a textarea element where users can modify the code. The textarea includes line numbers generated dynamically based on the number of newline characters in the content, providing visual reference points for navigation. Syntax highlighting is not applied in the Edit tab to avoid conflicts with contentEditable behavior and to ensure that the user can freely type without interference from HTML markup.
+
+The Preview tab renders the code with syntax highlighting applied using highlight.js, a JavaScript library that supports over 190 programming languages. The code is displayed in a read-only format with the GitHub Dark theme, providing visual distinction between different syntactic elements such as keywords, strings, comments, and function names. This tab allows users to view the code in a more readable format similar to how it would appear in an IDE.
+
+The Notes tab provides a simple textarea where users can write personal notes, comments, or documentation related to the code snippet. This feature supports learning workflows where users document their understanding, questions, or modification ideas. Notes are stored in component state and persist for the duration of the Canvas session but are not saved to the database, maintaining privacy and ephemeral nature.
+
+Users can download the code at any time by clicking the Download button in the Canvas header. The download function creates a Blob object containing the code content, generates an appropriate filename based on the programming language extension (e.g., .js for JavaScript, .py for Python), creates a temporary anchor element with a download attribute pointing to the Blob URL, programmatically clicks the anchor to trigger the browser's download mechanism, and then revokes the Blob URL to free memory.
+
+[DIAGRAM SPACE: Canvas Code Editor Workflow showing component initialization, tab navigation, code editing, syntax highlighting, and download process]
+
+
+2.2.6 Data Processing and Validation Pipeline
+
+The data processing and validation pipeline represents a critical cross-cutting concern that ensures data integrity, security, and consistency throughout the system. This pipeline operates at multiple stages of request processing, applying validation rules, sanitization procedures, transformation operations, and error handling mechanisms.
+
+Input validation begins at the API route handlers, which examine incoming request payloads before any business logic execution. Validation rules verify that required fields are present, field values conform to expected data types and formats, string lengths do not exceed defined maximums, numeric values fall within acceptable ranges, and enum-like fields contain only permitted values. URL validation applies regular expression patterns to ensure that repository URLs match GitHub's domain and path structure. Email validation confirms that addresses contain valid local and domain parts separated by an at sign.
+
+Sanitization procedures protect against injection attacks and data corruption. User-provided text inputs are HTML-escaped to prevent XSS attacks where malicious scripts could be injected into the application. SQL injection prevention is inherently provided by Supabase's client library, which parameterizes all queries automatically. JSONB fields are validated to ensure they contain well-formed JSON structures before insertion into the database.
+
+Business logic execution follows successful validation, routing requests to the appropriate service functions based on the operation type. Database queries are executed with RLS policies automatically enforced by PostgreSQL, ensuring that users can only access their own data regardless of how the query is constructed. External API calls include timeout configurations, typically set to 10 seconds, to prevent indefinite blocking on unresponsive services. Error handling wraps API calls in try-catch blocks that capture exceptions and transform them into user-friendly error messages.
+
+Data transformation operations convert between the formats required by different parts of the system. Repository data fetched from the GitHub API, which includes many fields irrelevant to the application, is transformed into a simplified repository object containing only the necessary fields. Timestamps, which may be represented as Unix epochs, ISO 8601 strings, or JavaScript Date objects depending on the source, are standardized to ISO 8601 format for consistency. JSONB fields are serialized from JavaScript objects to JSON strings for database storage and deserialized back to objects when retrieved.
+
+Response generation constructs API responses according to consistent contracts. Success responses include a data field containing the requested information, metadata such as pagination details when applicable, and an HTTP status code in the 2xx range. Error responses include an error field containing a descriptive message suitable for display to end users, an optional details field for debugging information in development environments, and an appropriate HTTP status code in the 4xx range for client errors or 5xx range for server errors.
+
+Error handling implements multiple strategies depending on the error type and severity. Transient errors, such as temporary network failures or rate limit exceeded responses, trigger retry logic with exponential backoff. The system attempts the operation again after an initial delay, doubling the delay after each subsequent failure up to a maximum retry count. Permanent errors, such as invalid input or authorization failures, are returned immediately to the client without retries. Critical errors that indicate system malfunctions are logged with full context for later investigation while returning generic error messages to users to avoid exposing implementation details that could aid attackers.
+
+[DIAGRAM SPACE: Data Processing Pipeline Diagram showing validation, sanitization, business logic, transformation, and error handling stages]
+
+
+2.3 TECHNOLOGY STACK AND STANDARDS COMPLIANCE
+----------------------------------------------
+
+The technology stack selected for the SEFGH platform reflects contemporary best practices in full-stack web development, prioritizing performance, developer experience, security, and scalability. The decision-making process for technology selection involved evaluating multiple alternatives against criteria including maturity, community support, documentation quality, performance characteristics, security track record, and alignment with project requirements. This section provides detailed justification for each major technology choice and describes how these technologies integrate to form a cohesive development ecosystem.
+
+
+2.3.1 Frontend Technology Foundation
+
+The frontend technology stack is anchored by Next.js 16.0.1, a React-based framework that has emerged as an industry standard for building production-grade web applications. Next.js extends React's capabilities by providing an opinionated framework that solves common challenges such as routing, server-side rendering, static site generation, image optimization, and API route implementation. Version 16.0.1 introduces the App Router architecture, which represents a paradigm shift from the traditional Pages Router, offering improved performance through React Server Components, streaming rendering, and enhanced data fetching patterns.
+
+The framework's file-system based routing eliminates the need for explicit route configuration. Each folder within the app directory represents a URL segment, and special files such as page.js define route endpoints, layout.js define shared layouts, loading.js define loading states, and error.js define error boundaries. This convention-over-configuration approach reduces boilerplate code and makes the application structure more intuitive.
+
+Server Components, a feature enabled by the App Router, allow React components to render on the server without sending their JavaScript code to the client. This approach significantly reduces the amount of JavaScript that browsers must download and execute, improving initial page load times and runtime performance. Server Components can directly access backend resources such as databases and APIs without exposing credentials to the client, simplifying data fetching patterns and enhancing security.
+
+Image optimization represents another critical capability provided by Next.js. The framework's Image component automatically serves images in modern formats such as WebP and AVIF when supported by the browser, generates multiple sizes for responsive layouts, implements lazy loading to defer offscreen images, and provides blur-up placeholders for improved perceived performance. These optimizations occur automatically without requiring developer intervention or external build tools.
+
+Automatic code splitting ensures that each route only loads the JavaScript necessary for that specific page, reducing initial bundle sizes and improving performance. The framework analyzes import statements and dynamically loads components and modules only when required, implementing intelligent prefetching strategies that load code for likely navigation targets before the user clicks.
+
+[DIAGRAM SPACE: Next.js Architecture Diagram showing App Router structure, Server/Client Component distinction, and optimization features]
+
+
+React 19.2.0 forms the underlying UI library upon which Next.js is built. This version introduces several enhancements over previous releases, including improved hydration that reduces mismatches between server-rendered and client-rendered content, enhanced error boundaries that provide better error recovery mechanisms, new hooks such as useTransition for managing asynchronous state transitions and useOptimistic for optimistic UI updates, and better Suspense support for coordinating asynchronous operations.
+
+The concurrent features introduced in React 18 and refined in React 19 enable the framework to interrupt rendering work to handle higher-priority updates, maintaining responsiveness even during computationally intensive operations. This capability is particularly valuable in interactive applications where user input should receive immediate feedback even when the application is performing background work.
+
+
+2.3.2 User Interface Component Library and Styling System
+
+The user interface is constructed using shadcn/ui, a collection of reusable components built on top of Radix UI primitives. Unlike traditional component libraries that provide pre-built, pre-styled components, shadcn/ui takes a different approach by providing component source code that developers can copy into their projects and customize as needed. This approach offers several advantages: complete control over component implementation, no dependency on external component libraries that may become unmaintained, ability to modify components to meet specific requirements, and elimination of unused component code from the final bundle.
+
+Radix UI primitives provide the foundational accessibility features for these components. Radix UI is an unstyled, accessible component library that implements complex interaction patterns such as dialogs, dropdowns, tooltips, and accordions following WAI-ARIA specifications. By building on these primitives, shadcn/ui components inherit robust keyboard navigation, screen reader support, focus management, and ARIA attributes, ensuring that the application is usable by people with disabilities and complies with accessibility standards.
+
+Tailwind CSS 3.4.1 serves as the styling system, implementing a utility-first approach where styles are applied by composing small, single-purpose utility classes rather than writing custom CSS. The framework provides thousands of utility classes for properties such as colors, spacing, typography, layout, and animations. This approach promotes consistency by encouraging developers to use standardized values from the design system, reduces CSS specificity conflicts, eliminates unused CSS through purging, and improves developer velocity by reducing context switching between HTML and CSS files.
+
+The project extends Tailwind's default configuration with custom design tokens defined in the tailwind.config.mjs file. These tokens include custom color palettes based on CSS variables, extended spacing scales, custom border radius values, custom shadow definitions, custom animation keyframes, and custom breakpoints. CSS variables enable dynamic theming, allowing the application to switch between light and dark modes by changing the values of these variables rather than loading entirely different stylesheets.
+
+The Just-In-Time (JIT) compiler introduced in Tailwind CSS 3.x generates styles on-demand as classes are encountered in the source code, rather than generating all possible combinations upfront. This approach dramatically reduces build times during development and produces smaller CSS files in production by only including classes that are actually used.
+
+Framer Motion 12.23.24 provides animation capabilities that enhance the user experience through smooth transitions, gesture-based interactions, and layout animations. The library offers a declarative API where animations are defined as props on components, making it easy to add sophisticated animations without complex state management. Framer Motion handles the underlying Web Animations API and requestAnimationFrame orchestration, ensuring animations remain performant and synchronized with browser repaints.
+
+[DIAGRAM SPACE: UI Component Stack Diagram showing layering of Tailwind CSS, shadcn/ui, Radix UI, and Framer Motion]
+
+
+2.3.3 Backend Technology Infrastructure
+
+The backend infrastructure is provided by Supabase, an open-source Firebase alternative that offers a suite of integrated services built on top of PostgreSQL. Supabase eliminates the need to provision and manage separate services for database, authentication, real-time subscriptions, and file storage, significantly reducing operational complexity and accelerating development velocity.
+
+PostgreSQL 15 serves as the relational database, providing robust data persistence with support for complex queries, transactions, triggers, stored procedures, and JSONB columns for semi-structured data. PostgreSQL's maturity, performance characteristics, and extensive feature set make it suitable for applications ranging from prototypes to large-scale production systems. The database includes several extensions that enhance its capabilities: uuid-ossp for generating UUID primary keys, pgcrypto for cryptographic functions, and pg_stat_statements for query performance monitoring.
+
+PostgREST forms the API layer that automatically generates RESTful API endpoints from the database schema. When tables, views, or functions are created in PostgreSQL, PostgREST automatically exposes corresponding HTTP endpoints that support CRUD operations, filtering, ordering, and pagination through URL query parameters. This automatic API generation eliminates the need to write boilerplate API code and ensures that the API remains synchronized with the database schema.
+
+GoTrue implements the authentication service, handling user registration, login, password management, email verification, and OAuth integration with external providers such as GitHub, Google, and Apple. GoTrue issues JWT tokens upon successful authentication, which are then included in subsequent API requests to verify user identity. The service integrates with the PostgreSQL database, storing user records in the auth.users table and making user identity available to Row Level Security policies through the auth.uid() function.
+
+The Realtime service provides WebSocket-based subscriptions to database changes, enabling applications to receive instant notifications when data is inserted, updated, or deleted. The service is built on Elixir and the Phoenix framework, which are specifically designed for handling large numbers of concurrent connections efficiently. Realtime uses PostgreSQL's logical replication feature to capture change data and broadcasts these changes to subscribed clients filtered by Row Level Security policies.
+
+The Storage service offers S3-compatible object storage for user-uploaded files such as avatars, documents, and media. The service supports public and private buckets with configurable access policies, automatic image transformations for generating thumbnails and responsive variants, and CDN integration for fast global delivery. Files are stored with PostgreSQL metadata tracking, enabling seamless integration with other Supabase services.
+
+[DIAGRAM SPACE: Supabase Services Architecture showing PostgreSQL core with surrounding Auth, Realtime, Storage, and PostgREST services]
+
+
+2.3.4 Artificial Intelligence Integration
+
+The artificial intelligence capabilities of the SEFGH platform are powered by the GitHub Models API, which provides access to GPT-4o (Generative Pre-trained Transformer 4 Optimized), a large language model developed by OpenAI and hosted on Microsoft's Azure infrastructure. The API follows the OpenAI Chat Completions API specification, accepting conversational inputs formatted as arrays of message objects and returning generated responses.
+
+GPT-4o offers several advantages over previous models, including improved reasoning capabilities, better instruction following, enhanced coding knowledge, support for longer context windows up to 128,000 tokens, and reduced costs per token. The model's extensive training on code repositories, technical documentation, and software engineering content makes it particularly well-suited for the repository discovery task, as it possesses deep knowledge of programming languages, frameworks, libraries, and software development practices.
+
+The GitHub Models API provides a REST interface where requests are submitted as HTTP POST requests containing JSON payloads with fields specifying the model identifier, messages array, temperature parameter controlling randomness, max_tokens limiting response length, and optional parameters such as top_p, frequency_penalty, and presence_penalty. Responses are returned as JSON objects containing the generated text, usage statistics, and metadata.
+
+Authentication for the GitHub Models API uses bearer tokens provided through GitHub's personal access token system. Developers generate tokens from their GitHub account settings and include them in the Authorization header of API requests. These tokens provide authenticated access with rate limits suitable for production applications, typically allowing thousands of requests per hour depending on account tier.
+
+The integration layer implemented in the SEFGH platform abstracts the API communication details, providing a simplified interface that accepts conversational messages and options, constructs properly formatted API requests, handles authentication automatically using environment variables, parses API responses to extract generated content, implements retry logic for transient failures, and propagates errors with descriptive messages when failures occur.
+
+[DIAGRAM SPACE: AI Integration Architecture showing application layer communicating with GitHub Models API and processing responses]
+
+
+2.3.5 Supporting Libraries and Utilities
+
+Several supporting libraries enhance the platform's functionality in specific areas. For markdown processing, the application uses react-markdown as the core rendering engine that converts Markdown text to React components, remark-gfm for GitHub Flavored Markdown extensions such as tables, task lists, and strikethrough, rehype-highlight for syntax highlighting of code blocks, and rehype-raw for supporting HTML elements within Markdown content.
+
+Code highlighting is achieved through highlight.js, a syntax highlighting library that supports over 190 programming languages and provides numerous color themes. The platform uses the github-dark theme to maintain visual consistency with GitHub's interface. The library parses code strings, identifies syntactic elements such as keywords, strings, comments, and function names, and wraps them in span elements with appropriate CSS classes for styling.
+
+State management is implemented through React's built-in Context API rather than external libraries such as Redux or MobX. Context provides a way to pass data through the component tree without prop drilling, making state available to any component that subscribes to the context. Custom hooks encapsulate context consumption logic and provide convenient interfaces for components to access and update shared state.
+
+HTTP requests use the browser's native Fetch API rather than external libraries such as Axios. Fetch provides sufficient functionality for the application's needs, including support for various HTTP methods, request headers and bodies, response parsing, and streaming. The AbortController API enables request cancellation, useful for implementing timeouts and cleaning up pending requests when components unmount.
+
+Utility libraries include clsx for conditional class name generation, tailwind-merge for merging Tailwind classes while resolving conflicts, date-fns for date parsing and formatting operations, and sonner for displaying toast notifications. These lightweight libraries solve specific problems without introducing significant bundle size overhead.
+
+[DIAGRAM SPACE: Supporting Libraries Integration Diagram showing how markdown processing, code highlighting, state management, and utilities integrate into the application]
+
+
+2.3.6 Development Tools and Standards Compliance
+
+The development workflow is supported by several tools that enforce code quality and consistency. ESLint performs static analysis of JavaScript code to identify problematic patterns, enforce coding conventions, and catch potential bugs before runtime. The project's ESLint configuration includes rules for React best practices, Next.js-specific patterns, accessibility checks, and general JavaScript quality standards.
+
+PostCSS processes CSS files through a plugin system that enables features such as autoprefixing for cross-browser compatibility, CSS variable transformations, and syntax extensions. Tailwind CSS integrates with PostCSS to generate utility classes and process custom CSS. Babel transpiles modern JavaScript syntax to versions compatible with target browsers, ensuring that the application runs correctly even in older environments.
+
+Version control is managed through Git, with the repository hosted on GitHub. The project follows Git Flow branching strategy with separate branches for development, features, and production releases. Continuous integration workflows automatically run tests, perform code quality checks, and generate preview deployments for pull requests.
+
+The application adheres to modern web standards and best practices. HTML5 semantic elements such as header, nav, main, article, aside, and footer provide meaningful structure that aids accessibility and search engine optimization. ARIA attributes supplement semantic HTML where necessary to convey interface state and behavior to assistive technologies. The application targets WCAG 2.1 Level AA compliance, ensuring that color contrasts meet minimum ratios, interactive elements are keyboard accessible, form inputs have associated labels, and error messages are descriptive and programmatically associated with their fields.
+
+Responsive Web Design principles ensure the application functions well across device sizes from mobile phones to large desktop monitors. CSS Grid and Flexbox layouts adapt to available space, font sizes scale appropriately, touch targets meet minimum size requirements on mobile devices, and navigation patterns adjust to accommodate smaller screens. Progressive Enhancement strategy ensures core functionality remains available even when JavaScript fails to load or execute, with server-rendered content providing a baseline experience that is enhanced by client-side interactions.
+
+HTTP/2 protocol support improves performance through multiplexed connections that allow multiple resources to be transferred simultaneously over a single connection, header compression that reduces overhead, and server push capabilities that proactively send resources before they are requested. WebSocket connections enable real-time bidirectional communication for features such as notifications and live updates. The application architecture supports Service Worker integration for Progressive Web App capabilities, although this feature is not yet implemented in the current version.
+
+[DIAGRAM SPACE: Development Tools and Standards Compliance Diagram showing ESLint, PostCSS, Git workflow, and web standards implementation]
+
+
+2.4 FRONTEND ARCHITECTURE AND IMPLEMENTATION
+--------------------------------------------
+
+The frontend architecture of the SEFGH platform represents a sophisticated implementation of modern web development patterns, leveraging the latest capabilities of Next.js 16 and React 19 to deliver a performant, scalable, and maintainable application. This section explores the architectural decisions, implementation patterns, and organizational strategies that structure the frontend codebase, examining how these choices contribute to the overall quality and functionality of the platform.
+
+
+2.4.1 Application Structure and Organization
+
+The application follows a well-defined directory structure that promotes logical organization and facilitates developer navigation through the codebase. The src/app/ directory contains all application routes and pages, organized according to the Next.js App Router conventions. Each subdirectory within this structure represents a URL segment, with special files defining route behavior: page.js exports the component rendered for that route, layout.js defines layouts shared across multiple pages, loading.js specifies loading states displayed during data fetching or component loading, and error.js implements error boundaries that catch and handle runtime errors.
+
+The src/components/ directory houses reusable React components that are composed to build the application's user interface. These components range from simple presentational elements such as buttons and input fields to complex interactive features such as the chat interface and code editor. Components are organized by feature or functionality, with related components grouped into subdirectories to maintain clarity as the codebase grows.
+
+Context providers, which implement global state management using React's Context API, reside in the src/contexts/ directory. Each context provider encapsulates a specific domain of application state, such as authentication, settings, or language preferences, and exposes this state along with functions to update it to the component tree. This separation ensures that state management logic is centralized and reusable rather than scattered throughout individual components.
+
+Custom React hooks, located in the src/hooks/ directory, encapsulate reusable stateful logic that can be shared across multiple components. These hooks follow React's hooks conventions, using the "use" prefix and adhering to the rules of hooks such as only calling hooks at the top level of components. Examples include useAuth for accessing authentication state, useChatMessages for managing conversation functionality, and useFilters for handling search filter state.
+
+Utility functions and API clients are organized in the src/lib/ directory, providing shared functionality that does not involve React-specific features. This includes functions for formatting dates, parsing markdown, interacting with Supabase, calling the GitHub API, and other pure functions or stateless operations. Separating utilities from components promotes testability and reusability across both frontend and backend code.
+
+Internationalization files are stored in the src/locales/ directory, with subdirectories for each supported language containing JSON files that map translation keys to localized strings. This structure enables the application to support multiple languages through a centralized translation system that can be extended with additional languages without modifying component code.
+
+[DIAGRAM SPACE: Frontend Directory Structure showing src/app, src/components, src/contexts, src/hooks, src/lib, and src/locales with example files]
+
+
+2.4.2 Server Components and Client Components Architecture
+
+One of the most significant architectural patterns in the SEFGH frontend is the strategic use of Server Components and Client Components, a paradigm introduced by React and fully embraced by Next.js App Router. This pattern fundamentally changes how components are rendered and where their code executes, with profound implications for performance, security, and developer experience.
+
+Server Components represent the default component type in the App Router architecture. These components execute exclusively on the server, generating HTML that is sent to the client. The JavaScript code for Server Components is not included in the client-side bundle, significantly reducing the amount of code that browsers must download and execute. This characteristic makes Server Components ideal for rendering static or server-fetched content that does not require client-side interactivity.
+
+Server Components can directly access backend resources such as databases and APIs without exposing credentials or implementation details to the client. This capability simplifies data fetching by eliminating the need for intermediate API routes when components need database data. Server Components can import database clients, execute queries, and render the results, all while maintaining security by keeping sensitive operations server-side.
+
+The asynchronous nature of Server Components enables them to use async/await syntax directly in component functions, making data fetching code more readable and maintainable compared to useEffect hooks or lifecycle methods. Components can await promises to resolve before rendering, with Next.js automatically implementing streaming to send HTML to the client as it becomes available rather than waiting for all data to be fetched.
+
+Client Components, designated by the "use client" directive at the top of the file, execute in the browser and enable interactivity through access to browser APIs, event handlers, and React hooks. These components are necessary for features such as form inputs that capture user input, buttons that respond to clicks, interactive visualizations that respond to mouse movements, components that access localStorage or other browser-specific APIs, and any component that uses state hooks like useState or effect hooks like useEffect.
+
+The distinction between Server and Client Components influences the entire component tree structure. Once a "use client" directive is encountered in the component tree, all child components within that subtree are treated as Client Components, even if they don't explicitly include the directive themselves. This cascading behavior means that developers must carefully consider where to place the boundary between server and client rendering, positioning the "use client" directive as deep in the component tree as possible to maximize the proportion of code that remains server-side.
+
+In the SEFGH platform, layout components and static content pages are implemented as Server Components, benefiting from server-side rendering without client-side JavaScript overhead. Interactive components such as the chat interface, form inputs, modal dialogs, and components that manage local state are implemented as Client Components. Components that display data but don't require interactivity, such as repository information cards or README renderers, are implemented as Server Components when possible, with interactivity isolated to specific child Client Components.
+
+[DIAGRAM SPACE: Server Component vs Client Component Flow Diagram showing execution environments, data flow, and JavaScript bundling differences]
+
+
+2.4.3 Routing Patterns and React 19 Features
+
+The App Router introduces several conventions for organizing routes and implementing common patterns through special files that Next.js recognizes and handles in specific ways. Route groups, indicated by parentheses in directory names such as (auth) or (main), enable logical grouping of routes without affecting the URL structure. Dynamic routes, indicated by brackets such as [id], match variable URL segments and pass them as parameters to components. Catch-all routes using [...slug] match any number of segments, while optional catch-all routes [[...slug]] match routes with or without segments.
+
+Special files serve distinct purposes within the routing system. The loading.js file implements automatic loading states displayed while pages load, wrapping components in Suspense boundaries. The error.js file defines error boundaries that catch runtime errors and enable graceful recovery. The not-found.js file customizes 404 pages for undefined routes. The Metadata API, accessed through exported metadata objects, enables defining page-specific titles, descriptions, and social media tags that enhance SEO and sharing capabilities.
+
+React 19 introduces several features that enhance the developer experience and application performance. Enhanced error boundaries provide better error catching mechanisms with improved recovery options and more informative error messages during development. Improved hydration reduces mismatches between server-rendered and client-rendered content, handles third-party scripts more reliably, and supports streaming for progressive content delivery.
+
+The use() hook enables reading context values, unwrapping promises within components, and consuming resources in a more ergonomic manner than previous patterns. The useOptimistic hook facilitates optimistic UI updates where changes are displayed immediately while asynchronous operations complete in the background, with automatic rollback if operations fail. These features collectively improve the perceived performance and responsiveness of interactive applications.
+
+The component architecture follows the Atomic Design pattern, organizing components into hierarchical levels: atoms represent basic UI elements like buttons and inputs, molecules combine atoms into simple functional units, organisms compose molecules into complex interactive features, templates define page layouts, and pages represent complete routes with all necessary content. This hierarchical organization promotes reusability and maintainability.
+
+Composition over inheritance guides component design, favoring small focused components that can be composed together rather than complex components with extensive inheritance hierarchies. Props enable customization, children props allow content injection, and render props provide flexibility for advanced use cases. Custom hooks encapsulate reusable stateful logic including authentication state management, chat functionality, search filter handling, and internationalization support.
+
+[DIAGRAM SPACE: Component Architecture Diagram showing Atomic Design hierarchy from atoms to pages with example components at each level]
+
+
+2.4.4 User Interface Component System
+
+The user interface layer of the SEFGH platform is constructed using a comprehensive component library that balances functionality, accessibility, and visual appeal. The component system is built upon shadcn/ui, which provides a collection of reusable components designed with accessibility as a primary concern through the use of Radix UI primitives. These components serve as the building blocks for the entire user interface, offering consistent interaction patterns and visual styling throughout the application.
+
+The core UI components include a versatile Button component that supports multiple variants including default, destructive, outline, secondary, ghost, and link styles. Each variant communicates different semantic meanings and interaction affordances to users. The button component accommodates various size options ranging from small to large, with a dedicated icon-only variant for compact interfaces. Loading states display animated spinners to indicate ongoing operations, while disabled states prevent interaction and provide visual feedback about unavailability. Icon support enables the integration of visual symbols alongside or instead of text labels, improving recognition and reducing localization requirements.
+
+Input components provide the foundation for user data entry, implementing text inputs with built-in validation feedback, textareas with automatic resizing that adapts to content length, select dropdowns for choosing from predefined options, combobox components that combine dropdowns with search functionality for handling large option sets, date pickers that provide calendar interfaces for temporal data entry, and file upload components that handle drag-and-drop interactions and preview selected files. Each input component implements proper labeling, error messaging, and accessibility attributes to ensure usability across different devices and assistive technologies.
+
+Dialog and modal components implement overlay interfaces that focus user attention on specific tasks or information. These components feature accessible modal dialogs that trap keyboard focus within the modal while active, backdrops that can be clicked to dismiss the modal, smooth animation transitions that enhance perceived quality, support for nested dialogs when workflows require multiple layers of interaction, and command palette functionality activated by keyboard shortcuts like Cmd+K that enable power users to access features quickly through search rather than navigation.
+
+[DIAGRAM SPACE: Core UI Component Gallery showing buttons, inputs, dialogs, and their various states and variants]
+
+Navigation components structure the application's information architecture and enable users to move between different sections. The animated navbar implements a floating navigation bar with glassmorphism visual effects, dropdown menus that reveal additional options on hover or click, nested submenus for hierarchical navigation structures, smooth animations powered by Framer Motion that provide visual continuity during state changes, responsive behavior that collapses into a mobile-friendly menu on smaller screens, and integration of logo branding and user profile access.
+
+Feedback components communicate system state and operation results to users. Toast notifications, implemented using the Sonner library, display temporary messages that slide in from the screen edge to inform users about completed actions, errors, or important updates without interrupting their workflow. Alert dialogs present critical information that requires user acknowledgment before proceeding. Progress bars visualize the completion status of long-running operations. Skeleton loaders indicate loading content by displaying placeholder shapes that approximate the final layout. Empty states provide meaningful messaging when lists or collections contain no items, often suggesting actions users can take to populate the interface.
+
+Data display components present information in structured, scannable formats. Tables implement sortable columns and filterable rows for exploring tabular data, with pagination controls for managing large datasets. Cards group related information into visually distinct containers with consistent spacing and elevation, making complex interfaces easier to scan. Avatars display user profile images with automatic fallback to initials when images are unavailable. Badges and tags label and categorize items with compact visual indicators. Tooltips and popovers reveal additional information on hover or focus without cluttering the primary interface, providing progressive disclosure of complexity.
+
+
+Custom Application Components
+
+Beyond the generic UI primitives, the SEFGH platform implements several custom components that encapsulate complex domain-specific functionality. The MarkdownRenderer component is responsible for transforming markdown text, commonly found in repository README files and AI responses, into formatted HTML with interactive features. This component generates professional code blocks that include integrated copy buttons enabling users to quickly transfer code to their clipboard, syntax highlighting powered by highlight.js that improves code readability through color-coded language elements, and "Open in Canvas" buttons that launch the code editing environment directly from displayed code examples.
+
+The component implements full GitHub Flavored Markdown support, rendering tables, task lists, strikethrough text, and other GitHub-specific extensions. Link handling automatically opens external links in new browser tabs to prevent users from losing their place in the application. Image optimization leverages Next.js's Image component to deliver appropriately sized images based on the viewport and device pixel density. Table formatting applies responsive styles that enable horizontal scrolling on narrow screens while maintaining full-width presentation on larger displays.
+
+The Canvas Editor represents a sophisticated code manipulation environment embedded within the application. The interface consists of three tabs that organize different aspects of code interaction: the Edit tab provides a textarea where users can modify code with line numbers displayed alongside for easy reference, the Preview tab renders the code with full syntax highlighting in a read-only format using the GitHub Dark theme for comfortable viewing, and the Notes tab offers a space for users to document their understanding, questions, or modification plans. A language selector supports over sixteen programming languages, enabling appropriate syntax highlighting and file extension assignment. Copy and download functionality allows users to extract their work from the Canvas environment. The responsive layout adapts between side-by-side presentation on desktop devices and fullscreen mode on mobile devices to optimize the available screen space.
+
+[DIAGRAM SPACE: Canvas Editor Interface showing three-tab layout, line numbering, syntax highlighting, and responsive behaviors]
+
+The CodeExplorer component provides comprehensive repository information through a three-tab interface. The README tab renders the repository's documentation using markdown processing to format text, headings, lists, code examples, and images as intended by the repository maintainers. The Insights tab visualizes language composition using percentage bars that show the proportion of code written in each language, displays key repository statistics including star count, fork count, and watcher count, presents contributor information highlighting the developers who have contributed to the project, shows recent commits to indicate current development activity, and provides general repository metadata such as license type, creation date, and last update timestamp. The Details tab (when implemented) will offer additional technical information about dependencies, build configurations, and project structure.
+
+The RepoSuggestions component displays AI-generated repository recommendations in an organized, scannable format. The collapsible container features a gradient header that draws visual attention while conserving vertical space when collapsed. Repository cards are arranged in a responsive grid layout that adapts from single-column on mobile to multiple columns on wider displays. Clicking any repository card triggers the CodeExplorer component to display detailed information about the selected repository. A GitHub icon and repository count badge provide quick visual feedback about the number of suggestions provided.
+
+The NotificationBell component implements the notification system interface, appearing in the application header as a bell icon with a numerical badge indicating unread notification count. Clicking the bell reveals a dropdown panel displaying the twenty most recent notifications. Real-time updates are received through Supabase subscriptions, causing new notifications to appear immediately without requiring page refresh. Users can mark notifications as read or delete them directly from the dropdown. Clicking a notification navigates to the relevant page or feature referenced by the notification, closing the dropdown automatically.
+
+The AnimatedNavbar provides the primary navigation structure with sophisticated visual presentation. The floating navigation bar implements glassmorphism effects combining semi-transparent backgrounds with blur filters to create a sense of depth and polish. Dropdown menus organize related navigation items, with support for nested submenus when hierarchical organization is beneficial. Smooth animations courtesy of Framer Motion provide visual feedback during interactions such as menu openings, closings, and transitions. The responsive mobile menu collapses the full navigation structure into a hamburger menu icon on smaller screens, expanding to an overlay menu when activated. Logo branding and user profile integration provide consistent access to account features and brand identity throughout the application.
+
+[DIAGRAM SPACE: Custom Components Overview showing MarkdownRenderer, Canvas Editor, CodeExplorer, RepoSuggestions, NotificationBell, and AnimatedNavbar]
+
+
+Styling System Architecture
+
+The styling system implements a comprehensive design language through multiple complementary mechanisms. Design tokens, defined as CSS variables, establish the foundational visual parameters of the application. The background variable defines the base background color, foreground determines the primary text color, primary establishes the brand color using the distinctive blue shade #2563eb, secondary defines colors for secondary actions, accent specifies highlight colors for calls-to-action, destructive indicates error states and dangerous actions, muted provides subtle background colors for less prominent elements, border determines the color of dividing lines and component outlines, and radius controls border radius values to maintain consistent corner rounding throughout the interface.
+
+Custom utility classes extend Tailwind CSS with application-specific visual effects. The glass-premium class implements glassmorphism effects combining background blur, semi-transparency, and subtle borders. Shadow utilities including shadow-soft and shadow-glow-blue provide various elevation and glow effects that enhance depth perception and visual hierarchy. The transition-smooth class ensures consistent 300-millisecond transition durations across different animated properties. The gradient-flow class creates animated background gradients that subtly shift colors to add visual interest to hero sections and feature highlights.
+
+The animation system defines keyframe-based animations for various interactive elements. The accordion-down and accordion-up animations smoothly expand and collapse accordion sections. The glow-pulse animation creates a pulsing luminous effect for attention-grabbing elements. The shimmer animation powers loading skeleton placeholders with a sweeping gradient that suggests ongoing activity. The float animation causes elements to gently bob up and down, adding playful motion to decorative illustrations. The spin-slow animation rotates elements at a leisurely pace suitable for ambient background effects.
+
+Responsive breakpoints establish standardized viewport width thresholds where layout and behavior adaptations occur. The sm breakpoint at 640 pixels targets small devices including most smartphones in portrait orientation. The md breakpoint at 768 pixels accommodates tablets and larger smartphones in landscape orientation. The lg breakpoint at 1024 pixels serves laptop displays. The xl breakpoint at 1280 pixels addresses standard desktop monitors. The 2xl breakpoint at 1536 pixels optimizes layouts for large screens including ultra-wide monitors and high-resolution displays. Media queries reference these breakpoints to apply responsive styling, with mobile-first defaults progressively enhanced for larger viewports.
+
+[DIAGRAM SPACE: Design System Visualization showing color palette, typography scale, spacing system, and responsive breakpoints]
+
+
+2.4.3 State Management Strategy
+
+The application uses React Context API combined with custom hooks for state management:
+
+Context Providers:
+
+1. AuthContext (src/contexts/AuthContext.jsx):
+   - Manages user authentication state
+   - Provides: user object, loading state, signOut function, refreshUser function
+   - Listens to Supabase auth state changes
+   - Refreshes session on SIGNED_IN event
+   - Cleans up subscriptions on unmount
+
+2. SettingsContext (src/contexts/SettingsContext.jsx):
+   - Controls global settings modal visibility
+   - Simple open/close/toggle state management
+   - Consumed by header and settings components
+
+3. LanguageContext (src/contexts/LanguageContext.jsx):
+   - Manages i18n state and locale switching
+   - Provides: t function for translations, locale, changeLanguage, languages array
+   - Caches loaded translations in memory
+   - Persists language preference to localStorage
+   - Handles nested translation key resolution
+
+4. ThemeProvider (next-themes):
+   - Manages dark/light mode (forced to dark on landing)
+   - System preference detection
+   - Persistent theme storage
+   - CSS variable injection
+
+Provider Hierarchy (Critical Order):
+<ThemeProvider>
+  <AuthProvider>
+    <SettingsProvider>
+      <LanguageProvider>
+        <PageContent />
+      </LanguageProvider>
+    </SettingsProvider>
+  </AuthProvider>
+</ThemeProvider>
+
+Custom Hooks for Feature State:
+
+1. useChatMessages (chat functionality):
+   - Manages conversation list
+   - Current conversation and messages
+   - Send, edit, delete, regenerate message operations
+   - Auto-save to Supabase
+   - Optimistic updates with rollback
+
+2. useFilters (search filters):
+   - Language filter state
+   - Star count range
+   - Sort order (stars, forks, recent)
+   - Date range filter
+   - Apply filters function
+
+3. useSupabaseQuery (data fetching):
+   - Generic hook for Supabase queries
+   - Loading, error, data states
+   - Automatic refetch on dependencies
+   - Caching strategy
+
+4. useAuth (authentication guard):
+   - Wraps AuthContext
+   - Auto-redirect for protected routes
+   - Returns auth state and helpers
+
+Local State Management:
+
+1. Component-Level State (useState):
+   - Form inputs
+   - UI toggles (modal open/close)
+   - Temporary data
+   - Loading states
+
+2. Derived State (useMemo):
+   - Filtered lists
+   - Sorted data
+   - Computed values
+   - Expensive calculations
+
+3. Persistent State (localStorage):
+   - User preferences
+   - Theme selection
+   - Language choice
+   - Draft content
+
+4. URL State (searchParams):
+   - Search queries
+   - Filter values
+   - Pagination
+   - Active tabs
+
+
+2.5 BACKEND ARCHITECTURE
+------------------------
+
+2.5.1 Supabase Integration
+
+Supabase serves as the primary backend infrastructure, providing multiple integrated services:
+
+Database (PostgreSQL 15):
+- Relational data model
+- JSONB support for flexible schema
+- Full-text search capabilities
+- Triggers and functions
+- Extensions (uuid-ossp, pgcrypto)
+
+Authentication Service:
+- Email/password authentication
+- OAuth providers (GitHub, Google)
+- Magic link (passwordless)
+- JWT token management
+- User metadata storage
+- Session management with refresh tokens
+
+Realtime Service:
+- PostgreSQL change data capture
+- WebSocket connections
+- Channel subscriptions
+- Presence tracking (future feature)
+- Broadcast messaging
+
+Storage Service:
+- S3-compatible object storage
+- Public and private buckets
+- Image transformations
+- CDN integration
+- Automatic file cleanup
+
+Row Level Security (RLS):
+- Policy-based access control
+- User-specific data isolation
+- Function-based policies
+- Multi-tenant security
+
+Supabase Client Patterns:
+
+1. Browser Client (src/lib/supabase/client.js):
+import { createBrowserClient } from '@supabase/ssr'
+
+Used in Client Components for:
+- User-initiated actions
+- Real-time subscriptions
+- Browser API integration
+- localStorage-based session
+
+2. Server Client (src/lib/supabase/server.js):
+import { createServerClient } from '@supabase/ssr'
+import { cookies } from 'next/headers'
+
+Used in Server Components and API routes for:
+- Server-side data fetching
+- Secure operations
+- Admin functions
+- Cookie-based session
+
+Critical Rule: Never mix browser and server clients as they use different session storage mechanisms.
+
+
+2.5.2 API Routes Implementation
+
+Next.js API routes handle server-side logic and external API integration:
+
+1. Chat API (/api/chat):
+   - Receives user messages and conversation history
+   - Injects system prompt for repository suggestions
+   - Calls GitHub Models API (GPT-4o)
+   - Parses response for repository URLs or JSON
+   - Enhances repository data with GitHub API
+   - Returns formatted response with metadata
+   - Error handling with descriptive messages
+
+2. Conversation APIs:
+   - POST /api/conversations - Create new conversation
+   - GET /api/conversations - List user conversations
+   - GET /api/conversations/[id] - Get single conversation
+   - PUT /api/conversations/[id] - Update conversation
+   - DELETE /api/conversations/[id] - Delete conversation
+   - POST /api/conversations/[id]/messages - Add message
+   - POST /api/conversations/[id]/share - Generate share token
+
+3. Upload Avatar API (/api/upload-avatar):
+   - Validates file type and size
+   - Uploads to Supabase Storage
+   - Deletes old avatar if exists
+   - Updates user metadata and profiles table
+   - Returns new avatar URL
+
+4. GitHub Proxy APIs:
+   - /api/github/search - Proxy GitHub search to avoid CORS
+   - /api/github/repo/[owner]/[name] - Get repository details
+   - /api/github/readme/[owner]/[name] - Fetch README content
+   - Rate limiting and error handling
+
+5. Notification APIs:
+   - GET /api/notifications - Fetch user notifications
+   - POST /api/notifications - Create notification
+   - PATCH /api/notifications/[id]/read - Mark as read
+   - DELETE /api/notifications/[id] - Delete notification
+
+API Route Structure:
+export async function GET(request) {
+  // Extract parameters from URL
+  // Verify authentication
+  // Execute business logic
+  // Return NextResponse.json()
+}
+
+Error Handling Pattern:
+try {
+  // Logic
+} catch (error) {
+  console.error('Operation failed:', error)
+  return NextResponse.json(
+    { error: 'Descriptive error message' },
+    { status: 500 }
+  )
+}
+
+
+2.5.3 AI Integration Architecture
+
+The AI integration uses GitHub Models API for natural language processing:
+
+GitHub Models API Setup:
+- Endpoint: https://models.inference.ai.azure.com/chat/completions
+- Authentication: Bearer token from GITHUB_TOKEN environment variable
+- Model: gpt-4o (default), configurable
+- Context window: 128k tokens
+- Response format: JSON or text
+
+Implementation (src/lib/ai/github.js):
+
+export async function generateAIResponse(messages, options = {}) {
+  const {
+    model = 'gpt-4o',
+    temperature = 0.7,
+    max_tokens = 1000
+  } = options
+
+  const response = await fetch(API_ENDPOINT, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${process.env.GITHUB_TOKEN}`
+    },
+    body: JSON.stringify({
+      model,
+      messages,
+      temperature,
+      max_tokens
+    })
+  })
+
+  return await response.json()
+}
+
+System Prompt Strategy:
+
+The system message instructs the AI on how to handle repository suggestions:
+
+Two Formats Supported:
+1. JSON Code Block:
+```repos-json
+[
+  {
+    "full_name": "owner/repo",
+    "description": "Brief description",
+    "url": "https://github.com/owner/repo"
+  }
+]
+```
+
+2. Natural Language with URLs:
+Enhanced GitHub URLs in text format automatically detected and enriched.
+
+AI Response Processing:
+1. Parse response content
+2. Detect repository suggestion format
+3. Extract repository information
+4. Fetch additional data from GitHub API
+5. Enhance with metadata (stars, forks, language, topics)
+6. Return enriched repository objects
+
+Conversation Title Generation:
+- Uses first user message as input
+- Generates 3-6 word descriptive title
+- Fallback to first 4 words if API fails
+- Stored in conversation metadata
+
+
+2.6 DATABASE SCHEMA AND ARCHITECTURE
+-------------------------------------
+
+2.6.1 Database Design Philosophy
+
+The database follows these design principles:
+
+1. Normalization: Third normal form (3NF) for most tables to reduce redundancy
+2. Denormalization: Strategic use of JSONB for flexible, nested data (messages, repo_data)
+3. Indexing: Composite indexes on frequently queried columns
+4. Security: Row Level Security (RLS) on all user-facing tables
+5. Scalability: Efficient query patterns with proper indexes
+6. Flexibility: JSONB columns for evolving data structures
+7. Integrity: Foreign key constraints and CHECK constraints
+
+Entity-Relationship Overview:
+
+Users (auth.users - Managed by Supabase Auth)
+  ├── Has Many: user_conversations
+  ├── Has Many: notifications
+  ├── Has Many: api_keys
+  ├── Has Many: api_logs
+  ├── Has One: api_limits
+  ├── Has Many: repo_submissions
+  ├── Has One: onboarding_data
+  └── Has One: profiles
+
+trending_repos (Admin-managed, public read access)
+
+activity_tracking (User activity logs)
+
+
+2.6.2 Core Database Tables
+
+1. USER_CONVERSATIONS Table:
+
+Purpose: Stores chat conversations and messages
+
+Schema:
+CREATE TABLE user_conversations (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  title TEXT NOT NULL,
+  messages JSONB NOT NULL DEFAULT '[]'::jsonb,
+  token_count INTEGER DEFAULT 0,
+  message_count INTEGER DEFAULT 0,
+  model TEXT DEFAULT 'gpt-4o',
+  is_pinned BOOLEAN DEFAULT false,
+  status TEXT DEFAULT 'active' CHECK (status IN ('active', 'archived')),
+  last_message_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+Indexes:
+CREATE INDEX idx_conversations_user_id ON user_conversations(user_id);
+CREATE INDEX idx_conversations_last_message ON user_conversations(last_message_at DESC);
+CREATE INDEX idx_conversations_pinned ON user_conversations(is_pinned);
+CREATE INDEX idx_conversations_status ON user_conversations(status);
+
+RLS Policies:
+CREATE POLICY "Users can view own conversations"
+  ON user_conversations FOR SELECT
+  USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can create own conversations"
+  ON user_conversations FOR INSERT
+  WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Users can update own conversations"
+  ON user_conversations FOR UPDATE
+  USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can delete own conversations"
+  ON user_conversations FOR DELETE
+  USING (auth.uid() = user_id);
+
+Message Structure (JSONB):
+{
+  "id": "uuid",
+  "role": "user" | "assistant" | "system",
+  "content": "message text",
+  "timestamp": "ISO 8601 string",
+  "tokens": 123,
+  "model": "gpt-4o"
+}
+
+
+2. NOTIFICATIONS Table:
+
+Purpose: User notification system with real-time updates
+
+Schema:
+CREATE TABLE notifications (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  title TEXT NOT NULL,
+  message TEXT NOT NULL,
+  type TEXT NOT NULL CHECK (type IN ('info', 'success', 'warning', 'error')),
+  is_read BOOLEAN DEFAULT false,
+  link TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  read_at TIMESTAMPTZ
+);
+
+Indexes:
+CREATE INDEX idx_notifications_user_id ON notifications(user_id);
+CREATE INDEX idx_notifications_created_at ON notifications(created_at DESC);
+CREATE INDEX idx_notifications_is_read ON notifications(is_read);
+CREATE INDEX idx_notifications_user_unread ON notifications(user_id, is_read);
+
+Trigger for Auto-Setting read_at:
+CREATE OR REPLACE FUNCTION set_read_at_notifications()
+RETURNS TRIGGER AS $$
+BEGIN
+  IF NEW.is_read = true AND OLD.is_read = false THEN
+    NEW.read_at = NOW();
+  END IF;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_set_read_at_notifications
+  BEFORE UPDATE ON notifications
+  FOR EACH ROW
+  EXECUTE FUNCTION set_read_at_notifications();
+
+RLS Policies:
+CREATE POLICY "Users can view own notifications"
+  ON notifications FOR SELECT
+  USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can update own notifications"
+  ON notifications FOR UPDATE
+  USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can delete own notifications"
+  ON notifications FOR DELETE
+  USING (auth.uid() = user_id);
+
+
+3. API_KEYS Table:
+
+Purpose: API key management for playground
+
+Schema:
+CREATE TABLE api_keys (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  name TEXT NOT NULL,
+  key_hash TEXT NOT NULL UNIQUE,
+  key_prefix TEXT NOT NULL,
+  last_used_at TIMESTAMPTZ,
+  is_active BOOLEAN DEFAULT true,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  expires_at TIMESTAMPTZ
+);
+
+Indexes:
+CREATE INDEX idx_api_keys_user_id ON api_keys(user_id);
+CREATE INDEX idx_api_keys_hash ON api_keys(key_hash);
+CREATE INDEX idx_api_keys_active ON api_keys(is_active);
+
+RLS Policies: Standard user-scoped policies
+
+
+4. API_LOGS Table:
+
+Purpose: Request/response logging for API usage analytics
+
+Schema:
+CREATE TABLE api_logs (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  api_key_id UUID REFERENCES api_keys(id) ON DELETE SET NULL,
+  method TEXT NOT NULL,
+  endpoint TEXT NOT NULL,
+  status_code INTEGER NOT NULL,
+  response_time_ms INTEGER NOT NULL,
+  request_body JSONB,
+  cost DECIMAL(10, 6) DEFAULT 0,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+Indexes:
+CREATE INDEX idx_api_logs_user_id ON api_logs(user_id);
+CREATE INDEX idx_api_logs_created_at ON api_logs(created_at DESC);
+CREATE INDEX idx_api_logs_status ON api_logs(status_code);
+
+
+5. API_LIMITS Table:
+
+Purpose: Rate limiting configuration per user
+
+Schema:
+CREATE TABLE api_limits (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID NOT NULL UNIQUE REFERENCES auth.users(id) ON DELETE CASCADE,
+  requests_per_minute INTEGER DEFAULT 60,
+  requests_per_hour INTEGER DEFAULT 1000,
+  requests_per_day INTEGER DEFAULT 10000,
+  max_request_size_mb INTEGER DEFAULT 10,
+  rate_limiting_enabled BOOLEAN DEFAULT true,
+  cors_enabled BOOLEAN DEFAULT true,
+  ip_whitelist JSONB DEFAULT '[]'::jsonb,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+Indexes:
+CREATE UNIQUE INDEX idx_api_limits_user_id ON api_limits(user_id);
+
+
+6. REPO_SUBMISSIONS Table:
+
+Purpose: User-submitted GitHub repositories
+
+Schema:
+CREATE TABLE repo_submissions (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  url TEXT NOT NULL UNIQUE,
+  full_name TEXT NOT NULL,
+  description TEXT,
+  tags TEXT[],
+  submitted_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+Indexes:
+CREATE INDEX idx_submissions_user_id ON repo_submissions(user_id);
+CREATE INDEX idx_submissions_submitted_at ON repo_submissions(submitted_at DESC);
+CREATE UNIQUE INDEX idx_submissions_url ON repo_submissions(url);
+
+Constraints:
+ALTER TABLE repo_submissions
+  ADD CONSTRAINT unique_repo_url UNIQUE (url);
+
+
+7. ONBOARDING_DATA Table:
+
+Purpose: Multi-step onboarding information
+
+Schema:
+CREATE TABLE onboarding_data (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID NOT NULL UNIQUE REFERENCES auth.users(id) ON DELETE CASCADE,
+  
+  -- Step 1: Role and Experience
+  role TEXT CHECK (role IN ('student', 'professional', 'researcher', 'hobbyist')),
+  experience_level TEXT CHECK (experience_level IN ('beginner', 'intermediate', 'expert')),
+  
+  -- Step 2: Tech Stack
+  tech_stack JSONB DEFAULT '[]'::jsonb,
+  primary_language TEXT,
+  
+  -- Step 3: Goals
+  goals TEXT[],
+  
+  -- Step 4: GitHub Connection
+  github_connected BOOLEAN DEFAULT false,
+  github_username TEXT,
+  
+  -- Step 5: Preferences
+  notification_preference TEXT DEFAULT 'all' 
+    CHECK (notification_preference IN ('all', 'important', 'digest', 'none')),
+  preferred_language TEXT DEFAULT 'en',
+  
+  -- Progress Tracking
+  current_step INTEGER DEFAULT 1,
+  completed BOOLEAN DEFAULT false,
+  skipped BOOLEAN DEFAULT false,
+  completed_at TIMESTAMPTZ,
+  skipped_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+Unique Constraint:
+ALTER TABLE onboarding_data
+  ADD CONSTRAINT unique_user_onboarding UNIQUE (user_id);
+
+Trigger for Updated At:
+CREATE OR REPLACE FUNCTION update_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at = NOW();
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER update_onboarding_updated_at
+  BEFORE UPDATE ON onboarding_data
+  FOR EACH ROW
+  EXECUTE FUNCTION update_updated_at_column();
+
+
+8. TRENDING_REPOS Table:
+
+Purpose: Admin-curated trending repositories by category
+
+Schema:
+CREATE TABLE trending_repos (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  topic TEXT NOT NULL CHECK (topic IN (
+    'ai-ml', 'web-dev', 'mobile', 'devops', 'data-science', 'security'
+  )),
+  repo_full_name TEXT NOT NULL,
+  repo_data JSONB NOT NULL,
+  rank INTEGER NOT NULL CHECK (rank >= 1 AND rank <= 5),
+  stars_count INTEGER NOT NULL,
+  created_at_github TIMESTAMPTZ NOT NULL,
+  fetched_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+Unique Constraint:
+ALTER TABLE trending_repos
+  ADD CONSTRAINT unique_topic_repo UNIQUE (topic, repo_full_name);
+
+Indexes:
+CREATE INDEX idx_trending_topic ON trending_repos(topic);
+CREATE INDEX idx_trending_fetched_at ON trending_repos(fetched_at DESC);
+CREATE INDEX idx_trending_topic_rank ON trending_repos(topic, rank);
+
+Staleness Detection Function:
+CREATE OR REPLACE FUNCTION is_trending_data_stale()
+RETURNS BOOLEAN AS $$
+BEGIN
+  RETURN EXISTS (
+    SELECT 1 FROM trending_repos
+    WHERE fetched_at < NOW() - INTERVAL '3 days'
+  );
+END;
+$$ LANGUAGE plpgsql;
+
+RLS Policies:
+CREATE POLICY "Public read access to trending repos"
+  ON trending_repos FOR SELECT
+  TO authenticated, anon
+  USING (true);
+
+CREATE POLICY "Service role can insert trending repos"
+  ON trending_repos FOR INSERT
+  TO service_role
+  WITH CHECK (true);
+
+
+9. PROFILES Table (Extension of auth.users):
+
+Purpose: Extended user profile information
+
+Schema:
+CREATE TABLE profiles (
+  id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+  full_name TEXT,
+  username TEXT UNIQUE,
+  avatar_url TEXT,
+  bio TEXT,
+  location TEXT,
+  website TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+Indexes:
+CREATE UNIQUE INDEX idx_profiles_username ON profiles(username);
+
+RLS Policies: User-scoped access
+
+
+10. ACTIVITY_TRACKING Table:
+
+Purpose: User activity analytics
+
+Schema:
+CREATE TABLE activity_tracking (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  activity_type TEXT NOT NULL,
+  metadata JSONB,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+Indexes:
+CREATE INDEX idx_activity_user_id ON activity_tracking(user_id);
+CREATE INDEX idx_activity_created_at ON activity_tracking(created_at DESC);
+CREATE INDEX idx_activity_type ON activity_tracking(activity_type);
+
+
+2.6.3 Data Relationships and Indexing Strategy
+
+Primary Relationships:
+
+1. One-to-Many Relationships:
+   - Users → Conversations (one user, many conversations)
+   - Users → Notifications (one user, many notifications)
+   - Users → API Keys (one user, many keys)
+   - Users → API Logs (one user, many logs)
+   - Users → Repo Submissions (one user, many submissions)
+   - API Keys → API Logs (one key, many logs)
+
+2. One-to-One Relationships:
+   - Users → API Limits (one user, one limit config)
+   - Users → Onboarding Data (one user, one onboarding)
+   - Users → Profiles (one user, one profile)
+
+3. Independent Tables:
+   - Trending Repos (admin-managed, no direct user relationship)
+   - Activity Tracking (reference-only relationship)
+
+Indexing Strategy:
+
+1. Primary Keys:
+   - All tables use UUID primary keys
+   - Auto-generated with uuid_generate_v4()
+   - Clustered index for fast lookups
+
+2. Foreign Keys:
+   - Indexed automatically by PostgreSQL
+   - user_id columns indexed on all user-related tables
+   - Cascade deletes for user data cleanup
+
+3. Frequently Queried Columns:
+   - created_at: Descending index for recent-first queries
+   - is_read, is_active: Boolean indexes for filtering
+   - status, type: Enum-like TEXT fields indexed
+
+4. Composite Indexes:
+   - (user_id, is_read) on notifications for unread count
+   - (topic, rank) on trending_repos for category queries
+   - (user_id, created_at DESC) for user timeline queries
+
+5. Unique Indexes:
+   - username, email (enforced by Supabase Auth)
+   - url on repo_submissions (prevent duplicates)
+   - (topic, repo_full_name) on trending_repos
+
+6. JSONB Indexing (Future Optimization):
+   - GIN indexes on JSONB columns for deep queries
+   - Path-specific indexes for frequent JSON queries
+
+Query Optimization Patterns:
+
+1. Pagination:
+   - Use LIMIT and OFFSET for large result sets
+   - Order by indexed columns (created_at DESC)
+   - Consider cursor-based pagination for better performance
+
+2. Counting:
+   - Use COUNT(*) with proper WHERE clauses
+   - Cache counts for expensive queries
+   - Consider approximate counts for large tables
+
+3. Filtering:
+   - Leverage indexed columns in WHERE clauses
+   - Use EXPLAIN ANALYZE to verify index usage
+   - Combine filters efficiently (AND before OR)
+
+4. Joins:
+   - Minimize joins when possible
+   - Use indexed foreign keys
+   - Consider denormalization for read-heavy queries
+
+Database Maintenance:
+
+1. Vacuum and Analyze:
+   - Automatic vacuum enabled
+   - Regular ANALYZE for query planner statistics
+   - Monitor table bloat
+
+2. Backup Strategy:
+   - Supabase automatic daily backups
+   - Point-in-time recovery available
+   - Export critical data separately
+
+3. Monitoring:
+   - Track slow queries (> 1000ms)
+   - Monitor index usage
+   - Watch for missing indexes
+   - Track table sizes and growth
+
+
+2.7 SECURITY ARCHITECTURE
+--------------------------
+
+2.7.1 Authentication and Authorization
+
+Authentication Mechanism:
+
+1. Supabase Auth Service:
+   - JWT-based authentication
+   - Secure httpOnly cookies
+   - Automatic token refresh
+   - Session management
+
+2. Middleware Session Refresh:
+   - Intercepts every request
+   - Validates and refreshes session
+   - Stores refreshed session in cookies
+   - Ensures Server Components have fresh auth state
+
+3. Client-Side Session Management:
+   - AuthContext listens to auth state changes
+   - Auto-updates on SIGNED_IN/SIGNED_OUT events
+   - Refreshes user metadata when needed
+   - Cleanup on component unmount
+
+Authorization Patterns:
+
+1. Row Level Security (RLS):
+   - Enforced at database level
+   - Uses auth.uid() for user identification
+   - Policies applied automatically on all queries
+   - Cannot be bypassed from application code
+
+2. Route Protection:
+   - useRequireAuth hook for protected pages
+   - Automatic redirect to /login if unauthenticated
+   - Loading state prevents flash of protected content
+   - Session validation before rendering
+
+3. API Route Authorization:
+   - Verify session in API handlers
+   - Check user permissions
+   - Validate request origin
+   - Rate limiting per user
+
+4. Service Role Access:
+   - Bypasses RLS for admin operations
+   - Used server-side only
+   - Never exposed to client
+   - Audit logging for admin actions
+
+
+2.7.2 Data Security
+
+1. Encryption:
+   - Data at rest: Supabase automatic encryption
+   - Data in transit: HTTPS/TLS 1.3
+   - API keys: Hashed with bcrypt before storage
+   - Sensitive config: Environment variables
+
+2. Input Validation:
+   - Sanitize user inputs
+   - Validate URL formats
+   - Check file types and sizes
+   - Escape special characters in queries
+
+3. SQL Injection Prevention:
+   - Parameterized queries
+   - Supabase client automatic escaping
+   - No raw SQL from user input
+   - Prepared statements
+
+4. XSS Prevention:
+   - React automatic escaping
+   - Sanitize HTML in markdown
+   - Content Security Policy headers
+   - DOMPurify for user-generated content
+
+5. CSRF Protection:
+   - SameSite cookies
+   - Supabase built-in CSRF protection
+   - Origin validation
+   - State parameters for OAuth
+
+6. Rate Limiting:
+   - API playground rate limits per user
+   - GitHub API rate limit handling (5000/hour)
+   - Supabase connection pooling
+   - Denial of Service protection
+
+
+2.7.3 Privacy and Compliance
+
+1. Data Privacy:
+   - User data isolated via RLS
+   - No sharing between users
+   - Secure avatar storage
+   - Automatic data cleanup on account deletion
+
+2. GDPR Considerations:
+   - User data export capability
+   - Account deletion removes all user data (CASCADE)
+   - Clear privacy policy
+   - Cookie consent
+
+3. Security Headers:
+   - X-Frame-Options: DENY
+   - X-Content-Type-Options: nosniff
+   - X-XSS-Protection: 1; mode=block
+   - Strict-Transport-Security (HSTS)
+   - Content-Security-Policy
+
+
+2.8 PERFORMANCE OPTIMIZATION
+-----------------------------
+
+2.8.1 Frontend Performance
+
+1. Code Splitting:
+   - Automatic route-based splitting
+   - Dynamic imports for heavy components
+   - Lazy loading for below-fold content
+   - Vendor chunking for libraries
+
+2. Image Optimization:
+   - Next.js Image component
+   - Automatic WebP/AVIF conversion
+   - Responsive image sizes (7 breakpoints)
+   - Lazy loading with blur placeholder
+   - CDN delivery
+
+3. JavaScript Optimization:
+   - Minification and compression
+   - Tree shaking unused code
+   - Module imports optimization
+   - Icon tree-shaking (lucide-react)
+
+4. CSS Optimization:
+   - Tailwind JIT compilation
+   - Purge unused classes
+   - Critical CSS inline
+   - CSS modules for components
+
+5. React Performance:
+   - useMemo for expensive calculations
+   - useCallback for stable function references
+   - React.memo for pure components
+   - Virtualization for long lists (future)
+
+6. Caching Strategy:
+   - Browser cache for static assets
+   - Service Worker (PWA potential)
+   - localStorage for preferences
+   - SWR/React Query patterns (future)
+
+
+2.8.2 Backend Performance
+
+1. Database Query Optimization:
+   - Indexed queries
+   - Pagination for large result sets
+   - JSONB queries optimized
+   - Connection pooling
+
+2. API Response Optimization:
+   - JSON serialization efficiency
+   - Gzip/Brotli compression
+   - Response caching headers
+   - ETag support
+
+3. External API Optimization:
+   - GitHub API rate limit management
+   - Request batching
+   - Response caching (7-day TTL)
+   - Timeout handling (10 seconds)
+
+4. Real-time Performance:
+   - WebSocket connection pooling
+   - Subscription filtering
+   - Payload size optimization
+   - Connection state management
+
+
+2.8.3 Monitoring and Metrics
+
+1. Performance Metrics:
+   - Core Web Vitals (LCP, FID, CLS)
+   - Time to First Byte (TTFB)
+   - First Contentful Paint (FCP)
+   - Time to Interactive (TTI)
+
+2. Monitoring Tools:
+   - Vercel Analytics (default)
+   - Browser DevTools
+   - Lighthouse audits
+   - Custom performance marks
+
+3. Error Tracking:
+   - Error boundaries catch client errors
+   - API error logging
+   - Console error monitoring
+   - User error reporting (future)
+
+4. Database Monitoring:
+   - Supabase dashboard
+   - Query performance stats
+   - Connection pool status
+   - Table size monitoring
+
+================================================================================
+
+
+================================================================================
+                   AI IMAGE GENERATION PROMPTS FOR THESIS
+================================================================================
+
+CHAPTER 1 - INTRODUCTION IMAGE PROMPT:
+
+Create a professional, modern technical illustration for an AI-powered GitHub repository search platform thesis. The image should be in a 16:9 landscape format with a dark theme background (deep navy blue #0f172a to slate gray #1e293b gradient).
+
+Central Focus:
+- Large, glowing GitHub Octocat logo in the center, semi-transparent with blue luminous edges
+- Surrounding the Octocat, show multiple floating repository cards/windows displaying code snippets, stars, and fork counts
+- Each repository card should have a subtle glass morphism effect with soft shadows
+
+Left Side:
+- A sleek chat interface showing a conversation between a user and AI
+- Chat bubbles in alternating colors (user: light blue, AI: purple gradient)
+- Show natural language queries like "Find me a React dashboard library" and "Show trending ML projects"
+- Include typing indicators and message timestamps
+
+Right Side:
+- A code editor window (like VS Code) with syntax-highlighted code visible
+- Show multiple programming language icons floating around: JavaScript, Python, Java, Go, Rust logos
+- Include a small notification bell icon with a red badge showing "3"
+
+Bottom Section:
+- A search bar with glowing blue edges, placeholder text showing "Ask anything about GitHub repositories..."
+- Small icons representing features: magnifying glass (search), globe (8 languages), chart (analytics), key (API)
+
+Background Elements:
+- Abstract neural network connections between repositories (thin blue lines connecting nodes)
+- Subtle binary code flowing vertically (0s and 1s in very faint blue)
+- Particle effects and small glowing dots creating a technological atmosphere
+- Soft blue and purple light rays emanating from the center
+- Grid pattern overlay (very subtle, like a digital mesh)
+
+Technical Details:
+- Color palette: Primary blues (#2563eb, #3b82f6), purples (#8b5cf6, #a855f7), cyan accents (#06b6d4)
+- Lighting: Soft glow effects, rim lighting on objects
+- Style: Modern, clean, slightly futuristic but professional
+- Depth: Multiple layers with parallax effect, foreground elements sharper
+- Text: Minimal, use modern sans-serif font (Inter or similar)
+- Overall mood: Innovative, intelligent, trustworthy, cutting-edge
+
+Additional Elements:
+- Small GitHub stars floating around repositories
+- Trending up arrow icon near popular repos
+- Shield icon indicating security
+- Small "AI" badge with sparkle effect
+- Clock icon showing real-time updates
+- User avatar circles showing collaboration
+
+Avoid:
+- Cluttered design
+- Too many colors
+- Cartoonish elements
+- Stock photo people
+- Generic tech imagery
+
+Resolution: 3840x2160 pixels (4K) for high quality printing
+Format: PNG with transparency support where needed
+Aspect Ratio: 16:9
+DPI: 300 for print quality
+
+Alternative Prompt for Simpler Design:
+
+A minimalist hero image showing a split-screen design. Left half: Clean white code editor with colorful syntax highlighting showing a React component. Right half: Dark chat interface with AI conversation about finding repositories. Center: Large glowing connection line between them with GitHub Octocat logo. Background: Deep gradient from dark blue to purple. Floating UI elements: notification bell, language selector showing "EN/ES/FR/DE/JA/ZH/HI/TE", API key icon, trending chart. Style: Flat design with subtle shadows, modern tech aesthetic, professional color scheme.
+
+Alternative Prompt for Diagram Style:
+
+Create an architectural diagram illustration showing the SEFGH platform. Center: Large circle labeled "SEFGH Core". Connected to it via lines: "AI (GPT-4o)" with brain icon, "GitHub API" with Octocat, "Supabase Database" with database cylinder, "User Interface" with browser window, "Real-time Notifications" with bell, "Canvas Editor" with code symbol. Each connection should have directional arrows showing data flow. Use isometric 3D style with gradient fills. Color code each component: AI (purple), GitHub (orange), Database (green), UI (blue), Notifications (red), Canvas (yellow). Add small icons and labels. Background: White with subtle grid pattern. Style: Technical but visually appealing, like AWS/Azure architecture diagrams but more colorful.
+
+================================================================================
