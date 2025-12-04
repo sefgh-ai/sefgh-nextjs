@@ -1,0 +1,1220 @@
+================================================================================
+                    THESIS IMAGE PROMPTS FOR SEFGH PROJECT
+================================================================================
+
+This file contains detailed image generation prompts for all diagrams, charts,
+and visual elements mentioned throughout the thesis document. Each prompt is
+designed to be used with AI image generation tools (DALL-E, Midjourney, etc.)
+or as guidance for creating technical diagrams in tools like Lucidchart, Draw.io,
+or Microsoft Visio.
+
+================================================================================
+                            CHAPTER 1: INTRODUCTION
+================================================================================
+
+[No diagrams mentioned in Chapter 1]
+
+================================================================================
+                    CHAPTER 2: SYSTEM DESIGN AND ARCHITECTURE
+================================================================================
+
+--------------------------------------------------------------------------------
+IMAGE 1: Three-Tier Architecture Diagram
+Location: Section 2.1.1 - Presentation Layer
+--------------------------------------------------------------------------------
+
+PROMPT:
+"Create a professional three-tier architecture diagram for a web application showing:
+- Top tier (Presentation Layer): Browser icon with Next.js 16 and React 19 logos, labeled 'User Interface - Server & Client Components'
+- Middle tier (Application Layer): Server icon with API Routes, Middleware, AI Service modules, labeled 'Business Logic Layer'
+- Bottom tier (Data Layer): Database cylinder icon with PostgreSQL/Supabase logo and GitHub API icon, labeled 'Data Persistence'
+- Bidirectional arrows connecting each layer with labels 'HTTP Requests', 'Database Queries', 'API Calls'
+- Modern tech aesthetic with blue and purple gradient colors
+- Clean, minimal design suitable for academic documentation
+- Include small icons representing: authentication shield, caching layer, security lock
+- Style: Technical diagram, flat design, high contrast for printing"
+
+TECHNICAL DETAILS:
+- Aspect ratio: 16:9 or 4:3
+- Format: Vector (SVG preferred) or high-resolution PNG
+- Color scheme: Primary blue (#3B82F6), secondary purple (#8B5CF6), neutral grays
+- Annotations: Clear labels for each component
+
+--------------------------------------------------------------------------------
+IMAGE 2: Application Layer Component Diagram
+Location: Section 2.1.2 - Application Layer
+--------------------------------------------------------------------------------
+
+PROMPT:
+"Create a detailed component diagram of the application layer showing:
+- Central hub labeled 'Application Layer' with four connecting modules
+- Module 1: 'API Routes' with RESTful endpoint icons (GET, POST, PUT, DELETE)
+- Module 2: 'Middleware' with authentication shield and session management icons
+- Module 3: 'AI Service' with GPT-4o brain icon and GitHub Models API logo
+- Module 4: 'Utility Modules' with tools/gear icons for data processing
+- Arrows showing data flow between modules with labels: 'Request', 'Response', 'Data Transform'
+- Each module in a rounded rectangle with distinct colors
+- Modern flat design with icons and minimal text
+- Include small badges showing technologies: Node.js, Express, JWT
+- Style: Professional software architecture diagram, clean lines, organized layout"
+
+TECHNICAL DETAILS:
+- Show clear separation of concerns
+- Use consistent iconography
+- Include legend explaining arrow types (data flow, API call, internal communication)
+
+--------------------------------------------------------------------------------
+IMAGE 3: Data Layer Architecture Diagram
+Location: Section 2.1.3 - Data Layer
+--------------------------------------------------------------------------------
+
+PROMPT:
+"Create a comprehensive data layer architecture diagram showing:
+- Center: Large PostgreSQL database cylinder with Supabase logo
+- Left side: 'Row Level Security (RLS) Policies' shield with user filtering rules
+- Right side: 'External API Integrations' cloud with GitHub API and REST endpoints
+- Bottom: 'Caching Strategy' layer with cache icons and TTL indicators (7-day freshness)
+- Top: Application layer connection with bidirectional arrows
+- Data flow indicators showing: Write operations, Read operations, Cache hits, API fallbacks
+- Security annotations highlighting RLS enforcement at database level
+- Color coding: Green for cached data, blue for live API calls, red for security layers
+- Include small visual indicators for: Transactions, Triggers, Stored Procedures
+- Style: Technical infrastructure diagram, layered architecture, professional color scheme"
+
+TECHNICAL DETAILS:
+- Emphasize security mechanisms visually
+- Show caching workflow clearly
+- Include performance optimization indicators
+
+--------------------------------------------------------------------------------
+IMAGE 4: Supabase Services Integration Diagram
+Location: Section 2.1.4 - Key Architectural Components
+--------------------------------------------------------------------------------
+
+PROMPT:
+"Create an integration diagram showing Supabase services connected to the application:
+- Center: Next.js Application icon
+- Surrounding services (in circular arrangement):
+  * PostgreSQL Database (cylinder icon with table symbols)
+  * Auth Service (user icon with key/lock)
+  * Realtime Service (WebSocket icon with bidirectional waves)
+  * Storage Service (S3 bucket icon with image/file symbols)
+- Arrows from application to each service labeled with operations:
+  * Database: 'SQL Queries', 'RLS Policies'
+  * Auth: 'Login/Signup', 'JWT Tokens', 'Session Management'
+  * Realtime: 'Subscriptions', 'Live Updates', 'Notifications'
+  * Storage: 'Avatar Upload', 'CDN Delivery', 'Image Transform'
+- Supabase brand colors (green #3ECF8E)
+- Modern cloud infrastructure aesthetic
+- Include small status indicators (green checkmarks) for active connections
+- Style: Cloud services diagram, modern flat design, clear connection lines"
+
+TECHNICAL DETAILS:
+- Show real-time WebSocket connections distinctly
+- Highlight authentication flow
+- Include API endpoint examples
+
+--------------------------------------------------------------------------------
+IMAGE 5: Deployment Architecture Diagram
+Location: Section 2.1.4 - External Services and Infrastructure
+--------------------------------------------------------------------------------
+
+PROMPT:
+"Create a global deployment architecture diagram showing:
+- Top: User icons distributed across globe (Americas, Europe, Asia)
+- Middle: Vercel Edge Network with multiple CDN nodes on world map
+- Connection lines from users to nearest edge nodes
+- Bottom: Origin server with Next.js application
+- Side panel showing: 
+  * 'Automatic HTTPS' with SSL certificate icon
+  * 'Environment Variables' with config file icon
+  * 'Analytics Dashboard' with chart icon
+  * 'Git Integration' with GitHub logo and deployment pipeline
+- Data flow arrows showing:
+  * Static assets served from CDN (green fast path)
+  * API routes routed to origin (orange)
+  * Supabase database connections (blue)
+- Include latency indicators (ms) on connection lines
+- Vercel brand colors (black and white with accent colors)
+- Style: Global infrastructure map, modern tech company aesthetic, world map background"
+
+TECHNICAL DETAILS:
+- Emphasize global CDN distribution
+- Show deployment automation
+- Include performance metrics visualization
+
+--------------------------------------------------------------------------------
+IMAGE 6: User Authentication Flow Diagram
+Location: Section 2.2.1 - User Authentication and Session Management Workflow
+--------------------------------------------------------------------------------
+
+PROMPT:
+"Create a detailed sequence flow diagram for user authentication showing:
+- Swimlanes for: User Browser, Next.js Middleware, Supabase Auth, PostgreSQL Database
+- Step-by-step flow from top to bottom:
+  1. User navigates to page (browser icon)
+  2. Middleware intercepts request (shield icon)
+  3. Token extraction from cookies (cookie icon with JWT label)
+  4. Token validation with Supabase (checkmark or X icon)
+  5. Token refresh if expiring (refresh circular arrow)
+  6. New tokens stored in HTTP-only cookies (lock icon)
+  7. User metadata loaded from database (user profile icon)
+  8. AuthContext populated (React logo with context API)
+  9. Page rendered with user data (webpage icon)
+- Decision diamonds for: 'Token valid?', 'Token expiring?', 'User exists?'
+- Different colored arrows for: Success (green), Failure (red), Redirect (orange)
+- Include timing annotations (milliseconds) for performance
+- Style: UML sequence diagram, professional flowchart, clear decision points"
+
+TECHNICAL DETAILS:
+- Show error handling paths
+- Indicate async operations
+- Include security token symbols
+
+--------------------------------------------------------------------------------
+IMAGE 7: Conversational Search Workflow Diagram
+Location: Section 2.2.2 - Conversational Search Workflow
+--------------------------------------------------------------------------------
+
+PROMPT:
+"Create a comprehensive workflow diagram for AI-powered conversational search:
+- Left: User interface with chat input box and message bubbles
+- Center flow (vertical):
+  1. User query submission (speech bubble icon)
+  2. API route handler (/api/chat) with validation checks
+  3. System message construction (instruction document icon)
+  4. Messages array preparation (array brackets with message objects)
+  5. GitHub Models API call (GPT-4o brain icon with Azure cloud)
+  6. AI response generation (lightbulb icon with text)
+  7. Response parsing (code parser icon)
+  8. Repository URL extraction (link icon with regex pattern)
+  9. GitHub REST API enhancement (GitHub logo with metadata)
+  10. Response enrichment (data merge icon)
+  11. Database persistence (save icon)
+  12. Frontend rendering (UI update icon)
+- Right: Repository card preview with metadata
+- Include example data at each step (sample JSON, URLs, responses)
+- Color code by operation type: Blue (API), Green (Database), Purple (AI), Orange (Frontend)
+- Show error handling branches at critical steps
+- Style: Detailed technical workflow, modern design, step-by-step visualization"
+
+TECHNICAL DETAILS:
+- Show data transformation at each stage
+- Include API payload examples
+- Highlight caching opportunities
+
+--------------------------------------------------------------------------------
+IMAGE 8: Repository Data Retrieval Flow Diagram
+Location: Section 2.2.3 - Repository Data Retrieval and Caching Strategy
+--------------------------------------------------------------------------------
+
+PROMPT:
+"Create a decision tree flowchart for repository data retrieval with caching:
+- Start: 'Repository request received' (entry point)
+- First decision: 'Cache exists?' (database query icon)
+  * YES path → Second decision: 'Cache fresh? (<7 days)'
+    - YES → Return cached data (fast green path with rocket icon)
+    - NO → Fetch from GitHub API (orange path)
+  * NO path → Fetch from GitHub API (orange path)
+- GitHub API fetch section:
+  * API request with authentication token (key icon)
+  * Response received (200 OK or error codes)
+  * Extract metadata (data parsing icon)
+  * Update cache (database write icon)
+  * Return data (green arrow)
+- Error handling branches:
+  * 404 Not Found → Return error to user (red X)
+  * 403 Rate Limited → Serve stale cache if available (yellow warning)
+  * Network error → Fallback to stale cache (orange fallback)
+- Include timing metrics: Cache hit (5ms), API call (500ms)
+- Cache freshness indicator: Green (fresh), Yellow (stale), Red (expired)
+- Style: Technical decision flowchart, clear logic paths, performance-focused"
+
+TECHNICAL DETAILS:
+- Show all decision branches
+- Include performance timing
+- Highlight optimization strategy
+
+================================================================================
+                    CHAPTER 3: DATABASE SCHEMA AND ARCHITECTURE
+================================================================================
+
+--------------------------------------------------------------------------------
+IMAGE 9: Entity-Relationship Diagram
+Location: Section 2.6.1 - Database Design Philosophy
+--------------------------------------------------------------------------------
+
+PROMPT:
+"Create a comprehensive Entity-Relationship Diagram (ERD) for a database schema:
+- Center: 'auth.users' table (managed by Supabase) as the primary entity
+- Connected entities radiating outward:
+  * user_conversations (1:many relationship with messages JSONB)
+  * notifications (1:many with unread badge indicator)
+  * api_keys (1:many with key hash security icon)
+  * api_logs (1:many with analytics chart icon)
+  * api_limits (1:1 with rate limit gauge)
+  * repo_submissions (1:many with GitHub logo)
+  * onboarding_data (1:1 with checklist icon)
+  * profiles (1:1 with user avatar icon)
+  * activity_tracking (1:many with timeline icon)
+- Separate entity: trending_repos (public, no user relationship, admin managed)
+- Connection lines showing:
+  * Solid lines for foreign key relationships
+  * Dashed lines for reference relationships
+  * Cardinality markers (1, ∞) at line ends
+- Each table box includes:
+  * Table name header with database icon
+  * Primary key (id UUID) marked with key symbol
+  * Foreign keys (user_id) with FK marker
+  * 2-3 key columns listed
+- Color coding:
+  * User-related tables: Blue (#3B82F6)
+  * API-related tables: Green (#10B981)
+  * Content tables: Purple (#8B5CF6)
+  * System tables: Orange (#F59E0B)
+- Include RLS policy shield icons on user-scoped tables
+- Add indexes icon on frequently queried columns
+- Style: Professional database diagram, clean lines, technical aesthetic
+- Include legend explaining symbols, relationships, and color coding"
+
+TECHNICAL DETAILS:
+- Show CASCADE delete relationships
+- Indicate UNIQUE constraints with U symbol
+- Mark indexed columns with index icon
+- Use crow's foot notation for relationships
+
+--------------------------------------------------------------------------------
+IMAGE 10: Database Tables Structure Visualization
+Location: Section 2.6.2 - Core Database Tables
+--------------------------------------------------------------------------------
+
+PROMPT:
+"Create a detailed database table structure visualization showing all 10 core tables:
+- Layout: 2x5 grid arrangement of table schemas
+- Each table displayed as a structured box with:
+  * Table name header with icon (conversations: chat bubble, notifications: bell, etc.)
+  * Column list with data types:
+    - id UUID PRIMARY KEY (with key icon)
+    - user_id UUID REFERENCES auth.users (with link icon)
+    - Specific columns for each table with data types
+  * Constraints section:
+    - UNIQUE constraints (with U badge)
+    - CHECK constraints (with checkmark)
+    - FOREIGN KEY (with chain link)
+  * Indexes section:
+    - List of indexes with lightning bolt icon
+    - Composite indexes clearly marked
+  * RLS Policies badge (shield icon with 'RLS' text)
+- Tables to display:
+  1. user_conversations (with messages JSONB highlighted)
+  2. notifications (with trigger function indicator)
+  3. api_keys (with hash icon for key_hash)
+  4. api_logs (with request/response icons)
+  5. api_limits (with rate limit gauge)
+  6. repo_submissions (with URL and unique constraint)
+  7. onboarding_data (with multi-step progress indicator)
+  8. trending_repos (with topic categories and rank)
+  9. profiles (with avatar_url field)
+  10. activity_tracking (with metadata JSONB)
+- Color-coded by category:
+  * Conversations: Blue gradient
+  * Notifications: Red gradient
+  * API management: Green gradient
+  * Content: Purple gradient
+  * User data: Orange gradient
+- Include small annotations for:
+  * JSONB columns (JSON icon)
+  * Timestamp fields (clock icon)
+  * Boolean flags (toggle icon)
+- Style: Technical documentation, clean typography (Courier New for code, Inter for labels)
+- Background: Light gray (#F3F4F6) with white table boxes
+- Add drop shadows for depth"
+
+TECHNICAL DETAILS:
+- Show actual column names and types from schema
+- Indicate nullable vs NOT NULL columns
+- Mark auto-generated fields (DEFAULT values)
+- Show timestamp triggers
+
+--------------------------------------------------------------------------------
+IMAGE 11: Row Level Security (RLS) Policy Flow
+Location: Section 2.6.2 - Core Database Tables (RLS Policies section)
+--------------------------------------------------------------------------------
+
+PROMPT:
+"Create a flowchart showing Row Level Security (RLS) policy enforcement:
+- Top: User makes database query (user icon with SQL query bubble)
+- Step 1: Query enters PostgreSQL (database cylinder icon)
+- Step 2: Authentication check - 'Is user authenticated?' (decision diamond)
+  * NO → Query rejected (red X, 401 error)
+  * YES → Continue to Step 3
+- Step 3: RLS policy evaluation (shield icon with policy rules)
+  * Extract auth.uid() from session (key icon)
+  * Compare with user_id in query (comparison operator)
+  * Apply policy filters automatically (filter funnel icon)
+- Step 4: Policy check - 'Does user own this data?' (decision diamond)
+  * NO → Row filtered out (filtered icon, no data returned)
+  * YES → Continue to Step 5
+- Step 5: Execute filtered query (gear icon)
+- Step 6: Return authorized results (green checkmark, data rows)
+- Side panel showing example policies:
+  * SELECT policy: 'Users can view own conversations'
+  * INSERT policy: 'Users can create own conversations'
+  * UPDATE policy: 'Users can update own conversations'
+  * DELETE policy: 'Users can delete own conversations'
+- Bottom section showing security benefits:
+  * 'Database-level enforcement' (lock icon)
+  * 'Cannot be bypassed by app code' (shield icon)
+  * 'Automatic multi-tenancy' (users icon)
+  * 'Zero trust architecture' (security badge)
+- Color coding:
+  * Security checks: Red/Orange
+  * Policy evaluation: Blue
+  * Success paths: Green
+  * Failure paths: Red with X marks
+- Style: Security-focused flowchart, professional technical diagram
+- Include code snippet showing RLS policy SQL syntax"
+
+TECHNICAL DETAILS:
+- Show auth.uid() function usage
+- Indicate policy types (SELECT, INSERT, UPDATE, DELETE)
+- Display actual policy WHERE clauses
+- Show CASCADE effects
+
+--------------------------------------------------------------------------------
+IMAGE 12: Data Indexing Strategy Visualization
+Location: Section 2.6.3 - Data Relationships and Indexing Strategy
+--------------------------------------------------------------------------------
+
+PROMPT:
+"Create a comprehensive database indexing strategy visualization:
+- Center: Database performance optimization hub icon
+- Five sections radiating outward:
+
+1. PRIMARY KEY INDEXES (top, gold color):
+   - UUID primary keys on all tables
+   - Clustered index structure diagram
+   - B-tree index visualization
+   - Lightning bolt icon for fast lookups
+
+2. FOREIGN KEY INDEXES (top-right, blue color):
+   - user_id columns across tables
+   - Automatic indexing by PostgreSQL
+   - Relationship chain visualization
+   - CASCADE delete indicator
+
+3. FREQUENTLY QUERIED COLUMNS (right, green color):
+   - created_at DESC (clock icon)
+   - is_read, is_active booleans (toggle icons)
+   - status, type enums (tag icons)
+   - Performance improvement metrics (+80% speed)
+
+4. COMPOSITE INDEXES (bottom-right, purple color):
+   - (user_id, is_read) on notifications
+   - (topic, rank) on trending_repos
+   - (user_id, created_at DESC) for timelines
+   - Multiple column index structure diagram
+
+5. UNIQUE INDEXES (bottom-left, orange color):
+   - username (profile icon)
+   - url on repo_submissions (link icon)
+   - (topic, repo_full_name) compound (dual key icon)
+   - Unique constraint badge
+
+6. JSONB INDEXES (left, red color):
+   - GIN indexes for JSONB columns
+   - Path-specific index examples
+   - JSON query optimization icon
+   - Future optimization badge
+
+- Center connections showing:
+  * Query optimizer using indexes (brain icon)
+  * Index selection logic (decision tree)
+  * Performance monitoring (speedometer)
+  * EXPLAIN ANALYZE tool reference
+
+- Bottom panel showing index performance metrics:
+  * 'Index Hit Ratio: 99%' (target icon)
+  * 'Query Time: <50ms average' (stopwatch)
+  * 'Table Scan Avoidance: 95%' (efficiency badge)
+
+- Side annotations:
+  * 'B-tree structure' with tree diagram
+  * 'GIN (Generalized Inverted Index)' explanation
+  * 'Composite vs Single column' comparison
+
+- Color gradient background from light to dark
+- Modern technical aesthetic with icons and metrics
+- Include small code snippets showing CREATE INDEX syntax"
+
+TECHNICAL DETAILS:
+- Show actual index names from schema
+- Indicate index types (B-tree, GIN, BRIN)
+- Display index size considerations
+- Show query plan optimization
+
+--------------------------------------------------------------------------------
+IMAGE 13: Query Optimization Patterns
+Location: Section 2.6.3 - Query Optimization Patterns
+--------------------------------------------------------------------------------
+
+PROMPT:
+"Create an infographic showing database query optimization patterns:
+- Four-quadrant layout with central optimization hub:
+
+QUADRANT 1 - PAGINATION (top-left, blue):
+- Pattern visualization: LIMIT and OFFSET
+- Code snippet: 'SELECT * FROM table ORDER BY created_at DESC LIMIT 20 OFFSET 40'
+- Cursor-based pagination alternative diagram
+- Performance comparison: 'Offset vs Cursor' bar chart
+- Page icon with numbered pages
+
+QUADRANT 2 - COUNTING (top-right, green):
+- Pattern: COUNT(*) with WHERE clauses
+- Code snippet: 'SELECT COUNT(*) FROM table WHERE user_id = $1'
+- Caching strategy diagram (cache icon)
+- Approximate count for large tables
+- Calculator icon with optimization badge
+
+QUADRANT 3 - FILTERING (bottom-left, purple):
+- Indexed column filtering visualization
+- Code snippet: 'WHERE user_id = $1 AND is_read = false'
+- EXPLAIN ANALYZE output example
+- Filter funnel icon with indexed columns highlighted
+- Performance metrics: 'Index Scan vs Seq Scan'
+
+QUADRANT 4 - JOINS (bottom-right, orange):
+- Minimize joins diagram showing table relationships
+- Code snippet: 'SELECT * FROM users u JOIN conversations c ON u.id = c.user_id'
+- Indexed foreign keys emphasis
+- Denormalization consideration (two-way arrow)
+- Join strategy comparison table
+
+CENTER HUB - OPTIMIZATION WORKFLOW:
+- 'Write Query' → 'Check Indexes' → 'Run EXPLAIN' → 'Analyze Results' → 'Optimize'
+- Circular workflow with gear icons
+- Performance monitoring dashboard preview
+- Query execution plan visualization
+
+BOTTOM SECTION - BEST PRACTICES:
+- 'Use indexed columns in WHERE' (checkmark, green)
+- 'Avoid SELECT *' (X mark, red)
+- 'Combine filters efficiently (AND before OR)' (logic gate icon)
+- 'Monitor slow queries (>1000ms)' (alert icon)
+- 'Regular ANALYZE for statistics' (refresh icon)
+
+- Style: Educational infographic, clean modern design
+- Color-coded sections with icons
+- Include performance metrics and benchmarks
+- Show before/after optimization comparisons"
+
+TECHNICAL DETAILS:
+- Display actual query examples
+- Show EXPLAIN output format
+- Indicate index usage in queries
+- Performance timing comparisons
+
+================================================================================
+                    CHAPTER 4: KEY FEATURES AND FUNCTIONALITY
+================================================================================
+
+--------------------------------------------------------------------------------
+IMAGE 14: AI-Powered Chat Interface Workflow
+Location: Chapter 4 - Key Features and Functionality
+--------------------------------------------------------------------------------
+
+PROMPT:
+"Create a detailed user workflow diagram for the AI-powered chat interface:
+- Left side: User journey steps (vertical timeline)
+  1. User opens chat interface (browser window icon)
+  2. Types natural language query (keyboard icon, speech bubble)
+  3. Submits message (send button icon)
+  4. AI processes request (loading spinner, brain icon)
+  5. Receives recommendations (lightbulb icon)
+  6. Explores repositories (magnifying glass icon)
+  7. Opens Canvas editor (code editor icon)
+  
+- Center: Chat interface mockup showing:
+  * Clean ChatGPT-style interface
+  * User message bubble (light blue, right-aligned)
+  * AI response bubble (purple gradient, left-aligned)
+  * Repository suggestion cards with:
+    - GitHub logo and repo name
+    - Star count (star icon) and fork count (fork icon)
+    - Language badge (JavaScript, Python, etc.)
+    - Brief description
+    - 'View Details' button
+  * Code block with syntax highlighting
+  * 'Copy' and 'Open in Canvas' buttons
+  * Message timestamps
+  * Conversation title at top
+
+- Right side: Feature highlights (vertical list with icons):
+  * 'Semantic understanding' (brain with connections)
+  * 'Context awareness' (puzzle pieces fitting)
+  * 'Follow-up questions' (conversation thread icon)
+  * 'Code examples' (code brackets icon)
+  * 'Real-time enrichment' (GitHub API icon)
+  * 'Conversation history' (clock with history icon)
+  * 'Export & share' (share icon)
+
+- Top banner: Example queries in speech bubbles:
+  * 'Find me a React dashboard library'
+  * 'Show trending ML projects'
+  * 'Best authentication library for Express?'
+
+- Bottom section: AI processing pipeline (simplified):
+  Query → GPT-4o → Parse response → Enrich with GitHub API → Display
+
+- Color scheme: Modern tech (blues, purples, greens)
+- Style: User-friendly interface mockup with workflow annotations
+- Include cursor/pointer showing interaction points"
+
+TECHNICAL DETAILS:
+- Show actual UI components
+- Indicate state changes (loading, success, error)
+- Display markdown rendering
+- Show responsive design adaptations
+
+--------------------------------------------------------------------------------
+IMAGE 15: Canvas Code Editor Interface
+Location: Chapter 4 - Canvas Code Editor Feature
+--------------------------------------------------------------------------------
+
+PROMPT:
+"Create a detailed interface mockup of the Canvas Code Editor:
+- Main layout: Split-screen design (desktop) or fullscreen (mobile)
+
+LEFT SIDE - Chat conversation (30% width):
+- Conversation thread visible
+- Current message highlighted
+- Code block that triggered Canvas
+- Small reference panel
+
+RIGHT SIDE - Canvas Editor (70% width):
+- Header bar with:
+  * 'Canvas Code Editor' title
+  * Language selector dropdown (16+ languages: JavaScript, Python, Java, Go, Rust, etc.)
+  * 'X' close button
+  * Download button with file icon
+
+- Three-tab interface:
+  TAB 1 - EDIT (active state):
+  * Line numbers (1-25 visible)
+  * Code textarea with:
+    - Example React component code
+    - Proper indentation
+    - No syntax highlighting (editing mode)
+    - Cursor blinking
+  * Word wrap toggle
+  * Font size controls
+  
+  TAB 2 - PREVIEW:
+  * Read-only code display
+  * Full syntax highlighting (GitHub Dark theme)
+  * Color-coded: keywords (purple), strings (green), comments (gray), functions (blue)
+  * Copy button (top-right corner)
+  * Scrollbar for long code
+
+  TAB 3 - NOTES:
+  * Blank textarea for personal notes
+  * Placeholder: 'Add your notes, questions, or modifications...'
+  * Markdown support indicator
+  * Character count
+
+- Footer bar:
+  * Language badge (e.g., 'JavaScript' with JS logo)
+  * Line count indicator ('25 lines')
+  * Character count ('450 chars')
+  * Download button (primary action, blue)
+
+- Responsive indicator: Show mobile view (fullscreen) vs desktop view (side-by-side) comparison
+
+- Background: Dark theme with subtle grid pattern
+- Syntax highlighting colors: VSCode GitHub Dark theme palette
+- Icons: Modern, minimal line icons
+- Animations: Subtle tab switching animation indicators
+
+- Style: Professional code editor aesthetic, similar to VSCode/Monaco editor
+- Include tooltips showing keyboard shortcuts (Ctrl+S to download, etc.)"
+
+TECHNICAL DETAILS:
+- Show actual code examples
+- Display line numbering system
+- Indicate tab states (active, inactive)
+- Show download file naming convention
+
+--------------------------------------------------------------------------------
+IMAGE 16: Multi-Step Onboarding Flow
+Location: Chapter 4 - User Onboarding System
+--------------------------------------------------------------------------------
+
+PROMPT:
+"Create a comprehensive visual guide for the 5-step onboarding process:
+- Horizontal timeline layout with 5 connected steps:
+
+STEP 1 - ROLE & EXPERIENCE (purple):
+- Icon: User with briefcase
+- Form showing:
+  * Radio buttons for roles: Student, Professional, Researcher, Hobbyist
+  * Experience level: Beginner, Intermediate, Expert (with slider)
+  * Small illustration matching each role
+- Progress indicator: 1 of 5 (20%)
+
+STEP 2 - TECH STACK (blue):
+- Icon: Stacked technology logos
+- Form showing:
+  * Multi-select technology chips:
+    - React, Vue, Angular, Next.js (frontend)
+    - Node.js, Python, Java, Go (backend)
+    - MongoDB, PostgreSQL, MySQL (databases)
+  * Primary language dropdown: JavaScript, Python, Java, etc.
+  * Custom tech stack input field
+- Progress indicator: 2 of 5 (40%)
+
+STEP 3 - GOALS (green):
+- Icon: Target with arrow
+- Form showing:
+  * Checkbox list of goals:
+    □ Learn new technologies
+    □ Find project dependencies
+    □ Contribute to open source
+    □ Stay updated with trends
+    □ Build production apps
+    □ Academic research
+  * Custom goal input field
+- Progress indicator: 3 of 5 (60%)
+
+STEP 4 - GITHUB CONNECTION (orange):
+- Icon: GitHub Octocat with link chain
+- Form showing:
+  * 'Connect GitHub Account' button (large, primary)
+  * GitHub logo and OAuth indicator
+  * Optional: Skip for now (secondary button)
+  * Benefits list:
+    - Import starred repos
+    - Personalized suggestions
+    - Track contributions
+- Progress indicator: 4 of 5 (80%)
+
+STEP 5 - PREFERENCES (red):
+- Icon: Settings gear with notification bell
+- Form showing:
+  * Notification preferences radio:
+    ○ All notifications
+    ○ Important only
+    ○ Daily digest
+    ○ None
+  * Language selector dropdown: EN, ES, FR, DE, JA, ZH, HI, TE
+  * Email notifications toggle
+  * Theme preference (Light/Dark/Auto)
+- Progress indicator: 5 of 5 (100%)
+- 'Complete Setup' button (large, green, with checkmark)
+
+TOP SECTION:
+- Overall progress bar (colorful gradient, 0-100%)
+- Step indicators with numbers (1-5)
+- Active step highlighted, completed steps with checkmarks
+
+BOTTOM SECTION:
+- Navigation buttons: 'Back' and 'Continue' (or 'Complete')
+- 'Skip onboarding' link (gray, small)
+- Estimated time: '2 minutes remaining'
+
+SIDE PANEL (right):
+- Preview of personalized experience:
+  * Sample dashboard showing customized content
+  * Repository recommendations based on selections
+  * Notification preview
+  * 'This is what you'll see!' label
+
+- Style: Modern wizard interface, friendly and approachable
+- Color progression: Each step has distinct color
+- Animations: Progress bar filling, checkmarks appearing
+- Responsive: Show mobile-optimized vertical layout
+- Include validation indicators (green checkmarks, red errors)"
+
+TECHNICAL DETAILS:
+- Show form validation states
+- Indicate required vs optional fields
+- Display data persistence across steps
+- Show skip and back navigation
+
+--------------------------------------------------------------------------------
+IMAGE 17: Repository Submission Workflow
+Location: Chapter 4 - Repository Submission System
+--------------------------------------------------------------------------------
+
+PROMPT:
+"Create a detailed flowchart for the repository submission process:
+- Start: User clicks 'Submit Repository' button (top)
+
+PHASE 1 - SUBMISSION FORM (left side):
+- Form interface showing:
+  * GitHub URL input field (with placeholder)
+  * Auto-complete suggestions as user types
+  * URL validation indicator (checkmark or error)
+  * Tags input (multiple chips: 'React', 'Dashboard', 'UI')
+  * Optional description textarea
+  * Category dropdown: AI/ML, Web Dev, Mobile, etc.
+- User clicks 'Submit' button
+
+PHASE 2 - VALIDATION (center):
+- Validation checks (vertical list with progress):
+  1. URL format validation (regex check icon)
+     - Valid GitHub URL? (checkmark/X)
+  2. Repository exists check (GitHub API call icon)
+     - API request to GitHub (loading spinner)
+     - 200 OK or 404 Not Found response
+  3. Duplicate detection (database search icon)
+     - Query: SELECT FROM repo_submissions WHERE url = ?
+     - Unique constraint check
+  4. Repository accessibility (public/private check)
+     - Public repo required (eye icon)
+  5. Auto-extraction of metadata (data parsing icon)
+     - Extract: owner, name, description, language
+     - Fetch: stars, forks, topics from GitHub API
+
+PHASE 3 - OUTCOMES (right side):
+Three possible outcomes with different flows:
+
+SUCCESS PATH (green):
+- All validations passed (checkmark icon)
+- Repository inserted into database
+- Confirmation message: 'Repository submitted successfully!'
+- Display submitted repo card
+- Options: 'Submit another' or 'View submissions'
+- Notification sent to user
+- Badge: 'Submission #X' for user
+
+DUPLICATE PATH (yellow):
+- Duplicate detected (warning icon)
+- Message: 'This repository has already been submitted'
+- Show existing submission details:
+  * Submitted by: Username
+  * Submitted on: Date
+  * Current status: Pending/Approved
+- Option: 'Add to my favorites instead'
+
+ERROR PATH (red):
+- Validation failed (X icon)
+- Error scenarios:
+  * Invalid URL format → 'Please enter a valid GitHub URL'
+  * Repository not found → '404: Repository doesn't exist'
+  * Private repository → 'Only public repositories can be submitted'
+  * Network error → 'Connection failed, please try again'
+- 'Try Again' button
+- 'Contact Support' link
+
+BOTTOM SECTION - ADMIN REVIEW (optional future feature):
+- Admin dashboard preview showing:
+  * Pending submissions queue
+  * Approve/Reject buttons
+  * Quality score indicator
+  * Community vote count
+
+- Style: Professional flowchart with clear decision points
+- Color coding: Green (success), Yellow (warning), Red (error), Blue (process)
+- Icons: Modern, consistent icon set throughout
+- Include example GitHub URLs
+- Show API request/response indicators
+- Display database operations (INSERT, SELECT)
+- Animated transitions between states"
+
+TECHNICAL DETAILS:
+- Show SQL queries for duplicate check
+- Display GitHub API endpoints used
+- Indicate database constraints (UNIQUE)
+- Show error handling patterns
+
+--------------------------------------------------------------------------------
+IMAGE 18: API Playground Dashboard
+Location: Chapter 4 - API Playground and Management
+--------------------------------------------------------------------------------
+
+PROMPT:
+"Create a comprehensive mockup of the API Playground dashboard interface:
+- Header Section:
+  * 'API Playground' title with code icon
+  * 'Generate New API Key' button (prominent, green)
+  * API documentation link
+  * Status indicator: 'All Systems Operational' (green dot)
+
+MAIN DASHBOARD (3-column layout):
+
+LEFT COLUMN - API KEYS MANAGEMENT (30% width):
+- 'Your API Keys' section header
+- List of API keys (cards):
+  KEY CARD 1:
+  * Key name: 'Production App' (editable)
+  * Key prefix: 'sk_live_ABC...' (masked, copy button)
+  * Status: Active (green badge) or Inactive (gray badge)
+  * Created: 'Nov 15, 2024'
+  * Last used: '2 hours ago'
+  * Actions: Regenerate, Delete (icon buttons)
+  
+  KEY CARD 2:
+  * Key name: 'Development' 
+  * Similar structure
+  * Status: Inactive
+  
+- 'Add New Key' button (+ icon)
+- Rate limits display:
+  * 60 requests/minute
+  * 1000 requests/hour
+  * 10,000 requests/day
+  * Usage bars showing current consumption
+
+CENTER COLUMN - ANALYTICS (40% width):
+- 'Usage Analytics' section header with date range picker
+- Charts (stacked vertically):
+  
+  CHART 1 - Request Volume:
+  * Line graph showing requests over time (last 7 days)
+  * X-axis: Days (Mon-Sun)
+  * Y-axis: Request count (0-1000)
+  * Color: Blue gradient fill
+  * Peak highlighted: 'Peak: 850 on Thursday'
+  
+  CHART 2 - Success Rate:
+  * Donut chart showing status codes
+  * 200 OK: 85% (green)
+  * 400 Errors: 10% (yellow)
+  * 500 Errors: 5% (red)
+  * Center: '85% Success'
+  
+  CHART 3 - Response Time:
+  * Bar chart showing average response times
+  * X-axis: API endpoints
+  * Y-axis: Milliseconds (0-500ms)
+  * Color gradient: Green (fast) to Red (slow)
+  * Average line: 250ms
+
+- Key Metrics Cards (horizontal row):
+  * Total Requests: '12,450' (↑ 15% from last week)
+  * Avg Response Time: '245ms' (↓ 5% improvement)
+  * Error Rate: '2.3%' (↓ 0.5% improvement)
+  * Active Keys: '3'
+
+RIGHT COLUMN - REQUEST MONITORING (30% width):
+- 'Recent Requests' section header with refresh button
+- Live request log (scrollable list):
+  LOG ENTRY 1:
+  * Timestamp: '14:23:45'
+  * Method: GET (green badge)
+  * Endpoint: '/api/search'
+  * Status: 200 (green)
+  * Response time: '245ms'
+  * Key: 'Prod...ABC'
+  * Expand icon for details
+  
+  LOG ENTRY 2:
+  * Timestamp: '14:23:12'
+  * Method: POST (blue badge)
+  * Endpoint: '/api/repos'
+  * Status: 400 (yellow)
+  * Response time: '123ms'
+  * Error indicator: 'Invalid parameters'
+  
+- Real-time indicator: 'Live' with pulsing dot
+- Export logs button (CSV/JSON)
+
+BOTTOM SECTION - CODE GENERATION:
+- 'Quick Start' section with tabs:
+  TAB 1 - cURL:
+  ```bash
+  curl -X GET 'https://api.sefgh.com/search?q=react' \
+    -H 'Authorization: Bearer YOUR_API_KEY'
+  ```
+  
+  TAB 2 - JavaScript:
+  ```javascript
+  const response = await fetch('https://api.sefgh.com/search?q=react', {
+    headers: { 'Authorization': 'Bearer YOUR_API_KEY' }
+  });
+  ```
+  
+  TAB 3 - Python:
+  ```python
+  import requests
+  response = requests.get('https://api.sefgh.com/search?q=react',
+    headers={'Authorization': 'Bearer YOUR_API_KEY'})
+  ```
+
+- Copy code button for each tab
+- Language selector for more options
+
+MODAL - GENERATE NEW KEY (overlay):
+- Form fields:
+  * Key name input
+  * Rate limit sliders (per minute, hour, day)
+  * IP whitelist (optional)
+  * CORS settings toggle
+  * Expiration date picker (optional)
+- 'Generate Key' button
+- Security warning: 'Copy your key now, it won't be shown again'
+
+- Style: Modern SaaS dashboard aesthetic
+- Colors: Professional blue/green theme with status indicators
+- Charts: Clean, minimalist data visualization
+- Responsive grid layout
+- Loading states for charts
+- Tooltips on hover for metrics
+- Dark theme optimized"
+
+TECHNICAL DETAILS:
+- Show actual API endpoints
+- Display authentication headers
+- Indicate rate limiting logic
+- Show request/response examples
+
+================================================================================
+                        CHAPTER 5: IMPLEMENTATION DETAILS
+================================================================================
+
+--------------------------------------------------------------------------------
+IMAGE 19: Server vs Client Components Architecture
+Location: Chapter 5 - Implementation Details and Code Analysis
+--------------------------------------------------------------------------------
+
+PROMPT:
+"Create a technical architecture diagram comparing Server Components vs Client Components:
+- Split screen layout with central dividing line
+
+LEFT SIDE - SERVER COMPONENTS (blue theme):
+- Title: 'Server Components' with server icon
+- Execution environment: Server/Node.js logo
+- Characteristics boxes:
+  * 'Renders on Server' (server rack icon)
+  * 'No JavaScript to Client' (JS crossed out)
+  * 'Direct Database Access' (database with direct arrow)
+  * 'async/await Support' (await keyword)
+  * 'Streaming Possible' (stream icon)
+  
+- Use cases (checkmarks):
+  ✓ Fetching data from database
+  ✓ Accessing backend APIs
+  ✓ Reading environment variables
+  ✓ Static content rendering
+  ✓ SEO-critical content
+  
+- Code example box:
+  ```jsx
+  // app/page.js (Server Component - default)
+  export default async function Page() {
+    const data = await fetchFromDB();
+    return <div>{data}</div>;
+  }
+  ```
+  
+- Performance benefits:
+  * 'Reduced Bundle Size' with size comparison: 0 KB vs 45 KB
+  * 'Faster Initial Load' with clock showing reduced time
+  * 'Better SEO' with search engine icon
+
+RIGHT SIDE - CLIENT COMPONENTS (orange theme):
+- Title: 'Client Components' with browser icon
+- Directive indicator: 'use client' at top of file (highlighted)
+- Execution environment: Browser/Chrome logo
+- Characteristics boxes:
+  * 'Renders in Browser' (browser window icon)
+  * 'JavaScript Bundle' (JS file icon with size)
+  * 'Browser APIs Access' (window object)
+  * 'React Hooks' (useState, useEffect icons)
+  * 'Interactivity' (cursor click icon)
+  
+- Use cases (checkmarks):
+  ✓ Event handlers (onClick, onChange)
+  ✓ State management (useState)
+  ✓ Effects (useEffect)
+  ✓ Browser APIs (localStorage, window)
+  ✓ Interactive components
+  
+- Code example box:
+  ```jsx
+  // components/Button.jsx
+  'use client';
+  
+  export default function Button() {
+    const [count, setCount] = useState(0);
+    return <button onClick={() => setCount(count + 1)}>
+      Count: {count}
+    </button>;
+  }
+  ```
+  
+- Trade-offs:
+  * 'Larger Bundle' with bundle size indicator
+  * 'Hydration Required' with hydration icon
+  * 'Interactive UX' with happy user icon
+
+CENTER - COMPONENT TREE:
+- Visual tree showing nesting:
+  ```
+  <Layout> (Server)
+    ├─ <Header> (Server)
+    │   └─ <UserMenu> (Client - 'use client')
+    │       └─ <Avatar> (Client - inherits)
+    ├─ <Page> (Server)
+    │   ├─ <Content> (Server)
+    │   └─ <ChatInterface> (Client - 'use client')
+    │       ├─ <MessageList> (Client - inherits)
+    │       └─ <InputForm> (Client - inherits)
+    └─ <Footer> (Server)
+  ```
+  
+- Arrows showing:
+  * Server components: Solid blue
+  * Client components: Solid orange
+  * Boundary: 'use client' directive marked with bold line
+  * Cascading effect: Once client, always client below
+
+BOTTOM SECTION - BEST PRACTICES:
+1. 'Place use client as deep as possible in the tree' (tree icon with deep leaf highlighted)
+2. 'Maximize server components for better performance' (rocket icon)
+3. 'Use client components only for interactivity' (hand pointer icon)
+4. 'Pass server-fetched data as props to client components' (arrow icon)
+
+- Comparison table:
+  | Feature | Server | Client |
+  |---------|--------|--------|
+  | Data Fetching | Direct | Via API |
+  | Bundle Size | Small | Larger |
+  | Interactivity | None | Full |
+  | Hydration | No | Yes |
+  | SEO | Excellent | Good |
+
+- Style: Technical documentation, clear visual distinction
+- Colors: Blue (server), Orange (client), Green (benefits), Red (trade-offs)
+- Include code editor windows with syntax highlighting
+- Show network waterfall comparison (server vs client rendering timing)"
+
+TECHNICAL DETAILS:
+- Show actual Next.js file structure
+- Display component props passing
+- Indicate bundling differences
+- Show hydration process
+
+--------------------------------------------------------------------------------
+IMAGE 20: Context Provider Hierarchy
+Location: Chapter 5 - Provider Hierarchy Pattern
+--------------------------------------------------------------------------------
+
+PROMPT:
+"Create a nested boxes diagram showing the React Context Provider hierarchy:
+- Title: 'Critical Provider Ordering in app/layout.js'
+- Subtitle: 'Order matters - each provider wraps the next'
+
+- Nested structure (like Russian dolls):
+
+OUTERMOST BOX - ThemeProvider (dark purple, largest):
+- Label: '1. ThemeProvider' with theme icon (sun/moon)
+- Purpose: 'Manages dark/light mode, injects CSS variables'
+- Provides: theme, setTheme
+- Must be first: 'Enables theme detection before any rendering'
+- Border: Thick, glowing purple
+
+  SECOND BOX - AuthProvider (blue):
+  - Label: '2. AuthProvider' with lock icon
+  - Purpose: 'Manages authentication state, JWT tokens'
+  - Provides: user, loading, signOut, refreshUser
+  - Depends on: Theme (for auth UI)
+  - Listens to: Supabase auth state changes
+  - Border: Solid blue with shield icon
+
+    THIRD BOX - SettingsProvider (green):
+    - Label: '3. SettingsProvider' with gear icon
+    - Purpose: 'Controls settings modal visibility'
+    - Provides: isSettingsOpen, openSettings, closeSettings
+    - Depends on: Auth (user preferences)
+    - Border: Solid green
+
+      FOURTH BOX - LanguageProvider (orange):
+      - Label: '4. LanguageProvider' with globe icon
+      - Purpose: 'Internationalization, language switching'
+      - Provides: t (translate function), locale, changeLanguage
+      - Depends on: Auth (user language preference)
+      - Border: Solid orange with language flags
+
+        INNERMOST - PageWrapper/Children (white):
+        - Label: 'Page Content' with document icon
+        - All providers available via hooks:
+          * useTheme() → theme, setTheme
+          * useAuth() → user, loading, signOut
+          * useSettings() → isSettingsOpen, openSettings
+          * useLanguage() → t, locale, changeLanguage
+        - Border: White with content icon
+
+- Right side panel: CODE EXAMPLE
+```jsx
+// src/app/layout.js
+export default function RootLayout({ children }) {
+  return (
+    <html suppressHydrationWarning>
+      <body>
+        <ThemeProvider>
+          <AuthProvider>
+            <SettingsProvider>
+              <LanguageProvider>
+                <PageWrapper>
+                  {children}
+                </PageWrapper>
+              </LanguageProvider>
+            </SettingsProvider>
+          </AuthProvider>
+        </ThemeProvider>
+      </body>
+    </html>
+  );
+}
+```
+
+- Bottom section: DEPENDENCY FLOW
+- Arrow diagram showing data flow:
+  Theme → Auth → Settings → Language → Page
+  'Each provider can access providers above it'
+  'Providers cannot access providers below'
+
+- Warning box (red border):
+  ⚠️ 'CRITICAL: Do not reorder providers!'
+  'Changing order will break dependencies and cause runtime errors'
+  Examples:
+  ✗ Auth before Theme → Auth UI won't have theme
+  ✗ Language before Auth → User preference won't load
+
+- Side annotations showing hook usage in components:
+  Component.jsx:
+  ```jsx
+  'use client';
+  import { useAuth } from '@/contexts/AuthContext';
+  import { useLanguage } from '@/contexts/LanguageContext';
+  
+  export default function Component() {
+    const { user } = useAuth();
+    const { t } = useLanguage();
+    return <div>{t('welcome', { name: user.name })}</div>;
+  }
+  ```
+
+- Performance note:
+  'Context updates only re-render subscribed components'
+  'Use multiple contexts instead of one large context'
+  'Memoize context values to prevent unnecessary renders'
+
+- Style: Nested boxes with clear visual hierarchy
+- Colors: Each provider has distinct color
+- Depth indicated by box size and shadow
+- Include icons for each provider type
+- Show data flow with arrows
+- Code examples with syntax highlighting"
+
+TECHNICAL DETAILS:
+- Show actual provider implementations
+- Display context value structures
+- Indicate re-render optimization
+- Show hook usage patterns
+
+--------------------------------------------------------------------------------
+STATUS: Chapter 2, 3, 4, and 5 diagrams complete (20 images total)
+NEXT: Continue with Chapters 6, 7, 8, and additional diagrams
+--------------------------------------------------------------------------------
