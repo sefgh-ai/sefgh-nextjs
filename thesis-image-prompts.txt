@@ -1214,7 +1214,371 @@ TECHNICAL DETAILS:
 - Indicate re-render optimization
 - Show hook usage patterns
 
+================================================================================
+                    CHAPTER 6: TESTING AND QUALITY ASSURANCE
+================================================================================
+
+[Note: Chapter 6 content appears to be omitted from the thesis draft. If testing 
+documentation exists, diagrams would include test pyramid, CI/CD pipeline, test 
+coverage reports, and quality metrics dashboards.]
+
+================================================================================
+                        CHAPTER 7: RESULTS AND DISCUSSION
+================================================================================
+
+PROMPT:
+"Create a nested boxes diagram showing the React Context Provider hierarchy:
+- Title: 'Critical Provider Ordering in app/layout.js'
+- Subtitle: 'Order matters - each provider wraps the next'
+
+- Nested structure (like Russian dolls):
+
+OUTERMOST BOX - ThemeProvider (dark purple, largest):
+- Label: '1. ThemeProvider' with theme icon (sun/moon)
+- Purpose: 'Manages dark/light mode, injects CSS variables'
+- Provides: theme, setTheme
+- Must be first: 'Enables theme detection before any rendering'
+- Border: Thick, glowing purple
+
+  SECOND BOX - AuthProvider (blue):
+  - Label: '2. AuthProvider' with lock icon
+  - Purpose: 'Manages authentication state, JWT tokens'
+  - Provides: user, loading, signOut, refreshUser
+  - Depends on: Theme (for auth UI)
+  - Listens to: Supabase auth state changes
+  - Border: Solid blue with shield icon
+
+    THIRD BOX - SettingsProvider (green):
+    - Label: '3. SettingsProvider' with gear icon
+    - Purpose: 'Controls settings modal visibility'
+    - Provides: isSettingsOpen, openSettings, closeSettings
+    - Depends on: Auth (user preferences)
+    - Border: Solid green
+
+      FOURTH BOX - LanguageProvider (orange):
+      - Label: '4. LanguageProvider' with globe icon
+      - Purpose: 'Internationalization, language switching'
+      - Provides: t (translate function), locale, changeLanguage
+      - Depends on: Auth (user language preference)
+      - Border: Solid orange with language flags
+
+        INNERMOST - PageWrapper/Children (white):
+        - Label: 'Page Content' with document icon
+        - All providers available via hooks:
+          * useTheme() → theme, setTheme
+          * useAuth() → user, loading, signOut
+          * useSettings() → isSettingsOpen, openSettings
+          * useLanguage() → t, locale, changeLanguage
+        - Border: White with content icon
+
+- Right side panel: CODE EXAMPLE
+```jsx
+// src/app/layout.js
+export default function RootLayout({ children }) {
+  return (
+    <html suppressHydrationWarning>
+      <body>
+        <ThemeProvider>
+          <AuthProvider>
+            <SettingsProvider>
+              <LanguageProvider>
+                <PageWrapper>
+                  {children}
+                </PageWrapper>
+              </LanguageProvider>
+            </SettingsProvider>
+          </AuthProvider>
+        </ThemeProvider>
+      </body>
+    </html>
+  );
+}
+```
+
+- Bottom section: DEPENDENCY FLOW
+- Arrow diagram showing data flow:
+  Theme → Auth → Settings → Language → Page
+  'Each provider can access providers above it'
+  'Providers cannot access providers below'
+
+- Warning box (red border):
+  ⚠️ 'CRITICAL: Do not reorder providers!'
+  'Changing order will break dependencies and cause runtime errors'
+  Examples:
+  ✗ Auth before Theme → Auth UI won't have theme
+  ✗ Language before Auth → User preference won't load
+
+- Side annotations showing hook usage in components:
+  Component.jsx:
+  ```jsx
+  'use client';
+  import { useAuth } from '@/contexts/AuthContext';
+  import { useLanguage } from '@/contexts/LanguageContext';
+  
+  export default function Component() {
+    const { user } = useAuth();
+    const { t } = useLanguage();
+    return <div>{t('welcome', { name: user.name })}</div>;
+  }
+  ```
+
+- Performance note:
+  'Context updates only re-render subscribed components'
+  'Use multiple contexts instead of one large context'
+  'Memoize context values to prevent unnecessary renders'
+
+- Style: Nested boxes with clear visual hierarchy
+- Colors: Each provider has distinct color
+- Depth indicated by box size and shadow
+- Include icons for each provider type
+- Show data flow with arrows
+- Code examples with syntax highlighting"
+
+TECHNICAL DETAILS:
+- Show actual provider implementations
+- Display context value structures
+- Indicate re-render optimization
+- Show hook usage patterns
+
+================================================================================
+                    CHAPTER 6: TESTING AND QUALITY ASSURANCE
+================================================================================
+
+[Note: Chapter 6 content appears to be omitted from the thesis draft. If testing 
+documentation exists, diagrams would include test pyramid, CI/CD pipeline, test 
+coverage reports, and quality metrics dashboards.]
+
+================================================================================
+                        CHAPTER 7: RESULTS AND DISCUSSION
+================================================================================
+
 --------------------------------------------------------------------------------
-STATUS: Chapter 2, 3, 4, and 5 diagrams complete (20 images total)
-NEXT: Continue with Chapters 6, 7, 8, and additional diagrams
+IMAGE 21: Core Web Vitals Dashboard
+Location: Chapter 7.1.1 - Frontend Performance Metrics
+--------------------------------------------------------------------------------
+
+PROMPT:
+"Create a comprehensive performance dashboard showing Core Web Vitals metrics:
+- Title: 'SEFGH Platform - Core Web Vitals Performance Dashboard'
+- Subtitle: 'Performance measurements across key pages under simulated 4G network'
+
+MAIN DASHBOARD LAYOUT (3 main sections):
+
+SECTION 1 - LARGEST CONTENTFUL PAINT (LCP):
+- Large gauge visualization with color zones:
+  * Green zone: 0-2.5s (Good)
+  * Yellow zone: 2.5-4.0s (Needs Improvement)
+  * Red zone: 4.0s+ (Poor)
+- Page-specific measurements (horizontal bar chart):
+  * Landing Page: 1.2s (green bar, excellent badge)
+  * Chat Interface: 1.8s (green bar, excellent badge)
+  * Repository Details: 2.1s (green bar, good badge)
+  * Profile Dashboard: 1.5s (green bar, excellent badge)
+  * API Playground: 2.3s (green bar, good badge)
+- Target threshold line at 2.5s
+- Average indicator: 1.78s
+- Optimization strategies listed:
+  * Code splitting reduces bundle size
+  * Server Components for critical content
+  * Image optimization (WebP/AVIF)
+  * Font preloading
+
+SECTION 2 - FIRST INPUT DELAY / INTERACTION TO NEXT PAINT (FID/INP):
+- Dual gauge showing both FID and INP:
+  FID Gauge:
+  * Green zone: 0-100ms
+  * Yellow: 100-300ms
+  * Red: 300ms+
+  * Current: 45ms average (green)
+  * 95th percentile: 82ms (green)
+  
+  INP Gauge:
+  * Green zone: 0-200ms
+  * Yellow: 200-500ms
+  * Red: 500ms+
+  * Current: 125ms average (green)
+  * 95th percentile: 185ms (green)
+
+- Interaction breakdown (pie chart):
+  * Button clicks: 35% (fastest, <100ms)
+  * Form submissions: 25% (fast, <150ms)
+  * Canvas opening: 20% (moderate, <250ms)
+  * Dropdown menus: 15% (fast, <120ms)
+  * Modal dialogs: 5% (fast, <100ms)
+
+- Performance notes:
+  * Main thread unblocked during initial load
+  * Minimal JS execution overhead
+  * React concurrent features utilized
+  * Debouncing on scroll/resize events
+
+SECTION 3 - CUMULATIVE LAYOUT SHIFT (CLS):
+- Stability score visualization (vertical thermometer):
+  * Green zone: 0-0.1 (Good)
+  * Yellow: 0.1-0.25 (Needs Improvement)
+  * Red: 0.25+ (Poor)
+- Page-specific CLS scores (dot plot):
+  * Landing Page: 0.02 (excellent, green dot)
+  * Chat Interface: 0.04 (excellent, green dot)
+  * Repository Details: 0.08 (good, green dot)
+  * Profile Dashboard: 0.03 (excellent, green dot)
+  * Canvas Editor: 0.05 (excellent, green dot)
+- All scores in green zone (< 0.1)
+- Visual stability techniques listed:
+  * Explicit image dimensions
+  * Skeleton loaders reserve space
+  * font-display: swap with fallbacks
+  * No dynamic content insertion above fold
+  * CSS transforms for animations
+
+BOTTOM PANEL - TIME TO FIRST BYTE (TTFB):
+- World map showing global TTFB measurements:
+  * North America (Virginia): 180ms (green pin)
+  * Europe (Frankfurt): 220ms (green pin)
+  * Asia (Singapore): 380ms (yellow pin)
+  * South America (São Paulo): 420ms (yellow pin)
+- Average across all regions: 300ms (good indicator)
+- Optimization strategies:
+  * Efficient database queries with indexing
+  * Connection pooling
+  * Edge network CDN (Vercel)
+  * Minimal middleware processing
+
+RIGHT SIDEBAR - BUNDLE SIZE ANALYSIS:
+- JavaScript bundle breakdown (stacked bar chart):
+  * Initial load: 170 KB gzipped
+    - Framework chunks: 125 KB
+    - Page-specific: 45 KB
+  * Route-specific bundles (lazy-loaded):
+    - Chat interface: 85 KB (markdown, AI)
+    - Canvas editor: 120 KB (highlight.js)
+    - API Playground: 75 KB (charts)
+    - Profile dashboard: 40 KB
+- CSS bundle: 28 KB (after Tailwind purge)
+- Total initial: ~170 KB (reasonable indicator)
+
+- Performance grade summary box:
+  * Overall Grade: A (Excellent)
+  * LCP: ✅ Excellent (average 1.78s)
+  * FID: ✅ Excellent (average 45ms)
+  * INP: ✅ Good (average 125ms)
+  * CLS: ✅ Excellent (average 0.04)
+  * TTFB: ✅ Good (average 300ms)
+
+- Color scheme: Performance colors (green for good, yellow for moderate, red for poor)
+- Style: Professional analytics dashboard, clean metrics visualization
+- Include Lighthouse logo and Web Vitals logo
+- Show measurement date/time
+- Include device icon (desktop vs mobile measurements)"
+
+TECHNICAL DETAILS:
+- Show actual measured values from Lighthouse audits
+- Display percentile distributions (median, 75th, 95th)
+- Indicate network throttling conditions
+- Show before/after optimization comparisons
+
+--------------------------------------------------------------------------------
+IMAGE 22: API Response Time Distribution
+Location: Chapter 7.1.2 - Backend Performance and API Response Times
+--------------------------------------------------------------------------------
+
+PROMPT:
+"Create a comprehensive API performance visualization showing response time distributions:
+- Title: 'API Endpoint Response Time Analysis'
+- Subtitle: 'Performance measurements under typical load (10-50 concurrent users)'
+
+MAIN VISUALIZATION - BOX PLOTS:
+- Vertical box plot chart with 5 categories:
+
+CATEGORY 1 - AUTHENTICATION OPERATIONS (Blue):
+- Login: Median 280ms, Q1 240ms, Q3 320ms, Max 450ms
+- Signup: Median 420ms, Q1 380ms, Q3 480ms, Max 650ms
+- Session Refresh: Median 120ms, Q1 100ms, Q3 140ms, Max 180ms
+- Logout: Median 80ms, Q1 60ms, Q3 95ms, Max 120ms
+- Breakdown annotation: Session creation, DB query, JWT generation
+
+CATEGORY 2 - CHAT & AI OPERATIONS (Purple):
+- Submit Query to AI: Median 2800ms, Q1 2400ms, Q3 3200ms, Max 4500ms
+  * AI inference: ~2200ms
+  * Repository enrichment: ~400ms
+  * Database write: ~150ms
+  * Response formatting: ~50ms
+- Load Conversation: Median 180ms, Q1 150ms, Q3 210ms, Max 280ms
+- Create Conversation: Median 150ms, Q1 120ms, Q3 180ms, Max 250ms
+- Update Conversation: Median 120ms, Q1 100ms, Q3 145ms, Max 200ms
+
+CATEGORY 3 - REPOSITORY OPERATIONS (Green):
+- Fetch Details (Cache Hit): Median 90ms, Q1 70ms, Q3 110ms, Max 150ms
+- Fetch Details (Cache Miss): Median 650ms, Q1 550ms, Q3 750ms, Max 950ms
+- Search Repositories: Median 420ms, Q1 350ms, Q3 480ms, Max 620ms
+- Submit Repository: Median 380ms, Q1 320ms, Q3 440ms, Max 580ms
+- Cache hit vs miss comparison: 7x faster with cache
+
+CATEGORY 4 - NOTIFICATION OPERATIONS (Orange):
+- Fetch Notifications: Median 110ms, Q1 90ms, Q3 130ms, Max 180ms
+- Mark as Read: Median 85ms, Q1 70ms, Q3 100ms, Max 140ms
+- Delete Notification: Median 95ms, Q1 75ms, Q3 115ms, Max 160ms
+- Create Notification: Median 120ms, Q1 100ms, Q3 145ms, Max 190ms
+
+CATEGORY 5 - PROFILE & API PLAYGROUND (Red):
+- Update Profile: Median 180ms, Q1 150ms, Q3 210ms, Max 280ms
+- Upload Avatar: Median 850ms, Q1 720ms, Q3 980ms, Max 1200ms
+- Load Preferences: Median 95ms, Q1 75ms, Q3 115ms, Max 150ms
+- Generate API Key: Median 220ms, Q1 180ms, Q3 260ms, Max 340ms
+- Usage Analytics: Median 280ms, Q1 240ms, Q3 320ms, Max 450ms
+
+RIGHT PANEL - PERFORMANCE BENCHMARKS:
+- Response time categories with emoji indicators:
+  * Instantaneous (<100ms): ⚡ 8 endpoints
+  * Fast (100-300ms): ✅ 12 endpoints
+  * Acceptable (300-1000ms): ⚠️ 5 endpoints
+  * Slow (1000ms+): 🐌 2 endpoints (AI operations expected)
+
+- Percentile summary table:
+  | Endpoint Category | p50 | p75 | p95 | p99 |
+  |-------------------|-----|-----|-----|-----|
+  | Authentication    | 180ms | 250ms | 380ms | 520ms |
+  | Chat & AI         | 2800ms | 3100ms | 3800ms | 4500ms |
+  | Repository        | 280ms | 420ms | 680ms | 850ms |
+  | Notifications     | 105ms | 125ms | 165ms | 190ms |
+  | Profile/API       | 220ms | 340ms | 520ms | 780ms |
+
+BOTTOM SECTION - DATABASE QUERY PERFORMANCE:
+- Query complexity breakdown (horizontal stacked bar):
+  * Simple queries (PK lookups): 3-8ms (green, 40%)
+  * Moderate queries (joins, filters): 12-35ms (blue, 35%)
+  * Complex queries (aggregations): 45-120ms (orange, 20%)
+  * Full-text search: 80-200ms (yellow, 5%)
+
+- External API integration timing (timeline):
+  GitHub REST API: 400-600ms average
+  GitHub Models API: 1800-2500ms average (varies by response length)
+
+- Optimization indicators:
+  * ✅ Database indexing effective
+  * ✅ Connection pooling active
+  * ✅ Caching strategy working (7x improvement)
+  * ⚠️ AI API latency acceptable but high
+  * ✅ Query execution under 200ms for 95%
+
+- Performance targets vs actual (gauge chart):
+  * Target: <100ms for simple operations → Actual: 85ms avg ✅
+  * Target: <500ms for complex operations → Actual: 380ms avg ✅
+  * Target: <3000ms for AI operations → Actual: 2800ms avg ✅
+
+- Style: Professional data analytics, box-and-whisker plots, clean statistical visualization
+- Colors: Category-based color coding with performance indicators
+- Include outlier markers (dots beyond whiskers)
+- Show sample sizes (n=1000+ requests per endpoint)
+- Add annotations for significant findings"
+
+TECHNICAL DETAILS:
+- Show actual HTTP status code distributions (200, 400, 500)
+- Display request payload sizes
+- Indicate async vs sync operations
+- Show connection pool utilization
+
+--------------------------------------------------------------------------------
+STATUS: Chapters 2-5 complete (20 images), Chapter 7 (2 images added)
+NEXT: Continue with remaining Chapter 7 and 8 diagrams
 --------------------------------------------------------------------------------

@@ -1,0 +1,1684 @@
+================================================================================
+                          CHAPTER 9: APPENDIX
+================================================================================
+
+This appendix provides comprehensive technical documentation, code examples,
+configuration files, and supplementary materials that support the implementation
+of the SEFGH platform. The content is organized into sections covering source
+code structure, database schemas, API documentation, configuration files,
+deployment procedures, and additional technical resources.
+
+================================================================================
+                    SECTION A: PROJECT STRUCTURE AND ORGANIZATION
+================================================================================
+
+A.1 ROOT DIRECTORY STRUCTURE
+-----------------------------
+
+sefgh-nextjs/
+├── .github/                    # GitHub-specific configurations
+│   └── copilot-instructions.md # AI assistant instructions
+├── .next/                      # Next.js build output (generated)
+├── docs/                       # Project documentation
+├── node_modules/               # Dependencies (generated)
+├── public/                     # Static assets
+│   ├── fonts/                  # Custom font files
+│   ├── llms.txt               # LLM instructions
+│   ├── obelisk.min.js         # 3D visualization library
+│   ├── robots.txt             # Search engine directives
+│   └── sitemap.xml            # Site structure for SEO
+├── src/                        # Source code
+│   ├── app/                   # Next.js App Router pages
+│   ├── components/            # React components
+│   ├── contexts/              # React Context providers
+│   ├── data/                  # Static data files
+│   ├── hooks/                 # Custom React hooks
+│   ├── lib/                   # Utility libraries
+│   └── locales/               # Internationalization files
+├── supabase/                   # Database schemas and migrations
+├── .eslintrc.json             # ESLint configuration
+├── .gitignore                 # Git ignore patterns
+├── components.json            # shadcn/ui configuration
+├── jsconfig.json              # JavaScript configuration
+├── middleware.js              # Next.js middleware
+├── next.config.mjs            # Next.js configuration
+├── package.json               # Node.js dependencies
+├── postcss.config.mjs         # PostCSS configuration
+├── tailwind.config.mjs        # Tailwind CSS configuration
+└── README.md                  # Project documentation
+
+
+A.2 SOURCE CODE DIRECTORY STRUCTURE
+------------------------------------
+
+src/
+├── app/                        # Next.js 16 App Router
+│   ├── layout.js              # Root layout with providers
+│   ├── page.js                # Landing page
+│   ├── globals.css            # Global styles
+│   ├── not-found.js           # 404 error page
+│   │
+│   ├── about/                 # About page
+│   │   └── page.js
+│   │
+│   ├── api/                   # API routes
+│   │   ├── chat/             # AI chat endpoint
+│   │   ├── conversations/    # Conversation management
+│   │   ├── github/           # GitHub API proxy
+│   │   ├── notifications/    # Notification endpoints
+│   │   ├── playground/       # API playground endpoints
+│   │   └── submissions/      # Repository submissions
+│   │
+│   ├── auth/                  # Authentication pages
+│   │   ├── callback/         # OAuth callback
+│   │   ├── login/            # Login page
+│   │   └── signup/           # Signup page
+│   │
+│   ├── chat/                  # Chat interface
+│   │   ├── page.js           # Chat home
+│   │   └── [id]/             # Individual conversation
+│   │
+│   ├── home/                  # Main dashboard
+│   │   └── page.js
+│   │
+│   ├── notifications/         # Notifications page
+│   │   └── page.js
+│   │
+│   ├── onboarding/            # User onboarding flow
+│   │   └── page.js
+│   │
+│   ├── playground/            # API playground
+│   │   └── page.js
+│   │
+│   ├── profile/               # User profile
+│   │   ├── page.js
+│   │   └── [userId]/         # Public profiles
+│   │
+│   ├── repo/                  # Repository details
+│   │   └── [owner]/
+│   │       └── [name]/
+│   │           └── page.js
+│   │
+│   ├── s/                     # Shared conversations
+│   │   └── [shareId]/
+│   │       └── page.js
+│   │
+│   ├── search/                # Search interface
+│   │   └── page.js
+│   │
+│   ├── submissions/           # Repository submission
+│   │   └── page.js
+│   │
+│   └── trending/              # Trending repositories
+│       └── page.js
+│
+├── components/                 # React components
+│   ├── ui/                    # shadcn/ui base components
+│   │   ├── button.jsx
+│   │   ├── card.jsx
+│   │   ├── dialog.jsx
+│   │   ├── dropdown-menu.jsx
+│   │   ├── input.jsx
+│   │   ├── select.jsx
+│   │   ├── tabs.jsx
+│   │   ├── textarea.jsx
+│   │   └── ...
+│   │
+│   ├── AccountSettingsPanel.jsx
+│   ├── AIMessageRenderer.jsx
+│   ├── AnimatedNavbar.jsx
+│   ├── Canvas.jsx
+│   ├── ChatInterface.jsx
+│   ├── ConversationHistory.jsx
+│   ├── LanguageSwitcher.jsx
+│   ├── MarkdownRenderer.jsx
+│   ├── NotificationBell.jsx
+│   ├── PageWrapper.jsx
+│   ├── RepositoryCard.jsx
+│   ├── RepositoryDetails.jsx
+│   ├── ThemeToggle.jsx
+│   └── ...
+│
+├── contexts/                   # React Context providers
+│   ├── AuthContext.js         # Authentication state
+│   ├── LanguageContext.js     # Internationalization
+│   ├── SettingsContext.js     # User preferences
+│   └── ThemeContext.js        # Theme management
+│
+├── data/                       # Static data files
+│   ├── repositories.js        # Sample repositories
+│   └── trending-categories.js # Trending categories
+│
+├── hooks/                      # Custom React hooks
+│   ├── useAuth.js             # Authentication hook
+│   ├── useLanguage.js         # Language selection hook
+│   ├── useSettings.js         # Settings management hook
+│   └── useTheme.js            # Theme toggle hook
+│
+├── lib/                        # Utility libraries
+│   ├── ai/
+│   │   └── github.js          # GitHub Models API integration
+│   ├── supabase/
+│   │   ├── client.js          # Browser client
+│   │   └── server.js          # Server client
+│   ├── github-api.js          # GitHub REST API wrapper
+│   ├── notifications.js       # Notification helpers
+│   └── utils.js               # General utilities
+│
+└── locales/                    # i18n translation files
+    ├── en.json                # English
+    ├── es.json                # Spanish
+    ├── fr.json                # French
+    ├── de.json                # German
+    ├── ja.json                # Japanese
+    ├── zh.json                # Chinese
+    ├── hi.json                # Hindi
+    └── te.json                # Telugu
+
+
+A.3 DATABASE SCHEMA FILES
+--------------------------
+
+supabase/
+├── activity-tracking-schema.sql      # User activity tracking
+├── avatar-storage-setup.sql          # Avatar upload configuration
+├── notifications-quick-setup.sql     # Notifications setup
+├── notifications-schema.sql          # Notifications table
+├── onboarding-schema.sql             # Onboarding progress
+├── playground-schema.sql             # API playground tables
+├── QUICK_SETUP.sql                   # Combined setup script
+├── repo-details-schema.sql           # Repository cache
+├── repo-submissions-schema.sql       # User submissions
+└── trending-repos-schema.sql         # Trending repositories
+
+
+A.4 KEY CONFIGURATION FILES
+----------------------------
+
+Configuration File              Purpose
+------------------------------- ------------------------------------------
+next.config.mjs                 Next.js framework configuration
+tailwind.config.mjs             Tailwind CSS design system
+components.json                 shadcn/ui component registry
+eslint.config.mjs               Code linting rules
+postcss.config.mjs              CSS processing configuration
+jsconfig.json                   JavaScript path aliases
+middleware.js                   Request interception logic
+package.json                    Dependencies and scripts
+
+================================================================================
+                    SECTION B: DATABASE SCHEMAS (DETAILED)
+================================================================================
+
+B.1 PROFILES TABLE
+------------------
+
+Purpose: Stores extended user profile information beyond Supabase Auth.
+
+CREATE TABLE profiles (
+  id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+  email TEXT NOT NULL,
+  full_name TEXT,
+  avatar_url TEXT,
+  bio TEXT,
+  github_username TEXT,
+  website_url TEXT,
+  location TEXT,
+  company TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Row Level Security Policies
+ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can view own profile"
+  ON profiles FOR SELECT
+  USING (auth.uid() = id);
+
+CREATE POLICY "Users can update own profile"
+  ON profiles FOR UPDATE
+  USING (auth.uid() = id);
+
+CREATE POLICY "Public profiles are viewable by everyone"
+  ON profiles FOR SELECT
+  USING (true);
+
+-- Indexes for performance
+CREATE INDEX idx_profiles_email ON profiles(email);
+CREATE INDEX idx_profiles_github_username ON profiles(github_username);
+
+
+B.2 CONVERSATIONS TABLE
+------------------------
+
+Purpose: Stores AI chat conversations with metadata.
+
+CREATE TABLE conversations (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  title TEXT NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  is_shared BOOLEAN DEFAULT FALSE,
+  share_id TEXT UNIQUE,
+  message_count INTEGER DEFAULT 0,
+  last_message_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Row Level Security
+ALTER TABLE conversations ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can view own conversations"
+  ON conversations FOR SELECT
+  USING (auth.uid() = user_id OR is_shared = TRUE);
+
+CREATE POLICY "Users can create own conversations"
+  ON conversations FOR INSERT
+  WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Users can update own conversations"
+  ON conversations FOR UPDATE
+  USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can delete own conversations"
+  ON conversations FOR DELETE
+  USING (auth.uid() = user_id);
+
+-- Indexes
+CREATE INDEX idx_conversations_user_id ON conversations(user_id);
+CREATE INDEX idx_conversations_share_id ON conversations(share_id);
+CREATE INDEX idx_conversations_updated_at ON conversations(updated_at DESC);
+
+
+B.3 MESSAGES TABLE
+-------------------
+
+Purpose: Stores individual messages within conversations.
+
+CREATE TABLE messages (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  conversation_id UUID NOT NULL REFERENCES conversations(id) ON DELETE CASCADE,
+  role TEXT NOT NULL CHECK (role IN ('user', 'assistant', 'system')),
+  content TEXT NOT NULL,
+  repositories JSONB DEFAULT '[]'::JSONB,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  token_count INTEGER,
+  model_used TEXT DEFAULT 'gpt-4o'
+);
+
+-- Row Level Security
+ALTER TABLE messages ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can view messages from own conversations"
+  ON messages FOR SELECT
+  USING (
+    EXISTS (
+      SELECT 1 FROM conversations
+      WHERE conversations.id = messages.conversation_id
+      AND (conversations.user_id = auth.uid() OR conversations.is_shared = TRUE)
+    )
+  );
+
+CREATE POLICY "Users can create messages in own conversations"
+  ON messages FOR INSERT
+  WITH CHECK (
+    EXISTS (
+      SELECT 1 FROM conversations
+      WHERE conversations.id = messages.conversation_id
+      AND conversations.user_id = auth.uid()
+    )
+  );
+
+-- Indexes
+CREATE INDEX idx_messages_conversation_id ON messages(conversation_id);
+CREATE INDEX idx_messages_created_at ON messages(created_at);
+CREATE INDEX idx_messages_repositories ON messages USING GIN(repositories);
+
+
+B.4 NOTIFICATIONS TABLE
+------------------------
+
+Purpose: Stores user notifications with real-time delivery support.
+
+CREATE TABLE notifications (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  type TEXT NOT NULL CHECK (type IN ('info', 'success', 'warning', 'error')),
+  title TEXT NOT NULL,
+  message TEXT NOT NULL,
+  link TEXT,
+  is_read BOOLEAN DEFAULT FALSE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  read_at TIMESTAMP WITH TIME ZONE
+);
+
+-- Row Level Security
+ALTER TABLE notifications ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can view own notifications"
+  ON notifications FOR SELECT
+  USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can update own notifications"
+  ON notifications FOR UPDATE
+  USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can delete own notifications"
+  ON notifications FOR DELETE
+  USING (auth.uid() = user_id);
+
+-- Indexes
+CREATE INDEX idx_notifications_user_id ON notifications(user_id);
+CREATE INDEX idx_notifications_is_read ON notifications(is_read);
+CREATE INDEX idx_notifications_created_at ON notifications(created_at DESC);
+
+
+B.5 REPOSITORY SUBMISSIONS TABLE
+---------------------------------
+
+Purpose: Stores user-submitted GitHub repositories.
+
+CREATE TABLE repository_submissions (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  repository_url TEXT NOT NULL,
+  repository_name TEXT NOT NULL,
+  repository_owner TEXT NOT NULL,
+  description TEXT,
+  tags TEXT[] DEFAULT '{}',
+  status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'approved', 'rejected')),
+  submitted_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  reviewed_at TIMESTAMP WITH TIME ZONE,
+  reviewed_by UUID REFERENCES auth.users(id),
+  rejection_reason TEXT,
+  UNIQUE(repository_owner, repository_name)
+);
+
+-- Row Level Security
+ALTER TABLE repository_submissions ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can view own submissions"
+  ON repository_submissions FOR SELECT
+  USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can create submissions"
+  ON repository_submissions FOR INSERT
+  WITH CHECK (auth.uid() = user_id);
+
+-- Indexes
+CREATE INDEX idx_submissions_user_id ON repository_submissions(user_id);
+CREATE INDEX idx_submissions_status ON repository_submissions(status);
+CREATE INDEX idx_submissions_submitted_at ON repository_submissions(submitted_at DESC);
+
+
+B.6 API KEYS TABLE (PLAYGROUND)
+--------------------------------
+
+Purpose: Manages API keys for the API playground feature.
+
+CREATE TABLE api_keys (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  key_name TEXT NOT NULL,
+  key_hash TEXT NOT NULL UNIQUE,
+  key_prefix TEXT NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  last_used_at TIMESTAMP WITH TIME ZONE,
+  expires_at TIMESTAMP WITH TIME ZONE,
+  is_active BOOLEAN DEFAULT TRUE,
+  rate_limit INTEGER DEFAULT 100,
+  requests_made INTEGER DEFAULT 0
+);
+
+-- Row Level Security
+ALTER TABLE api_keys ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can manage own API keys"
+  ON api_keys FOR ALL
+  USING (auth.uid() = user_id);
+
+-- Indexes
+CREATE INDEX idx_api_keys_user_id ON api_keys(user_id);
+CREATE INDEX idx_api_keys_key_hash ON api_keys(key_hash);
+CREATE INDEX idx_api_keys_is_active ON api_keys(is_active);
+
+
+B.7 API LOGS TABLE
+-------------------
+
+Purpose: Records API request logs for monitoring and analytics.
+
+CREATE TABLE api_logs (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  api_key_id UUID REFERENCES api_keys(id) ON DELETE CASCADE,
+  user_id UUID REFERENCES auth.users(id) ON DELETE SET NULL,
+  endpoint TEXT NOT NULL,
+  method TEXT NOT NULL,
+  status_code INTEGER NOT NULL,
+  response_time INTEGER,
+  request_body JSONB,
+  response_body JSONB,
+  ip_address INET,
+  user_agent TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Row Level Security
+ALTER TABLE api_logs ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can view own API logs"
+  ON api_logs FOR SELECT
+  USING (auth.uid() = user_id);
+
+-- Indexes
+CREATE INDEX idx_api_logs_api_key_id ON api_logs(api_key_id);
+CREATE INDEX idx_api_logs_user_id ON api_logs(user_id);
+CREATE INDEX idx_api_logs_created_at ON api_logs(created_at DESC);
+CREATE INDEX idx_api_logs_status_code ON api_logs(status_code);
+
+
+B.8 ONBOARDING PROGRESS TABLE
+------------------------------
+
+Purpose: Tracks user onboarding completion and preferences.
+
+CREATE TABLE onboarding_progress (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  step INTEGER NOT NULL DEFAULT 1,
+  is_completed BOOLEAN DEFAULT FALSE,
+  role TEXT CHECK (role IN ('student', 'professional', 'researcher', 'hobbyist')),
+  experience_level TEXT CHECK (experience_level IN ('beginner', 'intermediate', 'expert')),
+  primary_languages TEXT[] DEFAULT '{}',
+  interests TEXT[] DEFAULT '{}',
+  goals TEXT,
+  completed_at TIMESTAMP WITH TIME ZONE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  UNIQUE(user_id)
+);
+
+-- Row Level Security
+ALTER TABLE onboarding_progress ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can manage own onboarding"
+  ON onboarding_progress FOR ALL
+  USING (auth.uid() = user_id);
+
+-- Index
+CREATE INDEX idx_onboarding_user_id ON onboarding_progress(user_id);
+
+
+B.9 TRENDING REPOSITORIES TABLE
+--------------------------------
+
+Purpose: Stores admin-curated trending repositories.
+
+CREATE TABLE trending_repositories (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  repository_name TEXT NOT NULL,
+  repository_owner TEXT NOT NULL,
+  repository_url TEXT NOT NULL,
+  description TEXT,
+  stars INTEGER,
+  language TEXT,
+  category TEXT NOT NULL CHECK (category IN (
+    'ai-ml', 'web', 'mobile', 'devops', 'data-science', 'security'
+  )),
+  is_active BOOLEAN DEFAULT TRUE,
+  featured_until TIMESTAMP WITH TIME ZONE,
+  added_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  added_by UUID REFERENCES auth.users(id),
+  UNIQUE(repository_owner, repository_name)
+);
+
+-- Indexes
+CREATE INDEX idx_trending_category ON trending_repositories(category);
+CREATE INDEX idx_trending_is_active ON trending_repositories(is_active);
+CREATE INDEX idx_trending_featured_until ON trending_repositories(featured_until);
+
+================================================================================
+                    SECTION C: API DOCUMENTATION
+================================================================================
+
+C.1 CHAT API ENDPOINT
+----------------------
+
+Endpoint: POST /api/chat
+Purpose: Process user messages and generate AI responses with repository suggestions
+
+Request Headers:
+  Content-Type: application/json
+  Cookie: (Authentication cookies from Supabase)
+
+Request Body:
+{
+  "conversationId": "uuid-string",        // Optional, creates new if absent
+  "message": "string",                    // User message content
+  "conversationHistory": [                // Optional, for context
+    {
+      "role": "user|assistant|system",
+      "content": "string"
+    }
+  ]
+}
+
+Response (Success - 200):
+{
+  "success": true,
+  "message": {
+    "id": "uuid-string",
+    "role": "assistant",
+    "content": "AI response text with markdown",
+    "repositories": [
+      {
+        "name": "repository-name",
+        "owner": "owner-username",
+        "full_name": "owner/repository-name",
+        "description": "Repository description",
+        "stars": 12345,
+        "language": "JavaScript",
+        "url": "https://github.com/owner/repository-name",
+        "topics": ["topic1", "topic2"]
+      }
+    ],
+    "created_at": "ISO-8601 timestamp"
+  },
+  "conversationId": "uuid-string"
+}
+
+Response (Error - 400/401/500):
+{
+  "success": false,
+  "error": "Error message description"
+}
+
+Example cURL Request:
+```bash
+curl -X POST https://sefgh.vercel.app/api/chat \
+  -H "Content-Type: application/json" \
+  -H "Cookie: sb-access-token=..." \
+  -d '{
+    "message": "Show me popular React UI libraries",
+    "conversationHistory": []
+  }'
+```
+
+
+C.2 NOTIFICATIONS API
+----------------------
+
+Endpoint: GET /api/notifications
+Purpose: Retrieve user notifications with pagination
+
+Query Parameters:
+  limit: integer (default: 50, max: 100)
+  offset: integer (default: 0)
+  unread_only: boolean (default: false)
+
+Response (Success - 200):
+{
+  "success": true,
+  "notifications": [
+    {
+      "id": "uuid-string",
+      "type": "info|success|warning|error",
+      "title": "Notification title",
+      "message": "Notification message",
+      "link": "/optional/link",
+      "is_read": false,
+      "created_at": "ISO-8601 timestamp"
+    }
+  ],
+  "total": 42,
+  "hasMore": true
+}
+
+---
+
+Endpoint: PATCH /api/notifications/[id]
+Purpose: Mark notification as read
+
+Response (Success - 200):
+{
+  "success": true,
+  "notification": { /* updated notification object */ }
+}
+
+---
+
+Endpoint: DELETE /api/notifications/[id]
+Purpose: Delete a notification
+
+Response (Success - 200):
+{
+  "success": true,
+  "message": "Notification deleted"
+}
+
+
+C.3 REPOSITORY SUBMISSION API
+------------------------------
+
+Endpoint: POST /api/submissions
+Purpose: Submit a new GitHub repository
+
+Request Body:
+{
+  "repositoryUrl": "https://github.com/owner/repository",
+  "description": "Optional custom description",
+  "tags": ["tag1", "tag2"]
+}
+
+Response (Success - 201):
+{
+  "success": true,
+  "submission": {
+    "id": "uuid-string",
+    "repository_url": "https://github.com/owner/repository",
+    "repository_name": "repository",
+    "repository_owner": "owner",
+    "status": "pending",
+    "submitted_at": "ISO-8601 timestamp"
+  }
+}
+
+Response (Error - 409):
+{
+  "success": false,
+  "error": "Repository already submitted"
+}
+
+
+C.4 PLAYGROUND API KEY MANAGEMENT
+----------------------------------
+
+Endpoint: POST /api/playground/keys
+Purpose: Generate new API key
+
+Request Body:
+{
+  "keyName": "My API Key",
+  "rateLimit": 100,              // Optional, requests per hour
+  "expiresAt": "ISO-8601"        // Optional, expiration date
+}
+
+Response (Success - 201):
+{
+  "success": true,
+  "apiKey": "sk_live_abc123...",  // Full key (shown only once!)
+  "keyData": {
+    "id": "uuid-string",
+    "key_name": "My API Key",
+    "key_prefix": "sk_live_abc",
+    "rate_limit": 100,
+    "created_at": "ISO-8601 timestamp"
+  }
+}
+
+---
+
+Endpoint: GET /api/playground/keys
+Purpose: List user's API keys
+
+Response (Success - 200):
+{
+  "success": true,
+  "keys": [
+    {
+      "id": "uuid-string",
+      "key_name": "My API Key",
+      "key_prefix": "sk_live_abc",
+      "created_at": "ISO-8601 timestamp",
+      "last_used_at": "ISO-8601 timestamp",
+      "is_active": true,
+      "rate_limit": 100,
+      "requests_made": 42
+    }
+  ]
+}
+
+---
+
+Endpoint: DELETE /api/playground/keys/[id]
+Purpose: Revoke an API key
+
+Response (Success - 200):
+{
+  "success": true,
+  "message": "API key revoked"
+}
+
+
+C.5 CONVERSATION SHARING API
+-----------------------------
+
+Endpoint: POST /api/conversations/[id]/share
+Purpose: Generate shareable link for a conversation
+
+Response (Success - 200):
+{
+  "success": true,
+  "shareId": "random-string",
+  "shareUrl": "https://sefgh.vercel.app/s/random-string"
+}
+
+---
+
+Endpoint: DELETE /api/conversations/[id]/share
+Purpose: Revoke shared conversation link
+
+Response (Success - 200):
+{
+  "success": true,
+  "message": "Share link revoked"
+}
+
+================================================================================
+                    SECTION D: CONFIGURATION FILE EXAMPLES
+================================================================================
+
+D.1 NEXT.JS CONFIGURATION (next.config.mjs)
+--------------------------------------------
+
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  reactStrictMode: true,
+  
+  // Enable React Compiler (React 19)
+  experimental: {
+    reactCompiler: true,
+  },
+
+  // Image optimization for external sources
+  images: {
+    domains: [
+      'avatars.githubusercontent.com',
+      'github.com',
+      'raw.githubusercontent.com',
+    ],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**.supabase.co',
+      },
+    ],
+  },
+
+  // Environment variables exposed to browser
+  env: {
+    NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
+  },
+
+  // Webpack configuration
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+        net: false,
+        tls: false,
+      };
+    }
+    return config;
+  },
+};
+
+export default nextConfig;
+
+
+D.2 TAILWIND CSS CONFIGURATION (tailwind.config.mjs)
+-----------------------------------------------------
+
+/** @type {import('tailwindcss').Config} */
+export default {
+  darkMode: 'class',
+  content: [
+    './src/pages/**/*.{js,jsx}',
+    './src/components/**/*.{js,jsx}',
+    './src/app/**/*.{js,jsx}',
+  ],
+  theme: {
+    extend: {
+      colors: {
+        border: 'hsl(var(--border))',
+        input: 'hsl(var(--input))',
+        ring: 'hsl(var(--ring))',
+        background: 'hsl(var(--background))',
+        foreground: 'hsl(var(--foreground))',
+        primary: {
+          DEFAULT: 'hsl(var(--primary))',
+          foreground: 'hsl(var(--primary-foreground))',
+        },
+        secondary: {
+          DEFAULT: 'hsl(var(--secondary))',
+          foreground: 'hsl(var(--secondary-foreground))',
+        },
+        destructive: {
+          DEFAULT: 'hsl(var(--destructive))',
+          foreground: 'hsl(var(--destructive-foreground))',
+        },
+        muted: {
+          DEFAULT: 'hsl(var(--muted))',
+          foreground: 'hsl(var(--muted-foreground))',
+        },
+        accent: {
+          DEFAULT: 'hsl(var(--accent))',
+          foreground: 'hsl(var(--accent-foreground))',
+        },
+        popover: {
+          DEFAULT: 'hsl(var(--popover))',
+          foreground: 'hsl(var(--popover-foreground))',
+        },
+        card: {
+          DEFAULT: 'hsl(var(--card))',
+          foreground: 'hsl(var(--card-foreground))',
+        },
+      },
+      borderRadius: {
+        lg: 'var(--radius)',
+        md: 'calc(var(--radius) - 2px)',
+        sm: 'calc(var(--radius) - 4px)',
+      },
+      keyframes: {
+        'accordion-down': {
+          from: { height: 0 },
+          to: { height: 'var(--radix-accordion-content-height)' },
+        },
+        'accordion-up': {
+          from: { height: 'var(--radix-accordion-content-height)' },
+          to: { height: 0 },
+        },
+      },
+      animation: {
+        'accordion-down': 'accordion-down 0.2s ease-out',
+        'accordion-up': 'accordion-up 0.2s ease-out',
+      },
+    },
+  },
+  plugins: [require('tailwindcss-animate')],
+};
+
+
+D.3 MIDDLEWARE CONFIGURATION (middleware.js)
+---------------------------------------------
+
+import { createServerClient } from '@supabase/ssr'
+import { NextResponse } from 'next/server'
+
+export async function middleware(request) {
+  let response = NextResponse.next({
+    request: {
+      headers: request.headers,
+    },
+  })
+
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    {
+      cookies: {
+        get(name) {
+          return request.cookies.get(name)?.value
+        },
+        set(name, value, options) {
+          request.cookies.set({
+            name,
+            value,
+            ...options,
+          })
+          response = NextResponse.next({
+            request: {
+              headers: request.headers,
+            },
+          })
+          response.cookies.set({
+            name,
+            value,
+            ...options,
+          })
+        },
+        remove(name, options) {
+          request.cookies.set({
+            name,
+            value: '',
+            ...options,
+          })
+          response = NextResponse.next({
+            request: {
+              headers: request.headers,
+            },
+          })
+          response.cookies.set({
+            name,
+            value: '',
+            ...options,
+          })
+        },
+      },
+    }
+  )
+
+  await supabase.auth.getUser()
+
+  return response
+}
+
+export const config = {
+  matcher: [
+    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+  ],
+}
+
+
+D.4 ESLINT CONFIGURATION (eslint.config.mjs)
+---------------------------------------------
+
+import { dirname } from "path";
+import { fileURLToPath } from "url";
+import { FlatCompat } from "@eslint/eslintrc";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+const compat = new FlatCompat({
+  baseDirectory: __dirname,
+});
+
+const eslintConfig = [
+  ...compat.extends("next/core-web-vitals", "next/typescript"),
+  {
+    rules: {
+      '@typescript-eslint/no-unused-vars': 'warn',
+      '@typescript-eslint/no-explicit-any': 'warn',
+      'react/no-unescaped-entities': 'off',
+      'react-hooks/exhaustive-deps': 'warn',
+    },
+  },
+];
+
+export default eslintConfig;
+
+
+D.5 PACKAGE.JSON (DEPENDENCIES)
+--------------------------------
+
+{
+  "name": "sefgh-nextjs",
+  "version": "2.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@radix-ui/react-accordion": "^1.2.2",
+    "@radix-ui/react-avatar": "^1.1.2",
+    "@radix-ui/react-dialog": "^1.1.4",
+    "@radix-ui/react-dropdown-menu": "^2.1.4",
+    "@radix-ui/react-label": "^2.1.1",
+    "@radix-ui/react-select": "^2.1.4",
+    "@radix-ui/react-separator": "^1.1.1",
+    "@radix-ui/react-slot": "^1.1.1",
+    "@radix-ui/react-tabs": "^1.1.2",
+    "@radix-ui/react-toast": "^1.2.4",
+    "@supabase/ssr": "^0.5.2",
+    "@supabase/supabase-js": "^2.47.10",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "framer-motion": "^11.15.0",
+    "highlight.js": "^11.10.0",
+    "lucide-react": "^0.469.0",
+    "next": "^15.1.3",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-markdown": "^9.0.1",
+    "recharts": "^2.15.0",
+    "rehype-highlight": "^7.0.1",
+    "rehype-raw": "^7.0.0",
+    "remark-gfm": "^4.0.0",
+    "tailwind-merge": "^2.6.0",
+    "tailwindcss-animate": "^1.0.7"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "^15.1.3",
+    "postcss": "^8",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5"
+  }
+}
+
+================================================================================
+                    SECTION E: ENVIRONMENT VARIABLES
+================================================================================
+
+E.1 REQUIRED ENVIRONMENT VARIABLES
+-----------------------------------
+
+Create a .env.local file in the root directory with the following variables:
+
+# Supabase Configuration
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key-here
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key-here
+
+# GitHub Configuration
+GITHUB_TOKEN=ghp_your_personal_access_token_here
+
+# Application Configuration
+NEXT_PUBLIC_SITE_URL=http://localhost:3000  # or production URL
+
+# Optional: Analytics
+NEXT_PUBLIC_GA_MEASUREMENT_ID=G-XXXXXXXXXX
+
+
+E.2 OBTAINING SUPABASE CREDENTIALS
+-----------------------------------
+
+1. Visit https://supabase.com and create a new project
+2. Navigate to Project Settings > API
+3. Copy the following values:
+   - Project URL → NEXT_PUBLIC_SUPABASE_URL
+   - anon/public key → NEXT_PUBLIC_SUPABASE_ANON_KEY
+   - service_role key → SUPABASE_SERVICE_ROLE_KEY (keep secret!)
+
+
+E.3 OBTAINING GITHUB TOKEN
+---------------------------
+
+1. Visit https://github.com/settings/tokens
+2. Click "Generate new token (classic)"
+3. Select scopes: repo (all), read:user
+4. Generate token and copy to GITHUB_TOKEN
+5. This increases rate limit from 60 to 5000 requests/hour
+
+
+E.4 ENVIRONMENT-SPECIFIC CONFIGURATIONS
+----------------------------------------
+
+Development (.env.local):
+  NEXT_PUBLIC_SITE_URL=http://localhost:3000
+  NODE_ENV=development
+
+Production (Vercel Environment Variables):
+  NEXT_PUBLIC_SITE_URL=https://sefgh.vercel.app
+  NODE_ENV=production
+
+================================================================================
+                    SECTION F: DEPLOYMENT PROCEDURES
+================================================================================
+
+F.1 VERCEL DEPLOYMENT SETUP
+----------------------------
+
+Step 1: Prepare Repository
+  - Ensure all code is committed to GitHub
+  - Verify .gitignore includes .env.local, .next, node_modules
+
+Step 2: Connect to Vercel
+  - Visit https://vercel.com/new
+  - Import your GitHub repository
+  - Select the main branch for production
+
+Step 3: Configure Environment Variables
+  - Add all variables from Section E.1
+  - Use production values (not localhost)
+  - NEVER commit .env files to version control
+
+Step 4: Configure Build Settings
+  - Framework Preset: Next.js
+  - Build Command: npm run build
+  - Output Directory: .next
+  - Install Command: npm install
+  - Node.js Version: 18.x or later
+
+Step 5: Deploy
+  - Click "Deploy"
+  - Wait for build to complete (typically 2-5 minutes)
+  - Verify deployment at provided URL
+
+
+F.2 DATABASE SETUP ON SUPABASE
+-------------------------------
+
+Step 1: Create Project
+  - Visit https://supabase.com/dashboard
+  - Create new project
+  - Choose region closest to target users
+  - Set strong database password
+
+Step 2: Execute Schema Scripts
+  - Navigate to SQL Editor
+  - Run QUICK_SETUP.sql for complete setup
+  - Or run individual schema files in order:
+    1. profiles (if not auto-created)
+    2. conversations and messages
+    3. notifications-schema.sql
+    4. repository-submissions-schema.sql
+    5. playground-schema.sql
+    6. onboarding-schema.sql
+    7. trending-repos-schema.sql
+
+Step 3: Configure Storage
+  - Run avatar-storage-setup.sql
+  - Creates 'avatars' bucket with public access
+  - Sets up RLS policies for uploads
+
+Step 4: Enable Realtime
+  - Navigate to Database > Replication
+  - Enable realtime for 'notifications' table
+  - This powers real-time notification delivery
+
+
+F.3 CUSTOM DOMAIN CONFIGURATION
+--------------------------------
+
+Step 1: Add Domain in Vercel
+  - Go to Project Settings > Domains
+  - Add your custom domain (e.g., sefgh.com)
+
+Step 2: Configure DNS
+  - Add A record: @ → 76.76.21.21
+  - Add CNAME record: www → cname.vercel-dns.com
+
+Step 3: SSL Certificate
+  - Vercel automatically provisions SSL
+  - Wait 24-48 hours for DNS propagation
+  - Certificate auto-renews
+
+
+F.4 CONTINUOUS DEPLOYMENT WORKFLOW
+-----------------------------------
+
+Automatic Deployments:
+  - Push to main branch → Production deployment
+  - Push to other branches → Preview deployments
+  - Pull requests → Automatic preview URLs
+
+Manual Deployment:
+  vercel --prod  # Deploy to production
+  vercel         # Deploy to preview
+
+Rollback:
+  - Visit Vercel Dashboard > Deployments
+  - Select previous successful deployment
+  - Click "Promote to Production"
+
+================================================================================
+                    SECTION G: TESTING PROCEDURES
+================================================================================
+
+G.1 MANUAL TESTING CHECKLIST
+-----------------------------
+
+Authentication:
+  ☐ User can sign up with email/password
+  ☐ User can log in with valid credentials
+  ☐ Invalid credentials show appropriate error
+  ☐ User can reset password via email
+  ☐ Session persists across page refreshes
+  ☐ User can log out successfully
+
+Chat Interface:
+  ☐ User can send messages
+  ☐ AI responses appear within 10 seconds
+  ☐ Repository suggestions display correctly
+  ☐ Code blocks have syntax highlighting
+  ☐ Copy button works for code blocks
+  ☐ Canvas editor opens and displays code
+  ☐ Conversation history loads correctly
+  ☐ New conversation creates successfully
+
+Repository Features:
+  ☐ Repository details page loads
+  ☐ README renders with proper formatting
+  ☐ Language statistics display correctly
+  ☐ Star/fork counts are accurate
+  ☐ Repository cards are clickable
+
+Notifications:
+  ☐ Bell icon shows unread count
+  ☐ Notifications appear in real-time
+  ☐ Mark as read updates immediately
+  ☐ Delete removes notification
+  ☐ Notification links navigate correctly
+
+Profile:
+  ☐ Profile page displays user info
+  ☐ Avatar upload works
+  ☐ Bio update saves correctly
+  ☐ Settings persist after refresh
+
+API Playground:
+  ☐ API key generation works
+  ☐ Generated key displays once
+  ☐ Key list shows all user keys
+  ☐ Key revocation works
+  ☐ Usage analytics display correctly
+
+Repository Submission:
+  ☐ Submission form validates input
+  ☐ Duplicate submissions are rejected
+  ☐ Submission appears in user's list
+  ☐ Invalid GitHub URLs show error
+
+Onboarding:
+  ☐ New users see onboarding flow
+  ☐ Multi-step form progresses correctly
+  ☐ Preferences save on completion
+  ☐ Onboarding can be skipped
+
+Internationalization:
+  ☐ Language switcher displays options
+  ☐ Selected language persists
+  ☐ All UI text translates correctly
+  ☐ No untranslated strings visible
+
+
+G.2 PERFORMANCE TESTING METRICS
+--------------------------------
+
+Core Web Vitals:
+  Target Metrics:
+    - Largest Contentful Paint (LCP): < 2.5s
+    - First Input Delay (FID): < 100ms
+    - Cumulative Layout Shift (CLS): < 0.1
+
+Tools:
+  - Google Lighthouse (built into Chrome DevTools)
+  - WebPageTest (https://www.webpagetest.org)
+  - Vercel Analytics (built-in)
+
+API Response Times:
+  - Chat endpoint: < 5s (depends on AI model)
+  - Database queries: < 500ms
+  - GitHub API calls: < 2s
+  - Page loads: < 3s (First Contentful Paint)
+
+
+G.3 SECURITY TESTING
+---------------------
+
+Authentication Tests:
+  ☐ JWT tokens expire after expected time
+  ☐ Refresh tokens work correctly
+  ☐ Unauthorized access redirects to login
+  ☐ CSRF protection active
+  ☐ XSS attempts are sanitized
+
+Database Tests:
+  ☐ RLS policies prevent cross-user data access
+  ☐ SQL injection attempts fail
+  ☐ Rate limiting prevents abuse
+  ☐ Input validation on all fields
+
+API Tests:
+  ☐ API keys cannot be reused after revocation
+  ☐ Rate limits enforced correctly
+  ☐ Invalid tokens rejected
+  ☐ Request logging captures essential data
+
+================================================================================
+                    SECTION H: TROUBLESHOOTING GUIDE
+================================================================================
+
+H.1 COMMON ISSUES AND SOLUTIONS
+--------------------------------
+
+Issue: "Module not found" errors
+Solution:
+  - Delete node_modules and package-lock.json
+  - Run: npm install
+  - Restart development server
+
+Issue: Supabase authentication not working
+Solution:
+  - Verify environment variables are set correctly
+  - Check Supabase project is not paused
+  - Ensure Site URL is configured in Supabase dashboard
+  - Clear browser cookies and try again
+
+Issue: GitHub API rate limit exceeded
+Solution:
+  - Verify GITHUB_TOKEN is set in environment variables
+  - Check token has correct permissions
+  - Implement caching for repository data
+  - Wait for rate limit to reset (check headers)
+
+Issue: Real-time notifications not working
+Solution:
+  - Verify Realtime is enabled for notifications table
+  - Check browser console for WebSocket errors
+  - Ensure RLS policies allow reads for authenticated users
+  - Test with multiple browser tabs
+
+Issue: Images not loading
+Solution:
+  - Add domain to next.config.mjs images.domains
+  - For Supabase Storage, use remotePatterns
+  - Check image URLs are publicly accessible
+  - Verify Storage bucket permissions
+
+Issue: Build failing on Vercel
+Solution:
+  - Check build logs for specific error
+  - Verify all environment variables are set
+  - Test build locally: npm run build
+  - Ensure all dependencies are in package.json
+  - Check Node.js version compatibility
+
+
+H.2 DEBUGGING TECHNIQUES
+-------------------------
+
+Client-Side Debugging:
+  - Open Browser DevTools (F12)
+  - Check Console for JavaScript errors
+  - Use Network tab to inspect API calls
+  - Use React DevTools to inspect component state
+
+Server-Side Debugging:
+  - Check Vercel function logs in dashboard
+  - Add console.log statements in API routes
+  - Use try-catch blocks around async operations
+  - Check Supabase logs for database errors
+
+Database Debugging:
+  - Use Supabase SQL Editor to test queries
+  - Check RLS policies with test queries
+  - Verify indexes exist for slow queries
+  - Monitor database performance metrics
+
+
+H.3 PERFORMANCE OPTIMIZATION TIPS
+----------------------------------
+
+Code Optimization:
+  - Use React.memo for expensive components
+  - Implement lazy loading with next/dynamic
+  - Optimize images with next/image
+  - Enable React Compiler for automatic optimizations
+  - Use streaming for long AI responses
+
+Database Optimization:
+  - Add indexes for frequently queried columns
+  - Use select() to limit returned columns
+  - Implement pagination for large result sets
+  - Cache frequently accessed data
+  - Use JSONB columns judiciously
+
+Network Optimization:
+  - Enable compression in Vercel
+  - Use CDN for static assets
+  - Implement request debouncing
+  - Batch API requests where possible
+  - Use stale-while-revalidate caching
+
+================================================================================
+                    SECTION I: CODE SNIPPETS AND UTILITIES
+================================================================================
+
+I.1 SUPABASE CLIENT INITIALIZATION
+-----------------------------------
+
+// Client-side (src/lib/supabase/client.js)
+import { createBrowserClient } from '@supabase/ssr'
+
+export function createClient() {
+  return createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  )
+}
+
+// Server-side (src/lib/supabase/server.js)
+import { createServerClient } from '@supabase/ssr'
+import { cookies } from 'next/headers'
+
+export async function createClient() {
+  const cookieStore = await cookies()
+
+  return createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    {
+      cookies: {
+        get(name) {
+          return cookieStore.get(name)?.value
+        },
+        set(name, value, options) {
+          cookieStore.set({ name, value, ...options })
+        },
+        remove(name, options) {
+          cookieStore.set({ name, value: '', ...options })
+        },
+      },
+    }
+  )
+}
+
+
+I.2 GITHUB API HELPER FUNCTIONS
+--------------------------------
+
+// src/lib/github-api.js
+
+/**
+ * Fetch repository details from GitHub API
+ * @param {string} owner - Repository owner username
+ * @param {string} repo - Repository name
+ * @returns {Promise<Object>} Repository data
+ */
+export async function fetchRepositoryDetails(owner, repo) {
+  const response = await fetch(
+    `https://api.github.com/repos/${owner}/${repo}`,
+    {
+      headers: {
+        'Authorization': `Bearer ${process.env.GITHUB_TOKEN}`,
+        'Accept': 'application/vnd.github.v3+json',
+      },
+    }
+  )
+
+  if (!response.ok) {
+    throw new Error(`GitHub API error: ${response.status}`)
+  }
+
+  return response.json()
+}
+
+/**
+ * Search GitHub repositories
+ * @param {string} query - Search query
+ * @param {number} perPage - Results per page
+ * @returns {Promise<Object>} Search results
+ */
+export async function searchRepositories(query, perPage = 10) {
+  const response = await fetch(
+    `https://api.github.com/search/repositories?q=${encodeURIComponent(query)}&per_page=${perPage}`,
+    {
+      headers: {
+        'Authorization': `Bearer ${process.env.GITHUB_TOKEN}`,
+        'Accept': 'application/vnd.github.v3+json',
+      },
+    }
+  )
+
+  if (!response.ok) {
+    throw new Error(`GitHub API error: ${response.status}`)
+  }
+
+  return response.json()
+}
+
+
+I.3 NOTIFICATION HELPER FUNCTIONS
+----------------------------------
+
+// src/lib/notifications.js
+
+/**
+ * Create a notification for a user
+ * @param {Object} supabase - Supabase client
+ * @param {string} userId - Target user ID
+ * @param {string} type - Notification type
+ * @param {string} title - Notification title
+ * @param {string} message - Notification message
+ * @param {string} link - Optional link URL
+ */
+export async function createNotification(
+  supabase,
+  userId,
+  type,
+  title,
+  message,
+  link = null
+) {
+  const { data, error } = await supabase
+    .from('notifications')
+    .insert({
+      user_id: userId,
+      type,
+      title,
+      message,
+      link,
+    })
+    .select()
+    .single()
+
+  if (error) throw error
+  return data
+}
+
+/**
+ * Mark all notifications as read for a user
+ * @param {Object} supabase - Supabase client
+ * @param {string} userId - User ID
+ */
+export async function markAllNotificationsAsRead(supabase, userId) {
+  const { error } = await supabase
+    .from('notifications')
+    .update({ is_read: true, read_at: new Date().toISOString() })
+    .eq('user_id', userId)
+    .eq('is_read', false)
+
+  if (error) throw error
+}
+
+
+I.4 CUSTOM REACT HOOKS
+-----------------------
+
+// src/hooks/useAuth.js
+import { useContext } from 'react'
+import { AuthContext } from '@/contexts/AuthContext'
+
+export function useAuth() {
+  const context = useContext(AuthContext)
+  if (!context) {
+    throw new Error('useAuth must be used within AuthProvider')
+  }
+  return context
+}
+
+// src/hooks/useLanguage.js
+import { useContext } from 'react'
+import { LanguageContext } from '@/contexts/LanguageContext'
+
+export function useLanguage() {
+  const context = useContext(LanguageContext)
+  if (!context) {
+    throw new Error('useLanguage must be used within LanguageProvider')
+  }
+  return context
+}
+
+================================================================================
+                    SECTION J: ADDITIONAL RESOURCES
+================================================================================
+
+J.1 OFFICIAL DOCUMENTATION LINKS
+---------------------------------
+
+Next.js: https://nextjs.org/docs
+React: https://react.dev/
+Supabase: https://supabase.com/docs
+Tailwind CSS: https://tailwindcss.com/docs
+shadcn/ui: https://ui.shadcn.com/
+Radix UI: https://www.radix-ui.com/primitives
+GitHub API: https://docs.github.com/en/rest
+OpenAI API: https://platform.openai.com/docs
+
+
+J.2 LEARNING RESOURCES
+-----------------------
+
+Next.js Tutorials:
+  - Official Learn Course: https://nextjs.org/learn
+  - Vercel YouTube: https://youtube.com/@vercel
+
+React Best Practices:
+  - React Documentation: https://react.dev/learn
+  - React Patterns: https://reactpatterns.com/
+
+Supabase Tutorials:
+  - Getting Started: https://supabase.com/docs/guides/getting-started
+  - Auth Helpers: https://supabase.com/docs/guides/auth/auth-helpers/nextjs
+
+Tailwind CSS:
+  - Play CDN: https://tailwindcss.com/docs/installation/play-cdn
+  - Component Examples: https://tailwindui.com/components
+
+
+J.3 COMMUNITY RESOURCES
+------------------------
+
+GitHub Repository: https://github.com/sefgh-ai/sefgh-nextjs
+Issue Tracker: https://github.com/sefgh-ai/sefgh-nextjs/issues
+Discussions: https://github.com/sefgh-ai/sefgh-nextjs/discussions
+
+Next.js Discord: https://nextjs.org/discord
+Supabase Discord: https://discord.supabase.com/
+React Discord: https://discord.gg/react
+
+
+J.4 DEVELOPMENT TOOLS
+----------------------
+
+VS Code Extensions:
+  - ES7+ React/Redux/React-Native snippets
+  - Tailwind CSS IntelliSense
+  - ESLint
+  - Prettier - Code formatter
+  - GitHub Copilot
+
+Browser Extensions:
+  - React Developer Tools
+  - Redux DevTools
+  - Lighthouse
+
+Command Line Tools:
+  - Vercel CLI: npm i -g vercel
+  - Supabase CLI: npm i -g supabase
+
+================================================================================
+                              END OF APPENDIX
+================================================================================
+
+This appendix provides comprehensive technical documentation for the SEFGH
+platform. For additional information or clarification on any section, please
+refer to the official documentation of the respective technologies or consult
+the project repository.
+
+Last Updated: December 5, 2024
+Version: 2.0.0
+
+================================================================================

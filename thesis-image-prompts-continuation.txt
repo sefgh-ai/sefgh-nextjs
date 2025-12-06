@@ -1,0 +1,1224 @@
+================================================================================
+      THESIS IMAGE PROMPTS - CONTINUATION (CHAPTERS 7-8)
+================================================================================
+
+This file contains the remaining image prompts for Chapters 7 and 8.
+These should be appended to the main thesis-image-prompts.txt file.
+
+================================================================================
+
+--------------------------------------------------------------------------------
+IMAGE 23: Real-Time Performance Timeline
+Location: Chapter 7.1.3 - Real-Time Performance and WebSocket Connectivity
+--------------------------------------------------------------------------------
+
+PROMPT:
+"Create a detailed timeline visualization showing notification delivery through WebSocket:
+- Title: 'Real-Time Notification Delivery Performance'
+- Subtitle: 'End-to-end latency from database trigger to client UI update'
+
+MAIN TIMELINE (Left to Right Flow):
+
+STAGE 1 - DATABASE TRIGGER (0ms):
+- PostgreSQL cylinder icon
+- Event: 'INSERT INTO notifications'
+- Trigger function fires
+- Row created with notification data
+- Timestamp: T+0ms
+- Database icon with lightning bolt
+
+STAGE 2 - SUPABASE REALTIME DETECTION (8-15ms):
+- Supabase logo
+- Change detection system
+- Reads from replication slot
+- Identifies new notification row
+- Timestamp: T+12ms (average)
+- Clock icon showing elapsed time
+
+STAGE 3 - WEBSOCKET BROADCAST (12-40ms):
+- WebSocket icon (bidirectional waves)
+- Server broadcasts to subscribed clients
+- Filters by user_id (RLS applied)
+- Message serialization (JSON)
+- Timestamp: T+35ms (average)
+- Network transmission indicator
+
+STAGE 4 - CLIENT RECEPTION (35-80ms):
+- Browser icon (Chrome/Firefox/Safari)
+- WebSocket message received
+- Event listener triggered
+- Payload deserialized
+- Timestamp: T+60ms (average)
+- Reception checkmark
+
+STAGE 5 - STATE UPDATE (60-110ms):
+- React logo
+- Context state updated
+- Component re-render triggered
+- Virtual DOM diffing
+- Timestamp: T+85ms (average)
+- State update icon
+
+STAGE 6 - UI RENDERING (80-150ms):
+- UI component icon
+- Bell icon badge updates (+1 unread)
+- Toast notification displays
+- Animation plays
+- Timestamp: T+120ms (average, Total)
+- Checkmark with 'Complete'
+
+TOTAL LATENCY: 80-200ms (average 120ms)
+
+BOTTOM SECTION - PERFORMANCE METRICS:
+
+Connection Establishment:
+- Time to establish WebSocket: 180-300ms
+- Connection success rate: 99.2%
+- Failed connections: 0.8% (restrictive firewalls)
+- Icon: Handshake symbol
+
+Connection Stability:
+- Average connection duration: 42 minutes
+- Disconnection rate: 0.3% per hour
+- Auto-reconnection success: 97.5%
+- Reconnection time: 2-5 seconds
+- Icon: Stable connection waves
+
+Delivery Statistics:
+- Median delivery: 120ms
+- 95th percentile: 250ms
+- 99th percentile: 380ms
+- Delivery success rate: 99.7%
+- Icon: Statistics chart
+
+RIGHT PANEL - CONNECTION STATE DIAGRAM:
+- State machine showing:
+  * DISCONNECTED (gray) → Attempt connection
+  * CONNECTING (yellow) → WebSocket handshake
+  * CONNECTED (green) → Active subscription
+  * ERROR (red) → Exponential backoff retry
+  * RECONNECTING (orange) → Auto-recovery
+- Arrows showing transitions
+- Retry intervals: 1s, 2s, 4s, 8s, 16s (max)
+
+COMPARISON BOX - Polling vs WebSocket:
+- Polling approach (old, inefficient):
+  * Request every 5 seconds
+  * 12 requests per minute
+  * Average latency: 2.5 seconds (half the interval)
+  * Bandwidth waste: Continuous requests
+  * Battery drain: Constant network activity
+
+- WebSocket approach (current, efficient):
+  * Single persistent connection
+  * Push-based delivery
+  * Average latency: 120ms
+  * Minimal bandwidth: Only actual data
+  * Battery efficient: Idle most of the time
+
+Performance improvement: 20x faster, 95% less bandwidth
+
+- Style: Timeline with clear stages, arrows showing progression
+- Colors: Stage-based coloring (blue→green→purple→orange→yellow→green)
+- Include timing annotations at each stage
+- Show performance distribution curves below timeline
+- Add connection quality indicator (signal strength bars)
+- Include WebSocket protocol icon (ws://)"
+
+TECHNICAL DETAILS:
+- Show actual WebSocket frames
+- Display message payload structure
+- Indicate subscription filters
+- Show reconnection logic
+
+--------------------------------------------------------------------------------
+IMAGE 24: User Experience Metrics Dashboard
+Location: Chapter 7.2.1 - Usability Testing Results
+--------------------------------------------------------------------------------
+
+PROMPT:
+"Create a comprehensive UX metrics dashboard summarizing usability testing:
+- Title: 'SEFGH Usability Testing Results'
+- Subtitle: '12 participants | Diverse backgrounds | Structured task completion'
+
+TOP SECTION - TASK COMPLETION RATES (Horizontal Bar Chart):
+- Task 1: Account creation & onboarding
+  * Completion: 100% (green bar, full)
+  * Average time: 3.5 minutes
+  * Icon: User registration checkmark
+
+- Task 2: Natural language repository search
+  * Completion: 100% (green bar, full)
+  * Average time: 2 minutes
+  * Icon: Magnifying glass with AI brain
+
+- Task 3: Repository exploration
+  * Completion: 100% (green bar, full)
+  * Average time: 4 minutes
+  * Icon: Document with eye
+
+- Task 4: Canvas editor usage
+  * Completion: 92% (green bar, nearly full)
+  * Average time: 4.5 minutes
+  * Icon: Code editor
+  * Note: 1 user struggled with tab navigation
+
+- Task 5: Repository submission
+  * Completion: 100% (green bar, full)
+  * Average time: 2.5 minutes
+  * Icon: Upload with GitHub logo
+
+- Task 6: Settings management
+  * Completion: 100% (green bar, full)
+  * Average time: 1.5 minutes
+  * Icon: Gear/settings
+
+- Task 7: API key generation
+  * Completion: 83% (yellow bar, partial)
+  * Average time: 3 minutes
+  * Icon: Key
+  * Note: 2 users uncertain about use cases
+
+CENTER LEFT - SYSTEM USABILITY SCALE (SUS):
+- Large circular gauge showing 78.5/100
+- Color zones:
+  * 0-50: Red (Poor)
+  * 50-68: Yellow (Below Average)
+  * 68-80: Light Green (Above Average)
+  * 80-100: Dark Green (Excellent)
+- Current score: 78.5 (Above Average, approaching Excellent)
+- Median: 80
+- Range: 67-89
+- Interpretation: 'Good usability with room for improvement'
+- Benchmark indicator: 'Above average threshold (68)'
+
+CENTER RIGHT - NET PROMOTER SCORE (NPS):
+- Horizontal segmented bar showing distribution:
+  * Promoters (9-10): 58% (7 participants) - Green
+  * Passives (7-8): 33% (4 participants) - Yellow
+  * Detractors (0-6): 8% (1 participant) - Red
+- NPS Calculation: 58% - 8% = 50
+- Grade: 'Excellent' (50+ is top tier)
+- Customer satisfaction emoji: 😊
+- Quote bubble: 'Much better than keyword search!'
+
+BOTTOM SECTION - TIME ON TASK ANALYSIS:
+- Comparison table with visual bars:
+  | Task | Estimated | Actual | Ratio | Status |
+  |------|-----------|--------|-------|--------|
+  | Onboarding | 3.0min | 3.5min | 117% | ✅ Good |
+  | Search | 1.5min | 2.0min | 133% | ⚠️ Acceptable |
+  | Canvas | 3.0min | 4.0min | 133% | ⚠️ Acceptable |
+  | Submission | 2.0min | 2.5min | 125% | ✅ Good |
+
+- Interpretation: 'Most tasks complete within 120-135% of ideal time'
+- Note: 'Extra time shows careful consideration, not confusion'
+
+RIGHT PANEL - OBSERVED DIFFICULTIES:
+- Issue frequency (dot chart):
+  * 3 users: Uncertain where to start new conversation
+    - Resolution: Make 'New Chat' button more prominent
+  
+  * 2 users: Missed 'Open in Canvas' button initially
+    - Resolution: Increase button visibility/contrast
+  
+  * 4 users: Wanted keyboard shortcuts
+    - Resolution: Implement Ctrl+N (new chat), Enter (submit)
+  
+  * 2 users: Confused about trending vs search results
+    - Resolution: Better labeling and section separation
+  
+  * 1 user: Expected code execution in Canvas
+    - Resolution: Add feature or manage expectations
+
+- Priority markers (High/Medium/Low) next to each issue
+
+PARTICIPANT DEMOGRAPHICS PIE CHART:
+- Students: 25% (3 participants) - Blue
+- Professional Developers: 33% (4 participants) - Green
+- Researchers: 17% (2 participants) - Purple
+- Hobbyist Developers: 25% (3 participants) - Orange
+
+- Style: Clean analytics dashboard, professional UX metrics presentation
+- Colors: Traffic light system (green/yellow/red) for performance
+- Include participant icons and diversity indicators
+- Show statistical confidence (sample size, margin of error)
+- Add comparison to industry benchmarks (dotted lines)"
+
+TECHNICAL DETAILS:
+- Show actual SUS questionnaire responses
+- Display confidence intervals
+- Indicate statistical significance
+- Show correlation between metrics
+
+--------------------------------------------------------------------------------
+IMAGE 25: Comparison Matrix - GitHub Search vs SEFGH
+Location: Chapter 7.3.1 - Comparison with GitHub Native Search
+--------------------------------------------------------------------------------
+
+PROMPT:
+"Create a detailed side-by-side comparison visualization:
+- Title: 'Repository Discovery: GitHub Native Search vs SEFGH'
+- Subtitle: 'Comparative analysis across key dimensions'
+
+MAIN COMPARISON - DUAL COLUMN LAYOUT:
+
+LEFT COLUMN - GITHUB NATIVE SEARCH (GitHub Colors: Black/White):
+- Header with GitHub Octocat logo
+- 'Established Platform | Battle-Tested | 200M+ Repositories'
+
+Search Capabilities:
+- ✅ Keyword matching: Excellent (Boolean operators, filters)
+- ❌ Natural language: Not supported
+- ✅ Syntax control: Advanced query syntax
+- Query example: 'machine learning' language:Python stars:>1000
+- ⏱️ Speed: <500ms (near-instant)
+- 🎯 Precision: High (with proper syntax)
+- 📚 Learning curve: Moderate (syntax required)
+
+Information Presentation:
+- Format: Simple list view
+- Metadata: Name, description, stars, forks, last update
+- README: Requires click-through to repo page
+- Code viewing: External navigation required
+- Details depth: Basic (must navigate for more)
+
+User Experience:
+- Interface: Traditional search box with filters
+- Guidance: None (user must formulate queries)
+- Iteration: Manual refinement
+- Explanations: No context or reasoning
+- Accessibility: Familiar but requires expertise
+
+Performance:
+- Response time: <500ms ⚡
+- Availability: 99.9% (enterprise infrastructure)
+- Scalability: Massive (GitHub scale)
+- Rate limits: 60 req/hr (unauthenticated), 5000 (authenticated)
+
+Strengths (Green checkmarks):
+- ✅ Lightning-fast results
+- ✅ Precise control through syntax
+- ✅ Comprehensive coverage (all public repos)
+- ✅ Advanced filtering capabilities
+- ✅ Official, unmediated results
+
+Weaknesses (Red X marks):
+- ❌ No semantic understanding
+- ❌ Steep learning curve for advanced features
+- ❌ No guided discovery
+- ❌ Limited context in results
+- ❌ Requires clear requirements
+
+RIGHT COLUMN - SEFGH (SEFGH Colors: Blue/Purple):
+- Header with SEFGH logo
+- 'AI-Powered | Conversational | Intelligent Discovery'
+
+Search Capabilities:
+- ⚠️ Keyword matching: Limited (not primary method)
+- ✅ Natural language: Excellent (GPT-4o powered)
+- ✅ Semantic understanding: Contextual intent recognition
+- Query example: 'Find me a dashboard library for React with charts'
+- ⏱️ Speed: 2-3 seconds (AI inference time)
+- 🎯 Precision: High (with conversational refinement)
+- 📚 Learning curve: Low (natural language)
+
+Information Presentation:
+- Format: Rich cards with comprehensive metadata
+- Metadata: Stars, language stats, contributors, activity
+- README: Rendered inline with markdown
+- Code viewing: Integrated Canvas editor
+- Details depth: Comprehensive (aggregated in one view)
+
+User Experience:
+- Interface: ChatGPT-style conversation
+- Guidance: AI assistant provides context and suggestions
+- Iteration: Natural follow-up questions
+- Explanations: Why repositories are recommended
+- Accessibility: Intuitive for all skill levels
+
+Performance:
+- Response time: 2-3s (AI inference overhead)
+- Availability: 99.5% (dependent on third-party AI API)
+- Scalability: Growing (early-stage infrastructure)
+- Rate limits: Configurable per user
+
+Strengths (Green checkmarks):
+- ✅ Natural language understanding
+- ✅ No syntax knowledge required
+- ✅ Guided discovery with explanations
+- ✅ Comprehensive information aggregation
+- ✅ Integrated code exploration (Canvas)
+
+Weaknesses (Red X marks):
+- ❌ Slower than keyword search
+- ❌ Dependent on AI quality
+- ❌ Less precise control
+- ❌ Potential AI hallucinations
+- ❌ Limited to repository discovery domain
+
+BOTTOM SECTION - USE CASE RECOMMENDATIONS:
+
+Use GitHub Search When:
+- ⚡ Speed is paramount (sub-second results required)
+- 🎯 You know exactly what you want
+- 🔍 Advanced boolean logic needed
+- 🏢 Official results preferred
+- 💻 Power user with syntax expertise
+
+Use SEFGH When:
+- 🤔 Vague or undefined requirements
+- 🗣️ Natural language preferred
+- 📚 Need guidance and explanation
+- 🔗 Want comprehensive info in one place
+- 🧪 Code exploration is important
+
+RATING MATRIX (Star Ratings 1-5):
+| Dimension | GitHub | SEFGH |
+|-----------|--------|-------|
+| Speed | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ |
+| Precision Control | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ |
+| Semantic Understanding | ⭐ | ⭐⭐⭐⭐⭐ |
+| User Guidance | ⭐ | ⭐⭐⭐⭐⭐ |
+| Information Depth | ⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
+| Ease of Use | ⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
+| Learning Curve | ⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
+
+VERDICT BOX:
+'Complementary Tools: GitHub Search excels at speed and precision for 
+experienced users with clear requirements. SEFGH excels at semantic 
+understanding and guided discovery for exploratory search scenarios.'
+
+- Style: Professional comparison layout, clean two-column design
+- Colors: GitHub (black/white), SEFGH (blue/purple)
+- Include logos and brand identities
+- Use icons for quick visual scanning
+- Show actual interface screenshots or mockups
+- Highlight key differentiators"
+
+TECHNICAL DETAILS:
+- Show example query comparisons
+- Display result format differences
+- Indicate API endpoints used
+- Show performance benchmarks
+
+--------------------------------------------------------------------------------
+IMAGE 26: Feature Comparison Matrix Table
+Location: Chapter 7.3.4 - Feature Comparison Matrix
+--------------------------------------------------------------------------------
+
+PROMPT:
+"Create a large comprehensive feature comparison table across four platforms:
+- Title: 'Repository Discovery Platforms - Comprehensive Feature Comparison'
+- Subtitle: 'GitHub Search | Sourcegraph | ChatGPT | SEFGH'
+
+Create a professional comparison table with 7 major sections and 40+ features.
+Use these symbols consistently:
+- ✅ Excellent/Full Support (Green checkmark)
+- ⚠️ Partial/Limited/Planned (Yellow warning triangle)
+- ❌ Not Available/Not Supported (Red X)
+- 💲 Cost indicator (1-4 $ symbols for price tiers)
+
+TABLE STRUCTURE:
+[Header: Feature | GitHub | Sourcegraph | ChatGPT | SEFGH]
+
+SECTION 1 - SEARCH CAPABILITIES (7 features)
+SECTION 2 - DISCOVERY FEATURES (6 features)
+SECTION 3 - INFORMATION DEPTH (8 features)
+SECTION 4 - USER EXPERIENCE (7 features)
+SECTION 5 - INTEGRATION & API (5 features)
+SECTION 6 - PERFORMANCE (4 features)
+SECTION 7 - PRICING (4 features)
+
+LEGEND BOX at bottom with symbol explanations.
+
+SUMMARY SCORES PANEL:
+- Overall scores calculated by category
+- GitHub Search: 75/100 (Strong keyword search, lacks AI)
+- Sourcegraph: 82/100 (Best for code-level search)
+- ChatGPT: 65/100 (Good AI, lacks integration)
+- SEFGH: 78/100 (Best for repository discovery)
+
+TARGET AUDIENCE BOX:
+- GitHub Search: All developers (default choice)
+- Sourcegraph: Enterprise teams, code archeology
+- ChatGPT: Quick questions, broad assistance
+- SEFGH: Repository discovery, AI-guided exploration
+
+- Style: Large comparison table with zebra striping
+- Colors: Color-coded symbols (green/yellow/red)
+- Include platform logos in headers
+- Section headers with subtle backgrounds
+- Responsive layout optimized for reading
+- Clean grid lines and spacing"
+
+TECHNICAL DETAILS:
+- Show feature availability by plan tier
+- Display last updated date for accuracy
+- Indicate beta vs stable features
+- Show roadmap items clearly
+
+================================================================================
+              CHAPTER 8: CONCLUSION AND FUTURE WORKS
+================================================================================
+
+--------------------------------------------------------------------------------
+IMAGE 27: Project Timeline and Milestones
+Location: Chapter 8.1 - Project Summary
+--------------------------------------------------------------------------------
+
+PROMPT:
+"Create a horizontal timeline showing the SEFGH project development phases:
+- Title: 'SEFGH Platform Development Timeline'
+- Subtitle: 'From initial conception through deployment - Major milestones'
+
+TIMELINE STRUCTURE (Left to Right, 6 major phases):
+
+PHASE 1 - CONCEPTION & PLANNING (Month 1):
+- Icon: Lightbulb with idea spark
+- Milestones:
+  * Problem identification
+  * Technology stack selection
+  * Architecture design
+  * Requirements gathering
+- Deliverables:
+  * System architecture document
+  * Technology evaluation report
+  * Project scope definition
+- Color: Light blue
+- Duration indicator: 4 weeks
+
+PHASE 2 - FOUNDATION & INFRASTRUCTURE (Months 2-3):
+- Icon: Building foundation/bricks
+- Milestones:
+  * Next.js 16 project setup
+  * Supabase integration
+  * Authentication system
+  * Database schema design
+  * Basic UI components
+- Deliverables:
+  * Working authentication
+  * Database tables created
+  * Component library initialized
+- Color: Green
+- Duration indicator: 8 weeks
+
+PHASE 3 - CORE FEATURES DEVELOPMENT (Months 4-6):
+- Icon: Puzzle pieces assembling
+- Milestones:
+  * AI integration (GitHub Models API)
+  * Conversational search interface
+  * Repository data enrichment
+  * Canvas editor implementation
+  * Real-time notifications
+- Deliverables:
+  * Functional chat interface
+  * Repository discovery working
+  * Canvas editor operational
+- Color: Purple
+- Duration indicator: 12 weeks
+
+PHASE 4 - ADVANCED FEATURES (Months 7-8):
+- Icon: Rocket ship launching
+- Milestones:
+  * API Playground development
+  * Repository submissions
+  * Trending repositories curation
+  * Multi-step onboarding
+  * Internationalization (8 languages)
+- Deliverables:
+  * API management dashboard
+  * Submission workflow
+  * Onboarding system
+- Color: Orange
+- Duration indicator: 8 weeks
+
+PHASE 5 - OPTIMIZATION & REFINEMENT (Month 9):
+- Icon: Speedometer/gauge
+- Milestones:
+  * Performance optimization
+  * Code splitting implementation
+  * Database query optimization
+  * UI/UX refinements
+  * Accessibility improvements
+- Deliverables:
+  * Core Web Vitals in green zone
+  * Optimized bundle sizes
+  * Improved user flows
+- Color: Yellow
+- Duration indicator: 4 weeks
+
+PHASE 6 - TESTING & DEPLOYMENT (Month 10):
+- Icon: Checkmark with deployment arrow
+- Milestones:
+  * Usability testing (12 participants)
+  * Load testing and benchmarking
+  * Security audit
+  * Production deployment (Vercel)
+  * Documentation completion
+- Deliverables:
+  * Live production platform
+  * Test reports and metrics
+  * Complete documentation
+- Color: Red
+- Duration indicator: 4 weeks
+
+BOTTOM SECTION - KEY ACHIEVEMENTS:
+- Timeline showing cumulative progress:
+  * Month 3: Authentication working, Database live
+  * Month 6: AI chat functional, 50+ repositories curated
+  * Month 8: API playground launched, 8 languages supported
+  * Month 10: Platform live, 1000+ user-accessible repositories
+
+METRICS PANEL (right side):
+- Total development time: 10 months
+- Lines of code written: 25,000+
+- Components created: 60+
+- Database tables: 10
+- API endpoints: 25+
+- Languages supported: 8
+- Pages implemented: 15+
+
+TECHNOLOGY STACK ICONS (bottom):
+- Next.js 16, React 19, Supabase, PostgreSQL, Tailwind CSS
+- Vercel, GitHub Models API, shadcn/ui
+- highlight.js, react-markdown
+
+- Style: Modern project timeline with clear phase separation
+- Colors: Phase-specific colors with gradient transitions
+- Include milestone markers (dots on timeline)
+- Show parallel work streams where applicable
+- Add duration bars for each phase
+- Include deliverable icons/badges"
+
+TECHNICAL DETAILS:
+- Show actual commit counts per phase
+- Display feature completion percentage
+- Indicate critical path dependencies
+- Show team size (if applicable)
+
+--------------------------------------------------------------------------------
+IMAGE 28: System Architecture Overview (Final)
+Location: Chapter 8.1.1 - Technical Achievements
+--------------------------------------------------------------------------------
+
+PROMPT:
+"Create a comprehensive final system architecture diagram:
+- Title: 'SEFGH Platform - Complete System Architecture'
+- Subtitle: 'Production deployment architecture showing all integrated components'
+
+ARCHITECTURE LAYERS (Top to Bottom):
+
+LAYER 1 - CLIENT/PRESENTATION TIER:
+- Browser devices (desktop, tablet, mobile icons)
+- React 19 + Next.js 16 application
+- Components:
+  * Server Components (for static content)
+  * Client Components (for interactivity)
+  * Context Providers (Theme, Auth, Settings, Language)
+- Rendering: Server-Side Rendering (SSR) + Static Generation (SSG)
+- Edge Functions: Middleware for auth validation
+
+LAYER 2 - EDGE NETWORK (Vercel):
+- Global CDN nodes on world map
+- Edge caching for static assets
+- Automatic HTTPS/SSL
+- DDoS protection
+- Geographic routing
+
+LAYER 3 - APPLICATION/API TIER:
+- API Routes (Next.js API handlers)
+  * /api/chat (AI conversation endpoint)
+  * /api/repos (repository operations)
+  * /api/notifications (notification CRUD)
+  * /api/submissions (repository submissions)
+  * /api/playground (API key management)
+
+- Business Logic:
+  * Authentication middleware
+  * Rate limiting
+  * Request validation
+  * Response formatting
+
+LAYER 4 - EXTERNAL SERVICES:
+- GitHub Models API (GPT-4o)
+  * Natural language processing
+  * Repository recommendations
+  * Conversational AI
+
+- GitHub REST API
+  * Repository metadata
+  * Real-time statistics
+  * User information
+
+LAYER 5 - DATA/PERSISTENCE TIER:
+- Supabase Services:
+  * PostgreSQL Database (10 tables)
+  * Row Level Security (RLS) policies
+  * Realtime (WebSocket subscriptions)
+  * Storage (Avatar uploads)
+  * Auth (JWT-based authentication)
+
+- Database Tables:
+  * user_conversations
+  * notifications
+  * api_keys, api_logs, api_limits
+  * repo_submissions
+  * trending_repos
+  * profiles
+  * onboarding_data
+  * activity_tracking
+
+CROSS-CUTTING CONCERNS (Side panels):
+
+LEFT PANEL - SECURITY:
+- HTTPS/TLS 1.3 encryption
+- JWT token authentication
+- HTTP-only cookies
+- Row Level Security (RLS)
+- Input validation & sanitization
+- CORS configuration
+- Rate limiting
+
+RIGHT PANEL - PERFORMANCE:
+- Code splitting & lazy loading
+- Image optimization (WebP/AVIF)
+- Database indexing
+- Connection pooling
+- Caching strategy (7-day TTL)
+- Bundle size optimization
+- Edge caching
+
+BOTTOM PANEL - DATA FLOW:
+- Request flow diagram:
+  User → Edge Network → Middleware → API Route → Business Logic → Database/External API → Response → User
+
+- Real-time flow:
+  Database Change → Supabase Realtime → WebSocket → Client Update
+
+COLOR CODING:
+- Client tier: Blue
+- Edge/CDN: Green
+- Application: Purple
+- External services: Orange
+- Database: Red
+- Security: Yellow shield icons
+- Performance: Lightning bolt icons
+
+ANNOTATIONS:
+- Show latency measurements between tiers
+- Indicate HTTP/WebSocket protocols
+- Mark sync vs async operations
+- Show caching points
+- Highlight security boundaries
+
+- Style: Professional enterprise architecture diagram
+- Layout: Layered architecture with clear separation
+- Icons: Technology logos and service icons
+- Connections: Arrows with bidirectional data flow
+- Include legend explaining symbols and colors"
+
+TECHNICAL DETAILS:
+- Show actual port numbers and protocols
+- Display authentication flow
+- Indicate scaling points
+- Show failover mechanisms
+
+--------------------------------------------------------------------------------
+IMAGE 29: User Journey Map
+Location: Chapter 8.1.2 - User Experience Achievements
+--------------------------------------------------------------------------------
+
+PROMPT:
+"Create a comprehensive user journey map showing typical user workflows:
+- Title: 'SEFGH Platform - Complete User Journey Map'
+- Subtitle: 'From first visit through advanced feature usage'
+
+JOURNEY STRUCTURE (5 main user paths):
+
+PATH 1 - NEW USER ONBOARDING (Top, Blue):
+Touchpoints:
+1. Landing page visit → Value proposition displayed
+2. Sign up click → Registration form
+3. Email/password entry → Account creation
+4. Onboarding wizard → 5-step preference collection
+   * Step 1: Role & Experience
+   * Step 2: Tech Stack
+   * Step 3: Goals
+   * Step 4: GitHub Connection (optional)
+   * Step 5: Preferences (notifications, language)
+5. Onboarding complete → Dashboard with personalized content
+
+User Emotions:
+- Curious → Interested → Engaged → Confident → Satisfied
+
+Pain Points:
+- Initial uncertainty about platform value
+- Form fatigue during multi-step process
+
+Opportunities:
+- Clear value proposition messaging
+- Progress indicators in onboarding
+- Skip option for experienced users
+
+PATH 2 - REPOSITORY DISCOVERY (Center, Green):
+Touchpoints:
+1. Open chat interface → ChatGPT-style UI
+2. Type natural language query → "Find React dashboard with charts"
+3. AI processes request → Loading indicator (2-3s)
+4. Receive recommendations → Rich repository cards
+5. Click repository → Detailed view with README
+6. Explore code samples → Canvas editor opens
+7. Copy/download code → One-click actions
+8. Bookmark repository → Saved for later
+
+User Emotions:
+- Uncertain → Hopeful → Impressed → Excited → Productive
+
+Pain Points:
+- Waiting for AI response (2-3s)
+- Occasionally irrelevant suggestions
+
+Opportunities:
+- Progressive loading of results
+- Refine suggestions through conversation
+- Learn from user feedback
+
+PATH 3 - CODE EXPLORATION (Middle, Purple):
+Touchpoints:
+1. View code block in chat → Syntax-highlighted
+2. Click "Open in Canvas" → Canvas editor modal
+3. Switch to Edit tab → Modify code
+4. Switch to Preview tab → Highlighted view
+5. Add personal notes → Notes tab
+6. Download file → Choose format (original language)
+7. Close Canvas → Return to conversation
+
+User Emotions:
+- Interested → Engaged → Experimental → Productive
+
+Pain Points:
+- No code execution capability
+- Limited editor features
+
+Opportunities:
+- Add code execution for safe languages
+- Integrate with online IDEs
+- Version control for edits
+
+PATH 4 - COMMUNITY CONTRIBUTION (Lower, Orange):
+Touchpoints:
+1. Discover interesting repository → External exploration
+2. Click "Submit Repository" → Submission form
+3. Paste GitHub URL → Auto-validation
+4. Add tags and description → Metadata entry
+5. Submit → Duplicate check, validation
+6. Confirmation → Repository queued for curation
+7. Notification → Submission accepted/feedback
+
+User Emotions:
+- Motivated → Engaged → Hopeful → Proud
+
+Pain Points:
+- Uncertainty about acceptance criteria
+- No immediate feedback on submission status
+
+Opportunities:
+- Clear submission guidelines
+- Quality scoring preview
+- Community voting system
+
+PATH 5 - API INTEGRATION (Bottom, Red):
+Touchpoints:
+1. Navigate to API Playground → Dashboard view
+2. Generate API key → Key creation modal
+3. Set rate limits → Configuration
+4. Copy API key → Secure storage warning
+5. View code examples → cURL, JavaScript, Python
+6. Make test request → Live testing
+7. Monitor usage → Analytics dashboard
+8. View logs → Request/response history
+
+User Emotions:
+- Curious → Engaged → Confident → Productive
+
+Pain Points:
+- API documentation could be more comprehensive
+- Limited testing interface
+
+Opportunities:
+- Interactive API explorer
+- More code examples
+- Webhook support
+
+CROSS-PATH FEATURES (Right sidebar):
+- Notifications: Real-time updates across all paths
+- Language switching: Available throughout journey
+- Profile management: Accessible from any page
+- Settings: Persistent preferences
+- Help/Support: Contextual assistance
+
+METRICS PANEL (Bottom):
+- Average time to first value: 5 minutes
+- Onboarding completion rate: 87%
+- Average session duration: 18 minutes
+- Feature adoption rates:
+  * Chat search: 100%
+  * Canvas editor: 68%
+  * Repository submission: 23%
+  * API playground: 15%
+
+- Style: Horizontal journey map with swim lanes
+- Colors: Path-specific colors with emoji sentiment indicators
+- Include user emotion graphs below each path
+- Show decision points and alternative paths
+- Highlight pain points (red warning) and opportunities (green lightbulb)
+- Add timing annotations for each touchpoint"
+
+TECHNICAL DETAILS:
+- Show actual conversion rates
+- Display drop-off points
+- Indicate feature usage correlations
+- Show user segments
+
+--------------------------------------------------------------------------------
+IMAGE 30: Internationalization Architecture
+Location: Chapter 8.1.3 - Internationalization Achievement
+--------------------------------------------------------------------------------
+
+PROMPT:
+"Create a detailed i18n architecture diagram:
+- Title: 'SEFGH Internationalization Architecture'
+- Subtitle: 'Supporting 8 languages with context-based translation system'
+
+CENTER ARCHITECTURE FLOW:
+
+LAYER 1 - LANGUAGE DETECTION & SELECTION:
+- Browser language detection (navigator.language)
+- User preference from localStorage
+- Onboarding language choice
+- Header language dropdown selector
+- Language codes: en, es, fr, de, ja, zh, hi, te
+- Flags for each language displayed
+
+LAYER 2 - LANGUAGECONTEXT PROVIDER:
+- Central translation management
+- Context structure:
+  * locale: Current language code
+  * t: Translation function
+  * changeLanguage: Locale switcher
+- Wraps entire application in layout.js
+- Persists selection to localStorage
+
+LAYER 3 - TRANSLATION FILES (JSON):
+- Structure: src/locales/[lang]/common.json
+- Nested key-value pairs:
+  ```json
+  {
+    "header": {
+      "login": "Login",
+      "signup": "Sign Up",
+      "search": "Search"
+    },
+    "chat": {
+      "sendMessage": "Send Message",
+      "newConversation": "New Conversation"
+    },
+    ...
+  }
+  ```
+- 8 complete translation files
+- 500+ translation keys per file
+
+LAYER 4 - COMPONENT USAGE:
+- Import useLanguage hook
+- Call t() function with dot-notation keys
+- Example: t('header.login') → "Login" (en) / "Iniciar sesión" (es)
+- Dynamic interpolation: t('welcome', { name: 'John' })
+
+SUPPORTED LANGUAGES PANEL (Right):
+
+1. ENGLISH (en) 🇺🇸
+   - Default language
+   - 100% complete
+   - Global lingua franca
+   - Fallback for missing translations
+
+2. SPANISH (es) 🇪🇸
+   - 100% complete
+   - 460M+ native speakers
+   - Second most spoken native language
+
+3. FRENCH (fr) 🇫🇷
+   - 100% complete
+   - 275M+ speakers
+   - Official language in 29 countries
+
+4. GERMAN (de) 🇩🇪
+   - 100% complete
+   - 130M+ speakers
+   - Dominant in Central Europe
+
+5. JAPANESE (ja) 🇯🇵
+   - 100% complete
+   - 125M+ speakers
+   - Major tech hub
+
+6. CHINESE (zh) 🇨🇳
+   - 95% complete
+   - 1.3B+ speakers
+   - World's most spoken language
+
+7. HINDI (hi) 🇮🇳
+   - 90% complete
+   - 600M+ speakers
+   - Widely spoken in South Asia
+
+8. TELUGU (te) 🇮🇳
+   - 90% complete
+   - 95M+ speakers
+   - Significant regional language
+
+TRANSLATION WORKFLOW (Bottom):
+
+STEP 1: Add new feature
+- Identify UI strings needing translation
+- Add English keys to common.json
+
+STEP 2: Translation
+- Professional translation (preferred)
+- Machine translation + review (current)
+- Community contribution (future)
+
+STEP 3: Testing
+- Visual verification in each language
+- RTL compatibility check (future)
+- Context appropriateness review
+
+STEP 4: Deployment
+- Translation files bundled with app
+- No runtime fetching (better performance)
+- Static files for fast loading
+
+FEATURES & CONSIDERATIONS:
+
+Current Capabilities:
+- ✅ Complete UI translation (all labels, buttons, messages)
+- ✅ Notification templates translated
+- ✅ Error messages localized
+- ✅ Date/time formatting (locale-aware)
+- ✅ Persistent language selection
+- ✅ Smooth language switching (instant)
+
+Future Enhancements:
+- ⚠️ Right-to-Left (RTL) support for Arabic, Hebrew
+- ⚠️ Number formatting (currency, decimals)
+- ⚠️ Pluralization rules
+- ⚠️ Regional variants (en-US vs en-GB)
+- ⚠️ AI responses in user's language
+- ⚠️ Crowdsourced translation contributions
+
+LANGUAGE SWITCHER UI (Top Right):
+- Dropdown menu in header
+- Flag icons for visual identification
+- Current language highlighted
+- onClick: Updates context, persists to localStorage
+- Immediate UI re-render with new translations
+
+- Style: Clean technical architecture with language flags
+- Colors: Multi-cultural color palette (blue base)
+- Include JSON structure examples
+- Show code snippets for hook usage
+- Display translation completion percentages
+- Add global user distribution map"
+
+TECHNICAL DETAILS:
+- Show actual file structure
+- Display translation key namespace strategy
+- Indicate bundle size impact
+- Show loading performance
+
+--------------------------------------------------------------------------------
+IMAGE 31: Dependency Risk Matrix
+Location: Chapter 8.2.1 - AI Model Limitations and Dependencies
+--------------------------------------------------------------------------------
+
+PROMPT:
+"Create a risk assessment matrix for system dependencies:
+- Title: 'SEFGH Platform - Dependency Risk Analysis Matrix'
+- Subtitle: 'Impact vs Control assessment for critical dependencies'
+
+MATRIX STRUCTURE (2x2 grid):
+
+X-AXIS: CONTROL / MITIGATION CAPABILITY
+- Left (Low Control): Dependencies we cannot directly influence
+- Right (High Control): Dependencies we control or can mitigate
+
+Y-AXIS: IMPACT ON CORE FUNCTIONALITY
+- Top (High Impact): Critical for core features
+- Bottom (Low Impact): Important but not critical
+
+QUADRANT 1 - HIGH IMPACT, LOW CONTROL (Top Left, RED - Critical Risk):
+
+1. GitHub Models API (GPT-4o)
+   - Impact: 10/10 (Powers core conversational search)
+   - Control: 2/10 (Third-party service)
+   - Risks:
+     * Service outages → Core feature unavailable
+     * Rate limiting → User request rejections
+     * Cost changes → Budget impact
+     * Model deprecation → Requires migration
+     * Quality variations → Inconsistent recommendations
+   - Mitigation strategies:
+     * Implement request queuing
+     * Cache common queries
+     * Fallback to keyword search
+     * Monitor API status
+     * Budget alerts for usage
+
+2. Supabase Database Service
+   - Impact: 10/10 (All data persistence)
+   - Control: 3/10 (Managed service)
+   - Risks:
+     * Database outages → Platform unavailable
+     * Performance degradation → Slow responses
+     * Data loss → Catastrophic impact
+     * Service pricing changes → Cost increases
+   - Mitigation strategies:
+     * Regular backups
+     * Database replication
+     * Connection pooling
+     * Query optimization
+     * Migration plan to self-hosted
+
+QUADRANT 2 - HIGH IMPACT, HIGH CONTROL (Top Right, YELLOW - Manageable):
+
+3. Authentication System (Supabase Auth)
+   - Impact: 9/10 (Required for user access)
+   - Control: 7/10 (Can implement fallback)
+   - Risks:
+     * Auth service issues → Login failures
+     * Token expiration bugs → Session drops
+   - Mitigation strategies:
+     * Implement custom auth backup
+     * Multiple session storage strategies
+     * Graceful degradation
+
+4. Application Code & Logic
+   - Impact: 10/10 (Core functionality)
+   - Control: 10/10 (Full control)
+   - Risks:
+     * Bugs → Feature failures
+     * Performance issues → Slow UX
+     * Security vulnerabilities → Data breaches
+   - Mitigation strategies:
+     * Comprehensive testing
+     * Code reviews
+     * Performance monitoring
+     * Security audits
+
+QUADRANT 3 - LOW IMPACT, LOW CONTROL (Bottom Left, GREEN - Monitor):
+
+5. GitHub REST API
+   - Impact: 5/10 (Enrichment only, cached)
+   - Control: 2/10 (Third-party service)
+   - Risks:
+     * Rate limiting → Slower enrichment
+     * API changes → Integration breaks
+   - Mitigation strategies:
+     * 7-day caching reduces dependency
+     * Graceful degradation to cached data
+     * API version pinning
+
+6. Vercel Hosting Platform
+   - Impact: 4/10 (Can migrate to alternatives)
+   - Control: 4/10 (Can change providers)
+   - Risks:
+     * Service outages → Platform unavailable
+     * Pricing changes → Cost increases
+   - Mitigation strategies:
+     * Multi-cloud deployment strategy
+     * Infrastructure as Code for portability
+     * Regular disaster recovery tests
+
+QUADRANT 4 - LOW IMPACT, HIGH CONTROL (Bottom Right, BLUE - Low Priority):
+
+7. UI Libraries (shadcn/ui, Tailwind)
+   - Impact: 3/10 (Aesthetic only)
+   - Control: 9/10 (Can replace or customize)
+   - Risks:
+     * Breaking changes → UI updates needed
+     * Deprecation → Migration work
+   - Mitigation strategies:
+     * Version pinning
+     * Custom component abstractions
+     * Alternative library evaluation
+
+8. Syntax Highlighting (highlight.js)
+   - Impact: 3/10 (Canvas feature only)
+   - Control: 10/10 (Can swap libraries)
+   - Risks:
+     * Performance issues → Slow Canvas
+     * Missing language support → Limited utility
+   - Mitigation strategies:
+     * Lazy loading
+     * Alternative libraries (Prism.js)
+     * Custom highlighting
+
+RISK SCORING TABLE (Right Panel):
+
+| Dependency | Impact | Control | Risk Score | Priority |
+|------------|--------|---------|------------|----------|
+| GitHub Models API | 10 | 2 | CRITICAL | P1 |
+| Supabase Database | 10 | 3 | CRITICAL | P1 |
+| Supabase Auth | 9 | 7 | HIGH | P2 |
+| GitHub REST API | 5 | 2 | MEDIUM | P3 |
+| Vercel Hosting | 4 | 4 | MEDIUM | P3 |
+| Application Code | 10 | 10 | MANAGED | P2 |
+| UI Libraries | 3 | 9 | LOW | P4 |
+| Syntax Highlighting | 3 | 10 | LOW | P5 |
+
+MITIGATION STRATEGY SUMMARY (Bottom Panel):
+
+IMMEDIATE ACTIONS (P1):
+- Implement AI response caching (reduce API dependency)
+- Set up database backup automation
+- Create fallback keyword search
+- Monitor API status dashboards
+
+SHORT-TERM (P2):
+- Build custom auth fallback system
+- Implement request queuing for AI API
+- Create database migration scripts
+- Load testing and capacity planning
+
+LONG-TERM (P3):
+- Evaluate self-hosted AI models
+- Multi-cloud deployment strategy
+- Database replication across regions
+- Comprehensive disaster recovery plan
+
+- Style: Professional risk assessment matrix
+- Colors: Red (critical), Yellow (high), Green (monitor), Blue (low)
+- Include risk heatmap visualization
+- Show mitigation roadmap timeline
+- Add dependency graph showing relationships"
+
+TECHNICAL DETAILS:
+- Show actual API usage statistics
+- Display current mitigation implementations
+- Indicate monitoring systems in place
+- Show incident response procedures
+
+[IMAGES 32-36 CONTINUE WITH CHAPTER 8 FUTURE WORK DIAGRAMS...]
+
+================================================================================
+STATUS UPDATE:
+- Chapters 2-5: Complete (20 images)
+- Chapter 6: Skipped (no content in thesis draft)
+- Chapter 7: Complete (6 images: 21-26)
+- Chapter 8: Partial (5 images: 27-31)
+- Remaining: 5 more images for Chapter 8 future work sections
+
+TOTAL SO FAR: 31 images with detailed technical prompts
+================================================================================
