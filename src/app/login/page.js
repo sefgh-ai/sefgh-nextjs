@@ -1,37 +1,14 @@
 'use client'
 
 import { useState, useEffect } from "react"
-import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { Moon, Sun, Github } from "lucide-react"
+import { Moon, Sun } from "lucide-react"
 import { useTheme } from "next-themes"
 import { createClient } from "@/lib/supabase/client"
 import { toast } from "sonner"
 import { useAuth } from "@/contexts/AuthContext"
-import { SignInPage } from "@/components/ui/sign-in"
-
-// Login page testimonials
-const loginTestimonials = [
-  {
-    avatarSrc: "https://randomuser.me/api/portraits/women/44.jpg",
-    name: "Emma Wilson",
-    handle: "@emmawilson",
-    text: "SEFGH-AI has transformed how I search for GitHub repos. Absolutely incredible!"
-  },
-  {
-    avatarSrc: "https://randomuser.me/api/portraits/men/32.jpg",
-    name: "Michael Chen",
-    handle: "@michaeldev",
-    text: "The AI-powered search is a game changer. Found exactly what I needed in seconds."
-  },
-  {
-    avatarSrc: "https://randomuser.me/api/portraits/women/65.jpg",
-    name: "Sarah Johnson",
-    handle: "@sarahcodes",
-    text: "Best developer tool I've used this year. Clean, fast, and incredibly powerful."
-  }
-];
+import { AuthPage } from "@/components/ui/auth-page"
 
 export default function LoginPage() {
   const [loading, setLoading] = useState(false)
@@ -104,11 +81,7 @@ export default function LoginPage() {
   const handleResetPassword = () => {
     toast.info("Password Reset", {
       description: "Password reset feature coming soon! Check your email for instructions.",
-    });
-  }
-
-  const handleCreateAccount = () => {
-    router.push('/signup')
+    })
   }
 
   const handleGithubLogin = async () => {
@@ -165,52 +138,22 @@ export default function LoginPage() {
     }
   }
 
-  const GithubButton = (
-    <button 
-      onClick={handleGithubLogin}
-      className="w-full flex items-center justify-center gap-3 border border-border rounded-2xl py-4 hover:bg-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-      disabled={loading}
-    >
-      <Github className="h-5 w-5" />
-      GitHub
-    </button>
-  );
-
   return (
     <>
-      {/* Theme Toggle - Top Left */}
-      <div className="fixed top-4 left-4 z-50">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
-          className="h-9 w-9"
-        >
-          <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-          <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-          <span className="sr-only">Toggle theme</span>
-        </Button>
-      </div>
-
-      <SignInPage
-        title={
-          <span className="font-semibold text-foreground">
-            Welcome back to{' '}
-            <span className="bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent">
-              SEFGH-AI
-            </span>
-          </span>
-        }
-        description="Sign in to access your AI-powered GitHub search platform"
-        heroImageSrc="https://images.unsplash.com/photo-1557426272-fc759fdf7a8d?w=2160&q=80"
-        testimonials={loginTestimonials}
-        onSignIn={handleSubmit}
-        onGoogleSignIn={handleGoogleLogin}
+      <AuthPage
+        mode="signin"
+        brandName="SEFGH-AI"
+        homeLink="/"
+        onSubmit={handleSubmit}
+        onGoogleAuth={handleGoogleLogin}
+        onGithubAuth={handleGithubLogin}
         onResetPassword={handleResetPassword}
-        onCreateAccount={handleCreateAccount}
         loading={loading}
         error={error}
-        GithubButton={GithubButton}
+        testimonial={{
+          text: "SEFGH-AI has transformed how I search for GitHub repos. The AI-powered search is a game changer!",
+          author: "Adeel, Developer"
+        }}
       />
     </>
   )
