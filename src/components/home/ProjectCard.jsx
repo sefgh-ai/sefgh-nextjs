@@ -6,13 +6,61 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Eye, Star, MessageSquare, Clock, Flame } from "lucide-react";
 
+/**
+ * Extract owner and repo name from GitHub URL
+ * @param {string} githubUrl - Full GitHub URL (e.g., https://github.com/owner/repo)
+ * @returns {{ owner: string, repo: string } | null}
+ */
+function parseGitHubUrl(githubUrl) {
+  if (!githubUrl) return null;
+  
+  try {
+    const match = githubUrl.match(/github\.com\/([^\/]+)\/([^\/]+)/);
+    if (match) {
+      return {
+        owner: match[1],
+        repo: match[2].replace(/\.git$/, '') // Remove .git suffix if present
+      };
+    }
+  } catch (error) {
+    console.error('Error parsing GitHub URL:', error);
+  }
+  
+  return null;
+}
+
 export function ProjectCard({ project }) {
   const router = useRouter();
+
+  // Parse GitHub URL to get owner and repo
+  const repoInfo = parseGitHubUrl(project.github_url);
+  
+  // Determine the route to navigate to
+  const projectRoute = repoInfo 
+    ? `/repo/${repoInfo.owner}/${repoInfo.repo}`
+    : project.github_url // If we have URL but can't parse, open externally
+    ? project.github_url
+    : null; // No URL available
+
+  const handleClick = () => {
+    if (!projectRoute) {
+      console.warn('No route available for project:', project.title);
+      return;
+    }
+
+    // If it's an external URL (starts with http), open in new tab
+    if (projectRoute.startsWith('http')) {
+      window.open(projectRoute, '_blank', 'noopener,noreferrer');
+    } else {
+      // Navigate to internal route
+      router.push(projectRoute);
+    }
+  };
 
   return (
     <Card
       className="glass-premium border-border hover:border-primary/50 transition-all duration-300 hover:shadow-xl backdrop-blur-sm group cursor-pointer"
-      onClick={() => router.push(`/project/${project.id}`)}
+      onClick={handleClick}
     >
       <CardContent className="p-6">
         <div className="flex gap-4">

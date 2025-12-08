@@ -14,63 +14,26 @@ import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
-import { X, Plus, GripVertical, Info } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { X, Plus, GripVertical, Info, Loader2, Sparkles } from 'lucide-react';
 import { toast } from 'sonner';
+import { useCategories } from '@/app/home/hooks/useCategories';
+import { useAuth } from '@/contexts/AuthContext';
 
-const AVAILABLE_TAGS = {
-  Programming: [
-    { name: 'Python', icon: '🐍' },
-    { name: 'Java', icon: '☕' },
-    { name: 'C++', icon: '⚙️' },
-    { name: 'JavaScript', icon: '⚡' },
-    { name: 'Rust', icon: '🦀' },
-    { name: 'Go', icon: '🔵' },
-    { name: 'Swift', icon: '🔶' },
-    { name: 'TypeScript', icon: '💠' },
-    { name: 'C#', icon: '💚' },
-    { name: 'C', icon: '🔧' },
-    { name: 'Kotlin', icon: '🟣' },
-    { name: 'PHP', icon: '🐘' },
-    { name: 'Ruby', icon: '💎' },
-    { name: 'Flutter', icon: '🦋' },
-  ],
-  Technology: [
-    { name: 'AI', icon: '🤖' },
-    { name: 'Algo', icon: '🧮' },
-    { name: 'Spider', icon: '🕷️' },
-    { name: 'Safe', icon: '🔒' },
-    { name: 'Linux', icon: '🐧' },
-    { name: 'DB', icon: '🗄️' },
-    { name: 'Test', icon: '🧪' },
-    { name: 'Embedded', icon: '🔌' },
-    { name: 'Docker', icon: '🐳' },
-    { name: 'Kubernetes', icon: '☸️' },
-    { name: 'Vue', icon: '💚' },
-    { name: 'React', icon: '⚛️' },
-  ],
-  Application: [
-    { name: 'Game', icon: '🎮' },
-    { name: 'Desktop', icon: '🖥️' },
-    { name: 'Android', icon: '🤖' },
-    { name: 'CLI', icon: '⌨️' },
-    { name: 'Web App', icon: '🌐' },
-    { name: 'Tool', icon: '🔨' },
-    { name: 'macOS', icon: '🍎' },
-    { name: 'Windows', icon: '🪟' },
-    { name: 'Self-Hosted', icon: '🏠' },
-  ],
-  Other: [
-    { name: 'Tutorial', icon: '📚' },
-    { name: 'Book', icon: '📖' },
-    { name: 'Collection', icon: '📦' },
-    { name: 'Funny', icon: '😄' },
-  ],
-};
+// Emoji picker for new categories
+const EMOJI_OPTIONS = ['🏷️', '🎯', '🚀', '⭐', '💡', '🔥', '✨', '🎨', '🔧', '📱', '💻', '🌟', '🎪', '🎭', '🎬'];
 
 export function PreferencesDialog({ open, onOpenChange, onSave }) {
+  const { user } = useAuth();
+  const { categories, loading, addCategory, refreshCategories } = useCategories();
   const [selectedTags, setSelectedTags] = useState([]);
   const [filterMode, setFilterMode] = useState('OR'); // OR or AND
   const [draggedIndex, setDraggedIndex] = useState(null);
+  const [showAddCategory, setShowAddCategory] = useState(false);
+  const [newCategoryName, setNewCategoryName] = useState('');
+  const [newCategoryIcon, setNewCategoryIcon] = useState('🏷️');
+  const [newCategoryType, setNewCategoryType] = useState('custom');
+  const [isAdding, setIsAdding] = useState(false);
 
   useEffect(() => {
     // Load saved preferences from localStorage
@@ -84,6 +47,14 @@ export function PreferencesDialog({ open, onOpenChange, onSave }) {
     }
   }, [open]);
 
+  // Group categories by type
+  const groupedCategories = categories.reduce((acc, cat) => {
+    const type = cat.type.charAt(0).toUpperCase() + cat.type.slice(1);
+    if (!acc[type]) acc[type] = [];
+    acc[type].push(cat);
+    return acc;
+  }, {});
+
   const handleTagClick = (tag) => {
     if (selectedTags.find((t) => t.name === tag.name)) {
       // Remove tag
@@ -95,6 +66,44 @@ export function PreferencesDialog({ open, onOpenChange, onSave }) {
         return;
       }
       setSelectedTags([...selectedTags, tag]);
+    }
+  };
+
+  const handleAddCategory = async () => {
+    if (!user) {
+      toast.error('Please login to add custom categories');
+      return;
+    }
+
+    if (!newCategoryName.trim()) {
+      toast.error('Category name is required');
+      return;
+    }
+
+    if (categories.find(cat => cat.name.toLowerCase() === newCategoryName.trim().toLowerCase())) {
+      toast.error('Category already exists');
+      return;
+    }
+
+    setIsAdding(true);
+    const result = await addCategory(
+      newCategoryName.trim(),
+      newCategoryIcon,
+      newCategoryType,
+      `Custom category created by user`
+    );
+
+    setIsAdding(false);
+
+    if (result.success) {
+      toast.success('Category added successfully!');
+      setNewCategoryName('');
+      setNewCategoryIcon('🏷️');
+      setNewCategoryType('custom');
+      setShowAddCategory(false);
+      refreshCategories();
+    } else {
+      toast.error(`Failed to add category: ${result.error}`);
     }
   };
 
@@ -143,42 +152,147 @@ export function PreferencesDialog({ open, onOpenChange, onSave }) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-5xl h-[80vh] bg-slate-900 border-slate-800 text-slate-100">
         <DialogHeader>
-          <DialogTitle className="text-xl font-bold text-slate-100">
+          <DialogTitle className="text-xl font-bold text-slate-100 flex items-center gap-2">
             Customize Your Feed Preferences
+            {loading && <Loader2 className="w-4 h-4 animate-spin text-slate-400" />}
           </DialogTitle>
           <DialogDescription className="text-slate-400 flex items-center gap-2">
             <Info className="w-4 h-4" />
-            Click tags on the left to select, drag on the right to sort
+            Click tags to select, drag to reorder. {categories.length} categories available from database.
           </DialogDescription>
         </DialogHeader>
 
         <div className="flex gap-6 h-full overflow-hidden">
           {/* Left Side - Available Tags */}
           <div className="flex-1">
-            <ScrollArea className="h-[calc(80vh-200px)]">
-              <div className="space-y-6 pr-4">
-                {Object.entries(AVAILABLE_TAGS).map(([category, tags]) => (
-                  <div key={category}>
-                    <h3 className="text-sm font-semibold text-slate-300 mb-3">{category}</h3>
-                    <div className="flex flex-wrap gap-2">
-                      {tags.map((tag) => (
-                        <Badge
-                          key={tag.name}
-                          variant={isTagSelected(tag.name) ? 'default' : 'outline'}
-                          className={`cursor-pointer transition-all ${
-                            isTagSelected(tag.name)
-                              ? 'bg-blue-600 hover:bg-blue-700 text-white border-blue-500'
-                              : 'bg-slate-800 hover:bg-slate-700 text-slate-300 border-slate-700'
-                          }`}
-                          onClick={() => handleTagClick(tag)}
-                        >
-                          <span className="mr-1">{tag.icon}</span>
-                          {tag.name}
-                        </Badge>
+            {/* Add Category Button */}
+            <div className="mb-4">
+              {!showAddCategory ? (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowAddCategory(true)}
+                  disabled={!user}
+                  className="w-full border-dashed border-slate-700 hover:border-blue-500 hover:bg-blue-950/20"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add Custom Category
+                  {!user && <span className="ml-2 text-xs">(Login required)</span>}
+                </Button>
+              ) : (
+                <div className="p-3 bg-slate-800 rounded-lg border border-slate-700 space-y-3">
+                  <div className="flex items-center gap-2">
+                    <select
+                      value={newCategoryIcon}
+                      onChange={(e) => setNewCategoryIcon(e.target.value)}
+                      className="w-12 h-10 bg-slate-900 border border-slate-700 rounded text-xl text-center cursor-pointer"
+                    >
+                      {EMOJI_OPTIONS.map(emoji => (
+                        <option key={emoji} value={emoji}>{emoji}</option>
                       ))}
-                    </div>
+                    </select>
+                    <Input
+                      placeholder="Category name"
+                      value={newCategoryName}
+                      onChange={(e) => setNewCategoryName(e.target.value)}
+                      className="flex-1 bg-slate-900 border-slate-700"
+                      maxLength={30}
+                    />
+                    <select
+                      value={newCategoryType}
+                      onChange={(e) => setNewCategoryType(e.target.value)}
+                      className="w-32 h-10 bg-slate-900 border border-slate-700 rounded px-2 text-sm"
+                    >
+                      <option value="custom">Custom</option>
+                      <option value="programming">Programming</option>
+                      <option value="technology">Technology</option>
+                      <option value="application">Application</option>
+                      <option value="other">Other</option>
+                    </select>
                   </div>
-                ))}
+                  <div className="flex gap-2">
+                    <Button
+                      size="sm"
+                      onClick={handleAddCategory}
+                      disabled={isAdding || !newCategoryName.trim()}
+                      className="flex-1 bg-blue-600 hover:bg-blue-700"
+                    >
+                      {isAdding ? (
+                        <>
+                          <Loader2 className="w-3 h-3 mr-2 animate-spin" />
+                          Adding...
+                        </>
+                      ) : (
+                        <>
+                          <Sparkles className="w-3 h-3 mr-2" />
+                          Add to Database
+                        </>
+                      )}
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => {
+                        setShowAddCategory(false);
+                        setNewCategoryName('');
+                        setNewCategoryIcon('🏷️');
+                        setNewCategoryType('custom');
+                      }}
+                      className="text-slate-400 hover:text-slate-300"
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <ScrollArea className="h-[calc(80vh-280px)]">
+              <div className="space-y-6 pr-4">
+                {loading && categories.length === 0 ? (
+                  <div className="flex items-center justify-center h-40 text-slate-500">
+                    <Loader2 className="w-8 h-8 animate-spin" />
+                  </div>
+                ) : Object.keys(groupedCategories).length === 0 ? (
+                  <div className="flex flex-col items-center justify-center h-40 text-slate-500">
+                    <Info className="w-8 h-8 mb-2" />
+                    <p className="text-sm">No categories available</p>
+                    <p className="text-xs">Add your first category above</p>
+                  </div>
+                ) : (
+                  Object.entries(groupedCategories).map(([categoryType, tags]) => (
+                    <div key={categoryType}>
+                      <h3 className="text-sm font-semibold text-slate-300 mb-3 flex items-center gap-2">
+                        {categoryType}
+                        <Badge variant="outline" className="text-xs">
+                          {tags.length}
+                        </Badge>
+                      </h3>
+                      <div className="flex flex-wrap gap-2">
+                        {tags.map((tag) => (
+                          <Badge
+                            key={tag.id}
+                            variant={isTagSelected(tag.name) ? 'default' : 'outline'}
+                            className={`cursor-pointer transition-all ${
+                              isTagSelected(tag.name)
+                                ? 'bg-blue-600 hover:bg-blue-700 text-white border-blue-500'
+                                : 'bg-slate-800 hover:bg-slate-700 text-slate-300 border-slate-700'
+                            }`}
+                            onClick={() => handleTagClick(tag)}
+                          >
+                            <span className="mr-1">{tag.icon}</span>
+                            {tag.name}
+                            {tag.usage_count > 0 && (
+                              <span className="ml-1 text-xs opacity-70">
+                                ({tag.usage_count})
+                              </span>
+                            )}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  ))
+                )}
               </div>
             </ScrollArea>
           </div>

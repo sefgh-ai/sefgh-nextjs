@@ -40,12 +40,14 @@ export const TrendingRepositoryCard = React.memo(function TrendingRepositoryCard
               <span className="text-muted-foreground">/</span>
               <span>{repo.name}</span>
               {repo.trending && (
-                <span className="text-base">{getHeatIndicator(repo.heatLevel)}</span>
+                <span className={`text-base ${getHeatIndicator(repo.heatLevel).color}`}>
+                  {getHeatIndicator(repo.heatLevel).label}
+                </span>
               )}
               {/* Topic Badge */}
               {repo.topic && (
                 <Badge variant="secondary" className="ml-2 text-xs">
-                  {repo.topicIcon} {repo.topic}
+                  {typeof repo.topicIcon === 'string' ? repo.topicIcon : repo.topicIcon?.label || '🔥'} {repo.topic}
                 </Badge>
               )}
             </h3>
@@ -58,13 +60,17 @@ export const TrendingRepositoryCard = React.memo(function TrendingRepositoryCard
             {/* Meta Info */}
             <div className="flex items-center gap-6 text-sm">
               {/* Language */}
-              <div className="flex items-center gap-2">
-                <div
-                  className="w-3 h-3 rounded-full"
-                  style={{ backgroundColor: repo.languageColor }}
-                ></div>
-                <span className="text-muted-foreground">{repo.language}</span>
-              </div>
+              {repo.language && (
+                <div className="flex items-center gap-2">
+                  <div
+                    className="w-3 h-3 rounded-full"
+                    style={{ backgroundColor: typeof repo.languageColor === 'string' ? repo.languageColor : repo.languageColor?.color || '#888' }}
+                  ></div>
+                  <span className="text-muted-foreground">
+                    {typeof repo.language === 'string' ? repo.language : repo.language?.label || 'Unknown'}
+                  </span>
+                </div>
+              )}
 
               {/* Stars */}
               <div className="flex items-center gap-1 text-muted-foreground">
