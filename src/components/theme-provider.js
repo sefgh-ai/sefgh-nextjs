@@ -7,7 +7,6 @@ export function ThemeProvider({ children, ...props }) {
   return (
     <NextThemesProvider 
       {...props} 
-      forcedTheme="dark"
       defaultTheme="dark"
       enableSystem={false}
       storageKey="sefgh-theme"
