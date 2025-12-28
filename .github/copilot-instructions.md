@@ -18,11 +18,13 @@ SEFGH is an AI-powered GitHub repository search platform built with Next.js 16, 
 ```javascript
 <ThemeProvider>
   <AuthProvider>
-    <SettingsProvider>
-      <LanguageProvider>
-        <PageWrapper>{children}</PageWrapper>
-      </LanguageProvider>
-    </SettingsProvider>
+    <NotificationProvider>
+      <SettingsProvider>
+        <LanguageProvider>
+          <PageWrapper>{children}</PageWrapper>
+        </LanguageProvider>
+      </SettingsProvider>
+    </NotificationProvider>
   </AuthProvider>
 </ThemeProvider>
 ```
@@ -73,10 +75,19 @@ Tables are created via SQL files in `supabase/`:
 - Uses `react-markdown`, `remark-gfm`, `rehype-highlight`, `rehype-raw`
 
 #### Notifications System
-- Real-time via Supabase subscriptions in `NotificationBell.jsx`
-- Template-based notifications in `src/lib/notifications.js` (20+ types)
-- Bell icon in header shows unread count
-- Full page at `/notifications` for detailed view
+- **Global Context**: `NotificationProvider` in layout provides app-wide real-time notifications
+- **Context Hook**: `useNotifications()` from `@/contexts/NotificationContext`
+  - Returns: `{ notifications, unreadCount, loading, isConnected, markAsRead, markAllAsRead, deleteNotification, clearAllNotifications, addLocalNotification, refresh, hasUnread, recentNotifications, unreadNotifications }`
+- **Real-time**: Supabase subscriptions auto-update on INSERT/UPDATE/DELETE
+- **Toast Notifications**: New notifications automatically show as toasts
+- **UI Components**: 
+  - `NotificationBell` in header shows unread count badge
+  - Full page at `/notifications` for detailed view
+- **Send Notifications**: Use `useSendNotification()` hook from `@/hooks/useSendNotification.js`
+  - `sendToSelf(title, message, type, link)` - Notify current user
+  - `sendToUser(userId, title, message, type, link)` - Notify specific user
+  - `sendFromTemplate(userId, template)` - Use predefined templates
+- **Templates**: Import `NotificationTemplates` from `@/hooks/useSendNotification.js`
 
 #### Internationalization (i18n)
 - Custom context-based solution (not next-intl routing)

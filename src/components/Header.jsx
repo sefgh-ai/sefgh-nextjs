@@ -8,6 +8,7 @@ import { useSettings } from "@/contexts/SettingsContext"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { NotificationBell } from "@/components/NotificationBell"
 import { toast } from "sonner"
 import { useCallback, memo } from 'react'
 
@@ -78,6 +79,9 @@ const Header = memo(function Header() {
           <Link href="/search">
             <Button variant="outline" size="sm">GitHub Search</Button>
           </Link>
+          
+          {/* Notification Bell */}
+          <NotificationBell />
           
           {/* Profile Dropdown */}
           <DropdownMenu>

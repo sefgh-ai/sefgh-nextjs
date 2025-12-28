@@ -5,100 +5,26 @@ import { Bell, Check, Trash2, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { useNotifications } from "@/contexts/NotificationContext";
 
-export function NotificationBell({ userId }) {
-  const [notifications, setNotifications] = useState([]);
-  const [unreadCount, setUnreadCount] = useState(0);
+export function NotificationBell() {
+  const {
+    notifications,
+    unreadCount,
+    loading,
+    markAsRead,
+    markAllAsRead,
+    deleteNotification,
+  } = useNotifications();
+
   const [isOpen, setIsOpen] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [isMounted, setIsMounted] = useState(false);
   const dropdownRef = useRef(null);
   const bellRef = useRef(null);
   const tooltipTimeout = useRef(null);
   const router = useRouter();
-
-  // Memoize supabase client - only create after mount
-  const supabase = useMemo(() => {
-    if (!isMounted) return null;
-    return createClient();
-  }, [isMounted]);
-
-  // Set mounted state
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  const fetchNotifications = useCallback(async () => {
-    if (!supabase || !userId) return;
-
-    try {
-      const { data, error } = await supabase
-        .from("notifications")
-        .select("*")
-        .eq("user_id", userId)
-        .order("created_at", { ascending: false })
-        .limit(20);
-
-      if (error) throw error;
-
-      setNotifications(data || []);
-      setUnreadCount(data?.filter((n) => !n.is_read).length || 0);
-    } catch (error) {
-      console.error("Error fetching notifications:", error);
-    } finally {
-      setLoading(false);
-    }
-  }, [userId, supabase]);
-
-  const handleRealtimeUpdate = useCallback((payload) => {
-    if (payload.eventType === "INSERT") {
-      setNotifications((prev) => [payload.new, ...prev]);
-      if (!payload.new.is_read) {
-        setUnreadCount((prev) => prev + 1);
-      }
-    } else if (payload.eventType === "UPDATE") {
-      setNotifications((prev) =>
-        prev.map((n) => (n.id === payload.new.id ? payload.new : n))
-      );
-      if (payload.old.is_read !== payload.new.is_read) {
-        setUnreadCount((prev) => (payload.new.is_read ? prev - 1 : prev + 1));
-      }
-    } else if (payload.eventType === "DELETE") {
-      setNotifications((prev) => prev.filter((n) => n.id !== payload.old.id));
-      if (!payload.old.is_read) {
-        setUnreadCount((prev) => prev - 1);
-      }
-    }
-  }, []);
-
-  useEffect(() => {
-    if (!isMounted || !supabase || !userId) return;
-
-    fetchNotifications();
-
-    // Set up real-time subscription
-    const channel = supabase
-      .channel("notifications")
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "notifications",
-          filter: `user_id=eq.${userId}`,
-        },
-        handleRealtimeUpdate
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [isMounted, userId, supabase, fetchNotifications, handleRealtimeUpdate]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -139,67 +65,36 @@ export function NotificationBell({ userId }) {
   }, []);
 
   const handleBellClick = useCallback(() => {
-    setIsOpen(!isOpen);
+    setIsOpen((prev) => !prev);
     setShowTooltip(false);
     if (tooltipTimeout.current) {
       clearTimeout(tooltipTimeout.current);
     }
-  }, [isOpen]);
+  }, []);
 
-  const markAsRead = useCallback(
+  const handleMarkAsRead = useCallback(
     async (notificationId) => {
-      if (!supabase) return;
-      try {
-        const { error } = await supabase
-          .from("notifications")
-          .update({ is_read: true })
-          .eq("id", notificationId);
-
-        if (error) throw error;
-      } catch (error) {
-        console.error("Error marking notification as read:", error);
-      }
+      await markAsRead(notificationId);
     },
-    [supabase]
+    [markAsRead]
   );
 
-  const markAllAsRead = useCallback(async () => {
-    if (!supabase) return;
-    try {
-      const { error } = await supabase
-        .from("notifications")
-        .update({ is_read: true })
-        .eq("user_id", userId)
-        .eq("is_read", false);
+  const handleMarkAllAsRead = useCallback(async () => {
+    await markAllAsRead();
+  }, [markAllAsRead]);
 
-      if (error) throw error;
-    } catch (error) {
-      console.error("Error marking all as read:", error);
-    }
-  }, [supabase, userId]);
-
-  const deleteNotification = useCallback(
+  const handleDeleteNotification = useCallback(
     async (notificationId, event) => {
-      if (!supabase) return;
       event.stopPropagation();
-      try {
-        const { error } = await supabase
-          .from("notifications")
-          .delete()
-          .eq("id", notificationId);
-
-        if (error) throw error;
-      } catch (error) {
-        console.error("Error deleting notification:", error);
-      }
+      await deleteNotification(notificationId);
     },
-    [supabase]
+    [deleteNotification]
   );
 
   const handleNotificationClick = useCallback(
     async (notification) => {
       if (!notification.is_read) {
-        await markAsRead(notification.id);
+        await handleMarkAsRead(notification.id);
       }
 
       if (notification.link) {
@@ -207,7 +102,7 @@ export function NotificationBell({ userId }) {
         router.push(notification.link);
       }
     },
-    [markAsRead, router]
+    [handleMarkAsRead, router]
   );
 
   const getNotificationIcon = useCallback((type) => {
@@ -344,7 +239,7 @@ export function NotificationBell({ userId }) {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={markAllAsRead}
+                onClick={handleMarkAllAsRead}
                 className="text-xs"
               >
                 <Check className="h-3 w-3 mr-1" />
@@ -403,7 +298,7 @@ export function NotificationBell({ userId }) {
                             variant="ghost"
                             size="icon"
                             onClick={(e) =>
-                              deleteNotification(notification.id, e)
+                              handleDeleteNotification(notification.id, e)
                             }
                             className="opacity-0 group-hover:opacity-100 h-6 w-6 flex-shrink-0 transition-opacity"
                           >
