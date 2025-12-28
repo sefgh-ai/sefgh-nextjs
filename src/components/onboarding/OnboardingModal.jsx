@@ -12,10 +12,12 @@ import { skipOnboarding } from '@/lib/supabase/onboarding'
 import { toast } from 'sonner'
 import { X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { useSendNotification, NotificationTemplates } from '@/hooks/useSendNotification'
 
 export function OnboardingModal({ userId, initialStep = 1, onComplete, onSkip }) {
   const [currentStep, setCurrentStep] = useState(initialStep)
   const [open, setOpen] = useState(true)
+  const { sendFromTemplate, sendToSelf } = useSendNotification()
 
   const totalSteps = 5
 
@@ -45,10 +47,14 @@ export function OnboardingModal({ userId, initialStep = 1, onComplete, onSkip })
     }
   }
 
-  const handleComplete = () => {
+  const handleComplete = async () => {
     toast.success('Welcome to SEFGH! 🎉', {
       description: 'Your profile is all set up'
     })
+    
+    // Send welcome notification
+    await sendFromTemplate(null, NotificationTemplates.onboardingComplete())
+    
     setOpen(false)
     onComplete?.()
   }

@@ -15,6 +15,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { cn } from '@/lib/utils'
+import { useSendNotification } from '@/hooks/useSendNotification'
 
 // Format date consistently for SSR
 const formatDate = (dateString) => {
@@ -204,6 +205,7 @@ function Comment({ comment, onReply, onVote, onDelete, depth = 0 }) {
 
 export function RepoCommentsSection({ repoFullName, initialComments }) {
   const { user } = useAuth()
+  const { sendToSelf } = useSendNotification()
   const [comments, setComments] = useState(initialComments || [])
   const [newComment, setNewComment] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -242,6 +244,14 @@ export function RepoCommentsSection({ repoFullName, initialComments }) {
       setComments([data.comment, ...comments])
       setNewComment('')
       toast.success('Comment posted!')
+      
+      // Send notification for first-time commenters
+      await sendToSelf(
+        "Comment Posted! 💬",
+        `Your comment on ${repoFullName} has been posted. Join the discussion!`,
+        "success",
+        `/repo/${repoFullName}`
+      )
     } catch (error) {
       console.error('Comment error:', error)
       toast.error(error.message || 'Failed to post comment')

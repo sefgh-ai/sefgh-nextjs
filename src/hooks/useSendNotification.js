@@ -108,6 +108,13 @@ export const NotificationTemplates = {
     link: "/search",
   }),
 
+  firstSearch: () => ({
+    title: "Great First Search! 🔍",
+    message: "You've made your first repository search. Keep exploring to find hidden gems!",
+    type: "info",
+    link: "/search",
+  }),
+
   // Profile
   profileUpdated: () => ({
     title: "Profile Updated",
@@ -117,7 +124,7 @@ export const NotificationTemplates = {
   }),
 
   avatarUpdated: () => ({
-    title: "Avatar Updated",
+    title: "Avatar Updated 📸",
     message: "Your profile picture has been changed.",
     type: "success",
     link: "/profile",
@@ -125,7 +132,7 @@ export const NotificationTemplates = {
 
   // API & Playground
   apiKeyCreated: (keyName) => ({
-    title: "API Key Created",
+    title: "API Key Created 🔑",
     message: `Your API key "${keyName}" has been created successfully.`,
     type: "success",
     link: "/playground",
@@ -154,7 +161,7 @@ export const NotificationTemplates = {
 
   // Submissions
   submissionReceived: (repoName) => ({
-    title: "Submission Received",
+    title: "Submission Received 📬",
     message: `Your submission for "${repoName}" is being reviewed.`,
     type: "info",
     link: "/submissions",
@@ -183,23 +190,59 @@ export const NotificationTemplates = {
   }),
 
   repoBookmarked: (repoName) => ({
-    title: "Repository Saved",
+    title: "Repository Saved ⭐",
     message: `"${repoName}" has been added to your bookmarks.`,
     type: "success",
     link: "/profile?tab=bookmarks",
   }),
 
+  trendingRepoAlert: (repoName) => ({
+    title: "Trending Repository 🔥",
+    message: `"${repoName}" is trending! Check it out before everyone else.`,
+    type: "info",
+    link: "/trending",
+  }),
+
   // Chat & Conversations
   conversationShared: (title) => ({
-    title: "Conversation Shared",
+    title: "Conversation Shared 🔗",
     message: `"${title}" is now accessible via your share link.`,
     type: "success",
     link: "/chat",
   }),
 
+  chatMilestone: (count) => ({
+    title: `${count} Conversations! 💬`,
+    message: `You've reached ${count} AI conversations. Keep exploring!`,
+    type: "success",
+    link: "/chat",
+  }),
+
+  // Comments & Engagement
+  commentPosted: (repoName) => ({
+    title: "Comment Posted 💬",
+    message: `Your comment on "${repoName}" has been posted.`,
+    type: "success",
+    link: null,
+  }),
+
+  replyReceived: (repoName, userName) => ({
+    title: "New Reply 📢",
+    message: `${userName} replied to your comment on "${repoName}".`,
+    type: "info",
+    link: `/repo/${repoName}`,
+  }),
+
+  commentUpvoted: (count) => ({
+    title: "Your Comment is Popular! 👍",
+    message: `Your comment has received ${count} upvotes.`,
+    type: "success",
+    link: null,
+  }),
+
   // Security
   newLogin: (location) => ({
-    title: "New Login Detected",
+    title: "New Login Detected 🔐",
     message: `A login was detected from ${location || "a new device"}.`,
     type: "warning",
     link: "/profile",
@@ -212,7 +255,7 @@ export const NotificationTemplates = {
     link: "/profile",
   }),
 
-  // General
+  // SEFGH Updates & Promotions
   featureUpdate: (featureName) => ({
     title: "New Feature Available 🚀",
     message: `Check out the new ${featureName} feature!`,
@@ -220,11 +263,69 @@ export const NotificationTemplates = {
     link: "/",
   }),
 
+  weeklyDigest: () => ({
+    title: "Your Weekly SEFGH Digest 📊",
+    message: "See this week's trending repositories and your activity summary.",
+    type: "info",
+    link: "/trending",
+  }),
+
+  platformUpdate: (version) => ({
+    title: `SEFGH Updated to ${version} 🆕`,
+    message: "New features and improvements are now available!",
+    type: "info",
+    link: "/about",
+  }),
+
   maintenanceScheduled: (date) => ({
-    title: "Scheduled Maintenance",
+    title: "Scheduled Maintenance 🔧",
     message: `SEFGH will undergo maintenance on ${date}.`,
     type: "warning",
     link: "/",
+  }),
+
+  maintenanceComplete: () => ({
+    title: "Maintenance Complete ✅",
+    message: "SEFGH is back online with improved performance!",
+    type: "success",
+    link: "/",
+  }),
+
+  // Tips & Education
+  proTip: (tip) => ({
+    title: "Pro Tip 💡",
+    message: tip,
+    type: "info",
+    link: null,
+  }),
+
+  discoverFeature: (featureName, description) => ({
+    title: `Discover: ${featureName}`,
+    message: description,
+    type: "info",
+    link: null,
+  }),
+
+  // Achievements & Milestones
+  achievementUnlocked: (achievement) => ({
+    title: "Achievement Unlocked! 🏆",
+    message: `You've earned: ${achievement}`,
+    type: "success",
+    link: "/profile",
+  }),
+
+  streakMilestone: (days) => ({
+    title: `${days}-Day Streak! 🔥`,
+    message: `You've been active on SEFGH for ${days} days in a row!`,
+    type: "success",
+    link: "/profile",
+  }),
+
+  contributionMilestone: (count) => ({
+    title: "Contribution Milestone! 🌟",
+    message: `You've made ${count} contributions on SEFGH. Thank you!`,
+    type: "success",
+    link: "/profile",
   }),
 };
 

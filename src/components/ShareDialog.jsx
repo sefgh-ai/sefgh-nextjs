@@ -9,6 +9,7 @@ import { Separator } from '@/components/ui/separator'
 import { Badge } from '@/components/ui/badge'
 import { Link2, Copy, Check, Globe, Lock, Twitter, Facebook, Linkedin, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
+import { useSendNotification, NotificationTemplates } from '@/hooks/useSendNotification'
 
 export default function ShareDialog({ open, onOpenChange, conversation, snapshot, onAfterShare }) {
   const [title, setTitle] = useState(conversation?.title || '')
@@ -17,6 +18,7 @@ export default function ShareDialog({ open, onOpenChange, conversation, snapshot
   const [creating, setCreating] = useState(false)
   const [shareUrl, setShareUrl] = useState('')
   const [copied, setCopied] = useState(false)
+  const { sendFromTemplate } = useSendNotification()
 
   const canShare = conversation && Array.isArray(snapshot) && snapshot.length > 0
 
@@ -33,6 +35,10 @@ export default function ShareDialog({ open, onOpenChange, conversation, snapshot
       if (!res.ok) throw new Error(json.error || 'Failed to create link')
       setShareUrl(json.url)
       toast.success('Share link ready')
+      
+      // Send notification
+      await sendFromTemplate(null, NotificationTemplates.conversationShared(title || conversation?.title || 'Conversation'))
+      
       onAfterShare?.(json)
     } catch (e) {
       toast.error(e.message)

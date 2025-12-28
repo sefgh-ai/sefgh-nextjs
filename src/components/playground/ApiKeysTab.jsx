@@ -9,6 +9,8 @@ import { Badge } from '@/components/ui/badge';
 import { createClient } from '@/lib/supabase/client';
 import { Copy, Plus, Trash2, Eye, EyeOff, CheckCircle2, Key } from 'lucide-react';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+import { toast } from 'sonner';
+import { useSendNotification, NotificationTemplates } from '@/hooks/useSendNotification';
 
 export default function ApiKeysTab({ userId }) {
   const [apiKeys, setApiKeys] = useState([]);
@@ -20,6 +22,7 @@ export default function ApiKeysTab({ userId }) {
   const [copiedKey, setCopiedKey] = useState(null);
 
   const supabase = createClient();
+  const { sendFromTemplate } = useSendNotification();
 
   useEffect(() => {
     fetchApiKeys();
@@ -72,6 +75,10 @@ export default function ApiKeysTab({ userId }) {
       
       // Show the newly created key
       setVisibleKeys(prev => ({ ...prev, [result.data.id]: true }));
+      
+      // Send notification
+      await sendFromTemplate(null, NotificationTemplates.apiKeyCreated(newKeyName.trim()));
+      toast.success('API key created successfully!');
     } catch (error) {
       console.error('Error creating API key:', error);
       alert(error.message || 'Failed to create API key');
@@ -81,6 +88,7 @@ export default function ApiKeysTab({ userId }) {
   };
 
   const deleteApiKey = async (keyId) => {
+    const keyToDelete = apiKeys.find(k => k.id === keyId);
     try {
       const { error } = await supabase
         .from('api_keys')
@@ -90,6 +98,12 @@ export default function ApiKeysTab({ userId }) {
       if (error) throw error;
 
       setApiKeys(apiKeys.filter(key => key.id !== keyId));
+      
+      // Send notification
+      if (keyToDelete) {
+        await sendFromTemplate(null, NotificationTemplates.apiKeyDeleted(keyToDelete.name));
+      }
+      toast.success('API key deleted');
     } catch (error) {
       console.error('Error deleting API key:', error);
       alert('Failed to delete API key');

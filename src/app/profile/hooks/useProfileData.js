@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 import { logError } from '@/lib/error-tracking'
+import { useSendNotification, NotificationTemplates } from '@/hooks/useSendNotification'
 
 /**
  * Custom hook for managing profile data with rate limiting
@@ -21,6 +22,7 @@ export const useProfileData = (user, refreshUser) => {
   const [profile, setProfile] = useState(null)
   const [loading, setLoading] = useState(false)
   const [lastUpdate, setLastUpdate] = useState(0)
+  const { sendFromTemplate } = useSendNotification()
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -117,6 +119,9 @@ export const useProfileData = (user, refreshUser) => {
         description: "Your profile information has been saved successfully.",
         duration: 3000,
       })
+      
+      // Send notification
+      await sendFromTemplate(null, NotificationTemplates.profileUpdated())
 
       return true
     } catch (error) {

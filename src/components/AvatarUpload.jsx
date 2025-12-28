@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Upload, Loader2, Camera, X } from 'lucide-react'
 import { toast } from 'sonner'
 import { useAuth } from '@/contexts/AuthContext'
+import { useSendNotification, NotificationTemplates } from '@/hooks/useSendNotification'
 
 export function AvatarUpload({ currentAvatarUrl, userInitials, onUploadSuccess }) {
   const [uploading, setUploading] = useState(false)
@@ -13,6 +14,7 @@ export function AvatarUpload({ currentAvatarUrl, userInitials, onUploadSuccess }
   const [selectedFile, setSelectedFile] = useState(null)
   const fileInputRef = useRef(null)
   const { refreshUser } = useAuth()
+  const { sendFromTemplate } = useSendNotification()
 
   const handleFileSelect = (event) => {
     const file = event.target.files?.[0]
@@ -76,6 +78,9 @@ export function AvatarUpload({ currentAvatarUrl, userInitials, onUploadSuccess }
       toast.success('Avatar updated! 🎉', {
         description: 'Your profile picture has been updated successfully.',
       })
+      
+      // Send notification
+      await sendFromTemplate(null, NotificationTemplates.avatarUpdated())
 
       // Clear preview
       setPreviewUrl(null)

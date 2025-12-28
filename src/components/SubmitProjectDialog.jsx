@@ -18,6 +18,7 @@ import { useAuth } from "@/contexts/AuthContext"
 import { createClient } from "@/lib/supabase/client"
 import { isValidGitHubUrl, fetchGitHubRepoData } from "@/lib/github-api"
 import { useRouter } from "next/navigation"
+import { useSendNotification, NotificationTemplates } from "@/hooks/useSendNotification"
 
 export function SubmitProjectDialog({ children }) {
   const [open, setOpen] = useState(false)
@@ -27,6 +28,7 @@ export function SubmitProjectDialog({ children }) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { user } = useAuth()
   const router = useRouter()
+  const { sendToSelf } = useSendNotification()
   
   // Memoize supabase client
   const supabase = useMemo(() => createClient(), [])
@@ -131,6 +133,14 @@ export function SubmitProjectDialog({ children }) {
       toast.success("Project submitted successfully! 🎉", {
         description: "Your submission is now visible in your submissions page."
       })
+      
+      // Send notification
+      await sendToSelf(
+        "Repository Submitted! 🎉",
+        `Your submission for "${title.trim()}" is now under review. We'll notify you when it's approved.`,
+        "success",
+        "/submissions"
+      )
       
       // Reset form and close modal
       setOpen(false)
