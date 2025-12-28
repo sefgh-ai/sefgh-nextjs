@@ -8,18 +8,26 @@ import ErrorBoundary from "@/components/shared/ErrorBoundary";
 import { NotificationSidebar } from "./components/NotificationSidebar";
 import { NotificationTopBar } from "./components/NotificationTopBar";
 import { NotificationList } from "./components/NotificationList";
+import { NotificationMobileHeader } from "./components/NotificationMobileHeader";
 import { useNotifications } from "./hooks/useNotifications";
 import { useNotificationFilters } from "./hooks/useNotificationFilters";
-import {
-  getNotificationIcon,
-  getNotificationColor,
-  formatTimestamp,
-} from "./utils/notificationHelpers";
+import { formatTimestamp } from "./utils/notificationHelpers";
 
 function NotificationsContent() {
   const { user, loading } = useAuth();
   const { isAuthenticated, isLoading } = useAuthGuard({ user, loading });
-  const { filter, setFilter, readFilter, setReadFilter, searchQuery, setSearchQuery } = useNotificationFilters();
+  const { 
+    filter, 
+    setFilter, 
+    readFilter, 
+    setReadFilter, 
+    searchQuery, 
+    setSearchQuery,
+    typeFilter,
+    setTypeFilter,
+    groupBy,
+    setGroupBy,
+  } = useNotificationFilters();
 
   const {
     notifications,
@@ -34,9 +42,12 @@ function NotificationsContent() {
     toggleSaved,
     toggleDone,
     handleBulkAction,
+    selectAll,
+    isAllSelected,
     unreadCount,
     inboxCount,
-  } = useNotifications(user, filter, readFilter, searchQuery);
+    typeCounts,
+  } = useNotifications(user, filter, readFilter, searchQuery, typeFilter);
 
   if (isLoading || !isAuthenticated) {
     return <PageLoadingSpinner message="Loading notifications..." />;
@@ -46,29 +57,46 @@ function NotificationsContent() {
   const doneCount = doneIds.length;
 
   return (
-    <div className="flex min-h-screen bg-background">
-      {/* Sidebar */}
+    <div className="flex h-[calc(100vh-4rem)] bg-background">
+      {/* Sidebar - Desktop only */}
       <NotificationSidebar
         filter={filter}
         setFilter={setFilter}
+        typeFilter={typeFilter}
+        setTypeFilter={setTypeFilter}
         inboxCount={inboxCount}
         savedCount={savedCount}
         doneCount={doneCount}
+        typeCounts={typeCounts}
       />
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+        {/* Mobile Header */}
+        <NotificationMobileHeader
+          filter={filter}
+          setFilter={setFilter}
+          inboxCount={inboxCount}
+          savedCount={savedCount}
+          doneCount={doneCount}
+        />
+
         {/* Top Bar */}
         <NotificationTopBar
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
           selectedIds={selectedIds}
           setSelectedIds={setSelectedIds}
+          notifications={notifications}
           unreadCount={unreadCount}
           readFilter={readFilter}
           setReadFilter={setReadFilter}
           handleBulkAction={handleBulkAction}
           markAllAsRead={markAllAsRead}
+          groupBy={groupBy}
+          setGroupBy={setGroupBy}
+          selectAll={selectAll}
+          isAllSelected={isAllSelected}
         />
 
         {/* Notifications List */}
@@ -86,9 +114,8 @@ function NotificationsContent() {
             toggleSaved={toggleSaved}
             toggleDone={toggleDone}
             deleteNotification={deleteNotification}
-            getNotificationIcon={getNotificationIcon}
-            getNotificationColor={getNotificationColor}
             formatTimestamp={formatTimestamp}
+            groupBy={groupBy}
           />
         </div>
       </div>

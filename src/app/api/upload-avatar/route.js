@@ -1,6 +1,38 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
 
+/**
+ * Clean up old avatar files in background
+ * This runs after the response is sent to avoid blocking the upload
+ */
+async function cleanupOldAvatars(supabase, userId, currentFileName) {
+  try {
+    const { data: existingFiles } = await supabase.storage
+      .from('avatars')
+      .list(userId)
+
+    if (existingFiles && existingFiles.length > 1) {
+      // Get the current file name without the user folder prefix
+      const currentFileOnly = currentFileName.split('/').pop()
+      
+      // Filter out the current file and delete the rest
+      const filesToDelete = existingFiles
+        .filter(file => file.name !== currentFileOnly)
+        .map(file => `${userId}/${file.name}`)
+
+      if (filesToDelete.length > 0) {
+        await supabase.storage
+          .from('avatars')
+          .remove(filesToDelete)
+        console.log(`🧹 Cleaned up ${filesToDelete.length} old avatar(s)`)
+      }
+    }
+  } catch (error) {
+    // Log but don't throw - this is non-critical
+    console.warn('⚠️ Avatar cleanup error:', error.message)
+  }
+}
+
 export async function POST(request) {
   try {
     const supabase = await createClient()
@@ -51,19 +83,7 @@ export async function POST(request) {
     const arrayBuffer = await file.arrayBuffer()
     const buffer = Buffer.from(arrayBuffer)
 
-    // Delete old avatar if exists
-    const { data: existingFiles } = await supabase.storage
-      .from('avatars')
-      .list(user.id)
-
-    if (existingFiles && existingFiles.length > 0) {
-      const filesToDelete = existingFiles.map(file => `${user.id}/${file.name}`)
-      await supabase.storage
-        .from('avatars')
-        .remove(filesToDelete)
-    }
-
-    // Upload new avatar
+    // Upload new avatar FIRST (don't wait for cleanup)
     const { data: uploadData, error: uploadError } = await supabase.storage
       .from('avatars')
       .upload(fileName, buffer, {
@@ -161,6 +181,12 @@ export async function POST(request) {
       fileName,
       publicUrl: publicUrlWithTimestamp
     })
+
+    // Clean up old avatars in background (fire-and-forget)
+    // Don't await this - let it run after response is sent
+    cleanupOldAvatars(supabase, user.id, fileName).catch(err => 
+      console.warn('⚠️ Background cleanup failed:', err.message)
+    )
 
     return NextResponse.json({
       success: true,

@@ -55,10 +55,17 @@ export function AvatarUpload({ currentAvatarUrl, userInitials, onUploadSuccess }
       const formData = new FormData()
       formData.append('avatar', selectedFile)
 
+      // Create an AbortController with timeout
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 30000) // 30 second timeout
+
       const response = await fetch('/api/upload-avatar', {
         method: 'POST',
         body: formData,
+        signal: controller.signal,
       })
+
+      clearTimeout(timeoutId)
 
       const data = await response.json()
 
@@ -68,33 +75,40 @@ export function AvatarUpload({ currentAvatarUrl, userInitials, onUploadSuccess }
 
       console.log('✅ Upload API returned:', data.avatar_url)
       
-      // Small delay to ensure metadata is propagated (reduced from 500ms to 200ms)
-      await new Promise(resolve => setTimeout(resolve, 200))
-      
-      // Refresh user data to get updated avatar
-      const updatedUser = await refreshUser()
-      console.log('🔄 After refresh, avatar_url:', updatedUser?.user_metadata?.avatar_url)
-
+      // Show success immediately - don't wait for secondary operations
       toast.success('Avatar updated! 🎉', {
         description: 'Your profile picture has been updated successfully.',
       })
-      
-      // Send notification
-      await sendFromTemplate(null, NotificationTemplates.avatarUpdated())
 
-      // Clear preview
+      // Clear preview immediately for better UX
       setPreviewUrl(null)
       setSelectedFile(null)
       
-      // Call callback if provided
+      // Call callback if provided (use the URL from response immediately)
       if (onUploadSuccess) {
         onUploadSuccess(data.avatar_url)
       }
+
+      // Fire-and-forget: refresh user data in background (don't await)
+      refreshUser().catch(err => console.warn('Background refresh failed:', err))
+      
+      // Fire-and-forget: send notification in background (don't await)
+      sendFromTemplate(null, NotificationTemplates.avatarUpdated())
+        .catch(err => console.warn('Notification send failed:', err))
+
     } catch (error) {
       console.error('Upload error:', error)
-      toast.error('Upload failed', {
-        description: error.message || 'Failed to upload avatar. Please try again.',
-      })
+      
+      // Handle abort/timeout specifically
+      if (error.name === 'AbortError') {
+        toast.error('Upload timed out', {
+          description: 'The upload took too long. Please try again with a smaller image.',
+        })
+      } else {
+        toast.error('Upload failed', {
+          description: error.message || 'Failed to upload avatar. Please try again.',
+        })
+      }
     } finally {
       setUploading(false)
     }

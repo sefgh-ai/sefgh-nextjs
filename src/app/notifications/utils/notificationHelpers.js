@@ -12,6 +12,9 @@ export {
   getUserStorageKey,
 } from "@/lib/utils/localStorage";
 
+// Import for internal use
+import { saveToLocalStorage, loadFromLocalStorage } from "@/lib/utils/localStorage";
+
 /**
  * Save notification-specific data to localStorage
  * @param {string} userId - User ID
