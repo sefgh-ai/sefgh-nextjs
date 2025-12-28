@@ -99,8 +99,14 @@ export const AuthProvider = ({ children }) => {
 
 export const useAuth = () => {
   const context = useContext(AuthContext)
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider')
+  // Return safe defaults during SSR or when outside provider
+  if (!context || Object.keys(context).length === 0) {
+    return { 
+      user: null, 
+      loading: true, 
+      refreshUser: async () => null, 
+      signOut: async () => {} 
+    }
   }
   return context
 }

@@ -3,17 +3,17 @@
 import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
-import { PageLoadingSpinner } from '@/components/shared/PageLoadingSpinner';
+import { PageLoadingSpinner } from '@/components/shared/LoadingSpinner';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import PlaygroundHeader from './components/PlaygroundHeader';
 import { playgroundTabs } from './utils/tabConfig';
 
 export default function PlaygroundPage() {
-  const { user } = useAuth();
+  const { user } = useAuth() || {};
   const { isAuthenticated, isLoading } = useAuthGuard();
   const [activeTab, setActiveTab] = useState('keys');
 
-  if (isLoading) {
+  if (isLoading || !user) {
     return <PageLoadingSpinner />;
   }
 
