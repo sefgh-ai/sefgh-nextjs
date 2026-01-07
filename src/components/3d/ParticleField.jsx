@@ -86,7 +86,7 @@ export default function ParticleField() {
         const rareRoll = Math.random();
         let label = jargonPool[Math.floor(Math.random() * jargonPool.length)];
         if (rareRoll < 0.008) label = "Adeel";
-        else if (rareRoll < 0.016) label = "Shiva";
+        else if (rareRoll < 0.016) label = "James";
 
         textParticles.push({
           index: i,
@@ -103,7 +103,7 @@ export default function ParticleField() {
             (Math.random() - 0.5) * 0.02,
           ],
           scale: Math.random() * 0.4 + 0.4,
-          special: label === "Adeel" || label === "Shiva",
+          special: label === "Adeel" || label === "James",
         });
       }
     }

@@ -7,6 +7,7 @@ import { LanguageProvider } from "@/contexts/LanguageContext";
 import { NotificationProvider } from "@/contexts/NotificationContext";
 import SettingsModal from "@/components/SettingsModal";
 import PageWrapper from "@/components/PageWrapper";
+import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 import { Toaster } from "sonner";
 import "./globals.css";
 
@@ -97,6 +98,40 @@ export default function RootLayout({ children }) {
           href="/sitemap.xml"
         />
 
+        {/* PWA Manifest */}
+        <link rel="manifest" href="/manifest.json" />
+
+        {/* Apple PWA Meta Tags */}
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta
+          name="apple-mobile-web-app-status-bar-style"
+          content="black-translucent"
+        />
+        <meta name="apple-mobile-web-app-title" content="SEFGH" />
+        <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
+        <link
+          rel="apple-touch-icon"
+          sizes="152x152"
+          href="/icons/icon-152x152.png"
+        />
+        <link
+          rel="apple-touch-icon"
+          sizes="180x180"
+          href="/icons/icon-192x192.png"
+        />
+        <link
+          rel="apple-touch-icon"
+          sizes="167x167"
+          href="/icons/icon-192x192.png"
+        />
+
+        {/* Microsoft PWA Meta Tags */}
+        <meta
+          name="msapplication-TileImage"
+          content="/icons/icon-144x144.png"
+        />
+        <meta name="msapplication-config" content="none" />
+
         {/* Structured Data: Web Application */}
         <script
           type="application/ld+json"
@@ -182,6 +217,7 @@ export default function RootLayout({ children }) {
             <NotificationProvider>
               <SettingsProvider>
                 <LanguageProvider>
+                  <ServiceWorkerRegister />
                   <PageWrapper>{children}</PageWrapper>
                   <SettingsModal />
                   <Toaster

@@ -129,20 +129,23 @@ export default function Home() {
 
       {/* Top Bar - Logo and Actions */}
       <header className="relative z-10 bg-transparent">
-        <div className="w-full px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between gap-4">
-          <Link href="/" className="flex items-center gap-3 flex-shrink-0">
+        <div className="w-full px-3 sm:px-6 lg:px-8 py-3 sm:py-4 flex items-center justify-between gap-2 sm:gap-4">
+          <Link
+            href="/"
+            className="flex items-center gap-2 sm:gap-3 flex-shrink-0"
+          >
             {mounted && <ParticleText text={t("header.logo")} />}
-            <span className="px-2.5 py-1 glass-premium rounded-md text-blue-400/80 text-xs font-medium border border-blue-500/20">
+            <span className="hidden sm:inline-block px-2.5 py-1 glass-premium rounded-md text-blue-400/80 text-xs font-medium border border-blue-500/20">
               v2.8.5
             </span>
           </Link>
 
-          {/* Animated Navbar - Centered with max space */}
-          <div className="flex-1 flex justify-center max-w-5xl mx-auto">
+          {/* Animated Navbar - Hidden on mobile, centered on desktop */}
+          <div className="hidden md:flex flex-1 justify-center max-w-5xl mx-auto">
             {mounted && <AnimatedNavbar />}
           </div>
 
-          <div className="flex items-center gap-6 flex-shrink-0">
+          <div className="flex items-center gap-2 sm:gap-6 flex-shrink-0">
             {/* Language Selector (Dropdown) */}
             <LanguageDropdown />
 
@@ -150,7 +153,7 @@ export default function Home() {
             {user ? (
               <button
                 onClick={() => router.push("/profile")}
-                className="flex items-center gap-2 px-3 py-2 glass-premium text-white rounded-md transition-colors hover:shadow-glow-blue"
+                className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1.5 sm:py-2 glass-premium text-white rounded-md transition-colors hover:shadow-glow-blue"
               >
                 {user?.user_metadata?.avatar_url ? (
                   <Image
@@ -158,19 +161,21 @@ export default function Home() {
                     alt={getUserDisplayName()}
                     width={24}
                     height={24}
-                    className="w-6 h-6 rounded-full"
+                    className="w-5 h-5 sm:w-6 sm:h-6 rounded-full"
                   />
                 ) : (
-                  <div className="w-6 h-6 rounded-full bg-gradient-to-br from-blue-600 to-teal-600 flex items-center justify-center text-white text-xs font-semibold">
+                  <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-gradient-to-br from-blue-600 to-teal-600 flex items-center justify-center text-white text-xs font-semibold">
                     {getUserInitials()}
                   </div>
                 )}
-                <span className="font-medium">{getUserDisplayName()}</span>
+                <span className="hidden sm:inline font-medium">
+                  {getUserDisplayName()}
+                </span>
               </button>
             ) : (
               <button
                 onClick={() => router.push("/signup")}
-                className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white font-medium rounded-md transition-all shadow-glow-blue"
+                className="px-3 sm:px-4 py-1.5 sm:py-2 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white text-sm sm:text-base font-medium rounded-md transition-all shadow-glow-blue"
               >
                 Sign up
               </button>
@@ -182,11 +187,11 @@ export default function Home() {
       {/* Hero Section */}
       <section
         id="main-content"
-        className="relative px-4 sm:px-6 lg:px-8 pt-20 pb-32"
+        className="relative px-3 sm:px-6 lg:px-8 pt-12 sm:pt-20 pb-16 sm:pb-32"
       >
         <div className="max-w-6xl mx-auto text-center">
           {/* Search Box */}
-          <div className="max-w-3xl mx-auto mb-12">
+          <div className="max-w-3xl mx-auto mb-8 sm:mb-12 px-2 sm:px-0">
             <SearchComponent
               placeholder={messages.hero.searchPlaceholders[searchPlaceholder]}
               onSearch={(query) =>
@@ -195,29 +200,29 @@ export default function Home() {
             />
           </div>
           {/* Action Buttons - Conditional based on auth status */}
-          <div className="flex flex-wrap gap-4 justify-center items-center">
+          <div className="flex flex-wrap gap-3 sm:gap-4 justify-center items-center px-2">
             {!user ? (
               /* Not logged in: Show large centered signup button */
               <button
                 onClick={() => router.push("/signup")}
-                className="px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white text-lg font-semibold rounded-lg transition-all shadow-glow-blue hover:shadow-premium-lg transform hover:scale-105"
+                className="px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white text-base sm:text-lg font-semibold rounded-lg transition-all shadow-glow-blue hover:shadow-premium-lg transform hover:scale-105"
               >
-                <Sparkles className="w-5 h-5 inline-block mr-2" />
-                Get Started - Sign Up Free
+                <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 inline-block mr-2" />
+                Get Started Free
               </button>
             ) : (
               /* Logged in: Show Home and Explore Search buttons */
               <>
                 <button
                   onClick={() => router.push("/home")}
-                  className="px-6 py-3 glass-premium text-white font-medium rounded-md transition-all hover:shadow-glow-blue"
+                  className="px-4 sm:px-6 py-2.5 sm:py-3 glass-premium text-white font-medium rounded-md transition-all hover:shadow-glow-blue"
                 >
                   <HomeIcon className="w-4 h-4 inline-block mr-2" />
                   Home
                 </button>
                 <button
                   onClick={() => router.push("/search")}
-                  className="px-6 py-3 glass-premium text-white font-medium rounded-md transition-all hover:shadow-glow-blue"
+                  className="px-4 sm:px-6 py-2.5 sm:py-3 glass-premium text-white font-medium rounded-md transition-all hover:shadow-glow-blue"
                 >
                   <Search className="w-4 h-4 inline-block mr-2" />
                   Explore Search
@@ -229,33 +234,33 @@ export default function Home() {
       </section>
 
       {/* Features Section */}
-      <section className="relative px-4 sm:px-6 lg:px-8 py-20 border-t border-slate-800/50">
+      <section className="relative px-3 sm:px-6 lg:px-8 py-12 sm:py-20 border-t border-slate-800/50">
         <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl sm:text-5xl font-bold text-white mb-4">
+          <div className="text-center mb-10 sm:mb-16">
+            <h2 className="text-2xl sm:text-4xl lg:text-5xl font-bold text-white mb-3 sm:mb-4">
               {t("features.title")}
             </h2>
-            <p className="text-xl text-slate-400 max-w-3xl mx-auto">
+            <p className="text-base sm:text-xl text-slate-400 max-w-3xl mx-auto px-2">
               {t("features.subtitle")}
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-8">
             {messages.features.items.map((feature, index) => {
               const icons = [Brain, Gem, Code];
               const Icon = icons[index];
               return (
                 <div
                   key={index}
-                  className="p-6 glass-premium rounded-lg hover:border-blue-500 transition-all hover:shadow-glow-blue"
+                  className="p-4 sm:p-6 glass-premium rounded-lg hover:border-blue-500 transition-all hover:shadow-glow-blue"
                 >
-                  <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-blue-600 to-teal-600 flex items-center justify-center mb-4 shadow-glow-blue">
-                    <Icon className="h-6 w-6 text-white" />
+                  <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-lg bg-gradient-to-br from-blue-600 to-teal-600 flex items-center justify-center mb-3 sm:mb-4 shadow-glow-blue">
+                    <Icon className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
                   </div>
-                  <h3 className="text-xl font-bold text-white mb-3">
+                  <h3 className="text-lg sm:text-xl font-bold text-white mb-2 sm:mb-3">
                     {feature.title}
                   </h3>
-                  <p className="text-slate-400 leading-relaxed">
+                  <p className="text-sm sm:text-base text-slate-400 leading-relaxed">
                     {feature.description}
                   </p>
                 </div>
@@ -266,22 +271,22 @@ export default function Home() {
       </section>
 
       {/* How It Works Section */}
-      <section className="relative px-4 sm:px-6 lg:px-8 py-20 border-t border-slate-800/50">
+      <section className="relative px-3 sm:px-6 lg:px-8 py-12 sm:py-20 border-t border-slate-800/50">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-4xl sm:text-5xl font-bold text-white text-center mb-16">
+          <h2 className="text-2xl sm:text-4xl lg:text-5xl font-bold text-white text-center mb-10 sm:mb-16">
             {t("howItWorks.title")}
           </h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 sm:gap-12">
             {messages.howItWorks.steps.map((step, index) => (
               <div key={index} className="text-center">
-                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-blue-600 to-teal-600 text-white text-2xl font-bold mb-6 shadow-glow-blue">
+                <div className="inline-flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-gradient-to-br from-blue-600 to-teal-600 text-white text-xl sm:text-2xl font-bold mb-4 sm:mb-6 shadow-glow-blue">
                   {step.number}
                 </div>
-                <h3 className="text-2xl font-bold text-white mb-4">
+                <h3 className="text-xl sm:text-2xl font-bold text-white mb-2 sm:mb-4">
                   {step.title}
                 </h3>
-                <p className="text-slate-400 leading-relaxed">
+                <p className="text-sm sm:text-base text-slate-400 leading-relaxed">
                   {step.description}
                 </p>
               </div>
@@ -291,16 +296,18 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="relative px-4 sm:px-6 lg:px-8 py-32 border-t border-slate-800/50">
+      <section className="relative px-3 sm:px-6 lg:px-8 py-16 sm:py-32 border-t border-slate-800/50">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl sm:text-5xl font-bold text-white mb-6">
+          <h2 className="text-2xl sm:text-4xl lg:text-5xl font-bold text-white mb-4 sm:mb-6">
             {t("cta.title")}
           </h2>
-          <p className="text-xl text-slate-400 mb-10">{t("cta.subtitle")}</p>
+          <p className="text-base sm:text-xl text-slate-400 mb-6 sm:mb-10 px-2">
+            {t("cta.subtitle")}
+          </p>
           {!user && (
             <button
               onClick={() => router.push("/signup")}
-              className="px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white text-lg font-semibold rounded-lg transition-all shadow-glow-blue hover:shadow-premium-lg"
+              className="px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white text-base sm:text-lg font-semibold rounded-lg transition-all shadow-glow-blue hover:shadow-premium-lg"
             >
               Sign up free
             </button>

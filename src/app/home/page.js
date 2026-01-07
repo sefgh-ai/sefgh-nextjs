@@ -15,7 +15,10 @@ import {
 } from "@/components/home";
 import { useProjects } from "./hooks/useProjects";
 import { useFilteredProjects } from "./hooks/useFilteredProjects";
-import { getInitialPreferences, clearSavedPreferences } from "./utils/preferencesHelper";
+import {
+  getInitialPreferences,
+  clearSavedPreferences,
+} from "./utils/preferencesHelper";
 
 export default function HomePage() {
   const { user, loading: authLoading } = useAuth();
@@ -25,7 +28,11 @@ export default function HomePage() {
   const [userPreferences, setUserPreferences] = useState(getInitialPreferences);
 
   const { allProjects, loading } = useProjects(selectedTab);
-  const projects = useFilteredProjects(allProjects, selectedCategory, userPreferences);
+  const projects = useFilteredProjects(
+    allProjects,
+    selectedCategory,
+    userPreferences
+  );
 
   const handlePreferencesSave = useCallback((preferences) => {
     setUserPreferences(preferences);
@@ -44,19 +51,19 @@ export default function HomePage() {
 
   return (
     <SidebarProvider>
-      <div className="flex min-h-screen w-full bg-background gradient-mesh p-4 gap-4 flex-col">
-        <div className="flex gap-4 flex-1">
+      <div className="flex min-h-screen w-full bg-background gradient-mesh p-2 sm:p-4 gap-2 sm:gap-4 flex-col">
+        <div className="flex gap-2 sm:gap-4 flex-1">
           <SearchSidebar user={user} />
 
-          <SidebarInset className="flex flex-col glass-premium rounded-2xl shadow-premium border border-white/10 overflow-hidden flex-1">
+          <SidebarInset className="flex flex-col glass-premium rounded-xl sm:rounded-2xl shadow-premium border border-white/10 overflow-hidden flex-1">
             <SearchNavbar />
 
-            <div className="container mx-auto px-4 py-6 pb-4 overflow-auto flex-1">
+            <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-6 pb-4 overflow-auto flex-1">
               <OnboardingBanner />
 
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                {/* Left Sidebar - Categories */}
-                <aside className="lg:col-span-2 space-y-4">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6">
+                {/* Left Sidebar - Categories (hidden on mobile, shown on large screens) */}
+                <aside className="hidden lg:block lg:col-span-2 space-y-4">
                   <CategoriesSidebar
                     selectedCategory={selectedCategory}
                     onCategoryChange={setSelectedCategory}
@@ -73,10 +80,13 @@ export default function HomePage() {
                   onTabChange={setSelectedTab}
                   userPreferences={userPreferences}
                   onClearFilters={handleClearFilters}
+                  selectedCategory={selectedCategory}
+                  onCategoryChange={setSelectedCategory}
+                  onOpenPreferences={() => setPreferencesOpen(true)}
                 />
 
-                {/* Right Sidebar - User Info */}
-                <aside className="lg:col-span-3 space-y-4">
+                {/* Right Sidebar - User Info (hidden on mobile, shown on large screens) */}
+                <aside className="hidden lg:block lg:col-span-3 space-y-4">
                   <UserProfileCard user={user} loading={authLoading} />
                   <AboutCard />
                 </aside>

@@ -17,15 +17,18 @@ export function CategoriesSidebar({
   const { categories: liveCategories, loading } = useCategories();
 
   // Filter out "All" from live categories to avoid duplication
-  const filteredLiveCategories = liveCategories.filter(cat => cat.name !== "All");
+  const filteredLiveCategories = liveCategories.filter(
+    (cat) => cat.name !== "All"
+  );
 
   // Determine which categories to display
   // Priority: User preferences > Live database categories
-  const categories = userPreferences?.tags?.length > 0
-    ? [{ name: "All", icon: "🎯" }, ...userPreferences.tags]
-    : filteredLiveCategories.length > 0
-    ? [{ name: "All", icon: "🎯" }, ...filteredLiveCategories]
-    : [{ name: "All", icon: "🎯" }]; // Fallback if no data
+  const categories =
+    userPreferences?.tags?.length > 0
+      ? [{ name: "All", icon: "🎯" }, ...userPreferences.tags]
+      : filteredLiveCategories.length > 0
+      ? [{ name: "All", icon: "🎯" }, ...filteredLiveCategories]
+      : [{ name: "All", icon: "🎯" }]; // Fallback if no data
 
   return (
     <Card className="glass-premium border-border backdrop-blur-sm">
@@ -34,7 +37,9 @@ export function CategoriesSidebar({
           <div className="flex items-center gap-2">
             <Code className="w-4 h-4" />
             Topics
-            {loading && <Loader2 className="w-3 h-3 animate-spin text-muted-foreground" />}
+            {loading && (
+              <Loader2 className="w-3 h-3 animate-spin text-muted-foreground" />
+            )}
           </div>
           {userPreferences?.tags?.length > 0 ? (
             <Badge className="bg-primary text-primary-foreground text-xs">
@@ -48,7 +53,7 @@ export function CategoriesSidebar({
         </CardTitle>
       </CardHeader>
       <CardContent className="p-0">
-        <ScrollArea className="h-[calc(100vh-20rem)]">
+        <ScrollArea className="h-[calc(100vh-24rem)] min-h-[200px]">
           <div className="space-y-1 p-4 pt-0">
             {categories.map((category) => (
               <Button
@@ -65,11 +70,12 @@ export function CategoriesSidebar({
               >
                 <span className="mr-2">{category.icon}</span>
                 {category.name}
-                {category.usage_count !== undefined && category.usage_count > 0 && (
-                  <span className="ml-auto text-xs text-muted-foreground">
-                    {category.usage_count}
-                  </span>
-                )}
+                {category.usage_count !== undefined &&
+                  category.usage_count > 0 && (
+                    <span className="ml-auto text-xs text-muted-foreground">
+                      {category.usage_count}
+                    </span>
+                  )}
               </Button>
             ))}
           </div>

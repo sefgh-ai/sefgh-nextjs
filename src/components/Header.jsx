@@ -1,46 +1,67 @@
-'use client'
+"use client";
 
-import Link from "next/link"
-import { MoonIcon, SunIcon, UserIcon, ArrowRightOnRectangleIcon, Cog6ToothIcon } from "@heroicons/react/24/outline"
-import { useTheme } from "next-themes"
-import { useAuth } from "@/contexts/AuthContext"
-import { useSettings } from "@/contexts/SettingsContext"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { Button } from "@/components/ui/button"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { NotificationBell } from "@/components/NotificationBell"
-import { toast } from "sonner"
-import { useCallback, memo } from 'react'
+import Link from "next/link";
+import {
+  MoonIcon,
+  SunIcon,
+  UserIcon,
+  ArrowRightOnRectangleIcon,
+  Cog6ToothIcon,
+} from "@heroicons/react/24/outline";
+import { useTheme } from "next-themes";
+import { useAuth } from "@/contexts/AuthContext";
+import { useSettings } from "@/contexts/SettingsContext";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { NotificationBell } from "@/components/NotificationBell";
+import { toast } from "sonner";
+import { useCallback, memo } from "react";
 
 const Header = memo(function Header() {
-  const { setTheme, theme } = useTheme()
-  const { user, signOut, loading } = useAuth()
-  const { openSettings } = useSettings()
+  const { setTheme, theme } = useTheme();
+  const { user, signOut, loading } = useAuth();
+  const { openSettings } = useSettings();
 
   const handleSignOut = useCallback(async () => {
     try {
-      const userName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User'
-      
-      await signOut()
-      
+      const userName =
+        user?.user_metadata?.full_name || user?.email?.split("@")[0] || "User";
+
+      console.log("[Header] Signing out user:", userName);
+      await signOut();
+      console.log("[Header] Sign out successful");
+
       toast.success(`Goodbye, ${userName}! 👋`, {
         description: "You've been signed out successfully. Come back soon!",
         duration: 3000,
-      })
+      });
     } catch (error) {
+      console.error("[Header] Sign out error:", error);
       toast.error("Sign out failed", {
         description: error.message,
-      })
+      });
     }
-  }, [user, signOut])
+  }, [user, signOut]);
 
   const getUserInitials = useCallback(() => {
     if (user?.user_metadata?.full_name) {
-      const names = user.user_metadata.full_name.split(' ')
-      return names.map(n => n[0]).join('').toUpperCase().slice(0, 2)
+      const names = user.user_metadata.full_name.split(" ");
+      return names
+        .map((n) => n[0])
+        .join("")
+        .toUpperCase()
+        .slice(0, 2);
     }
-    return user?.email?.[0]?.toUpperCase() || 'U'
-  }, [user])
+    return user?.email?.[0]?.toUpperCase() || "U";
+  }, [user]);
 
   if (loading) {
     return (
@@ -48,14 +69,16 @@ const Header = memo(function Header() {
         <div className="h-8 w-20 bg-muted animate-pulse rounded" />
         <div className="h-8 w-24 bg-muted animate-pulse rounded" />
       </>
-    )
+    );
   }
 
   return (
     <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="outline" size="sm">sefgh v1</Button>
+          <Button variant="outline" size="sm">
+            sefgh v1
+          </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Versions</DropdownMenuLabel>
@@ -69,27 +92,36 @@ const Header = memo(function Header() {
       {!user ? (
         <>
           <Link href="/login">
-            <Button variant="outline" size="sm">Login/Signup</Button>
+            <Button variant="outline" size="sm">
+              Login/Signup
+            </Button>
           </Link>
-          <Button variant="outline" size="sm">GitHub Search</Button>
+          <Button variant="outline" size="sm">
+            GitHub Search
+          </Button>
           <Button size="sm">Private Chat</Button>
         </>
       ) : (
         <>
           <Link href="/search">
-            <Button variant="outline" size="sm">GitHub Search</Button>
+            <Button variant="outline" size="sm">
+              GitHub Search
+            </Button>
           </Link>
-          
+
           {/* Notification Bell */}
           <NotificationBell />
-          
+
           {/* Profile Dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                <Avatar className="h-8 w-8" key={user?.user_metadata?.avatar_url}>
-                  <AvatarImage 
-                    src={user?.user_metadata?.avatar_url} 
+                <Avatar
+                  className="h-8 w-8"
+                  key={user?.user_metadata?.avatar_url}
+                >
+                  <AvatarImage
+                    src={user?.user_metadata?.avatar_url}
                     alt={user?.email}
                     crossOrigin="anonymous"
                   />
@@ -101,7 +133,7 @@ const Header = memo(function Header() {
               <DropdownMenuLabel>
                 <div className="flex flex-col space-y-1">
                   <p className="text-sm font-medium leading-none">
-                    {user?.user_metadata?.full_name || 'User'}
+                    {user?.user_metadata?.full_name || "User"}
                   </p>
                   <p className="text-xs leading-none text-muted-foreground">
                     {user?.email}
@@ -115,12 +147,21 @@ const Header = memo(function Header() {
                   <span>Profile</span>
                 </DropdownMenuItem>
               </Link>
-              <DropdownMenuItem onClick={openSettings}>
+              <DropdownMenuItem
+                onClick={openSettings}
+                className="cursor-pointer"
+              >
                 <Cog6ToothIcon className="mr-2 h-4 w-4" />
                 <span>Settings</span>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={handleSignOut} className="text-destructive">
+              <DropdownMenuItem
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleSignOut();
+                }}
+                className="text-destructive cursor-pointer"
+              >
                 <ArrowRightOnRectangleIcon className="mr-2 h-4 w-4" />
                 <span>Log out</span>
               </DropdownMenuItem>
@@ -128,12 +169,12 @@ const Header = memo(function Header() {
           </DropdownMenu>
         </>
       )}
-      
+
       <div className="ml-2 pl-2 border-l">
         <Button
           variant="ghost"
           size="icon"
-          onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
+          onClick={() => setTheme(theme === "light" ? "dark" : "light")}
           className="h-9 w-9"
         >
           <SunIcon className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
@@ -142,7 +183,7 @@ const Header = memo(function Header() {
         </Button>
       </div>
     </>
-  )
-})
+  );
+});
 
-export { Header }
+export { Header };

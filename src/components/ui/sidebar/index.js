@@ -1,5 +1,5 @@
-// This file re-exports all sidebar components from the modular sidebar folder
-// for backward compatibility with existing imports from '@/components/ui/sidebar'
+// Re-export all sidebar components from a single index file
+// This maintains backward compatibility with existing imports
 
 export {
   SidebarContext,
@@ -7,7 +7,7 @@ export {
   useSidebar,
   SIDEBAR_WIDTH,
   SIDEBAR_WIDTH_ICON,
-} from "./sidebar/sidebar-context"
+} from "./sidebar-context";
 
 export {
   Sidebar,
@@ -19,14 +19,14 @@ export {
   SidebarFooter,
   SidebarSeparator,
   SidebarContent,
-} from "./sidebar/sidebar-core"
+} from "./sidebar-core";
 
 export {
   SidebarGroup,
   SidebarGroupLabel,
   SidebarGroupAction,
   SidebarGroupContent,
-} from "./sidebar/sidebar-group"
+} from "./sidebar-group";
 
 export {
   SidebarMenu,
@@ -39,4 +39,4 @@ export {
   SidebarMenuSub,
   SidebarMenuSubItem,
   SidebarMenuSubButton,
-} from "./sidebar/sidebar-menu"
+} from "./sidebar-menu";
