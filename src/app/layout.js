@@ -189,7 +189,7 @@ export default function RootLayout({ children }) {
         />
       </head>
       <body
-        className={`${inter.variable} ${jetbrainsMono.variable} antialiased dark`}
+        className={`${inter.variable} ${jetbrainsMono.variable} antialiased`}
         style={{ fontFamily: "var(--font-inter)" }}
       >
         {/* Google Analytics */}

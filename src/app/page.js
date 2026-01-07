@@ -80,22 +80,6 @@ export default function Home() {
     }
   }, []);
 
-  // Force dark mode on landing page only
-  useEffect(() => {
-    document.documentElement.classList.add("dark");
-    document.documentElement.style.colorScheme = "dark";
-
-    // Cleanup when leaving the page
-    return () => {
-      // Let ThemeProvider take over on other pages
-      const theme = localStorage.getItem("theme") || "dark";
-      if (theme === "light") {
-        document.documentElement.classList.remove("dark");
-        document.documentElement.style.colorScheme = "light";
-      }
-    };
-  }, []);
-
   // Rotate search placeholders
   useEffect(() => {
     if (!messages) return;
