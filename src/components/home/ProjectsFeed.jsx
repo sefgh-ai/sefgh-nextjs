@@ -18,8 +18,8 @@ import {
   TrendingUp,
   Flame,
   Filter,
-  Settings,
   X,
+  Settings,
 } from "lucide-react";
 import { ProjectCard, ProjectCardSkeleton } from "./ProjectCard";
 import { useCategories } from "@/app/home/hooks/useCategories";
@@ -209,40 +209,38 @@ export function ProjectsFeed({
       </Card>
 
       {/* Projects Feed */}
-      <ScrollArea className="h-[calc(100vh-16rem)] sm:h-[calc(100vh-14rem)] lg:h-[calc(100vh-12rem)]">
-        <div className="space-y-3 sm:space-y-4 pr-2 sm:pr-4">
-          {loading ? (
-            // Loading skeleton - show only 3 for faster perceived load
-            Array.from({ length: 3 }).map((_, i) => (
-              <ProjectCardSkeleton key={i} />
-            ))
-          ) : projects.length === 0 ? (
-            // No results
-            <Card className="glass-premium border-border backdrop-blur-sm">
-              <CardContent className="p-8 sm:p-12 text-center">
-                <div className="flex flex-col items-center gap-4">
-                  <Code className="w-12 h-12 sm:w-16 sm:h-16 text-muted-foreground" />
-                  <div>
-                    <h3 className="text-base sm:text-lg font-semibold mb-2">
-                      No projects found
-                    </h3>
-                    <p className="text-sm text-muted-foreground mb-4">
-                      Try adjusting your filters or preferences
-                    </p>
-                    <Button variant="outline" onClick={onClearFilters}>
-                      Clear All Filters
-                    </Button>
-                  </div>
+      <div className="space-y-2 lg:space-y-2">
+        {loading ? (
+          // Loading skeleton - show only 3 for faster perceived load
+          Array.from({ length: 3 }).map((_, i) => (
+            <ProjectCardSkeleton key={i} />
+          ))
+        ) : projects.length === 0 ? (
+          // No results
+          <Card className="glass-premium border-border backdrop-blur-sm">
+            <CardContent className="p-8 sm:p-12 text-center">
+              <div className="flex flex-col items-center gap-4">
+                <Code className="w-12 h-12 sm:w-16 sm:h-16 text-muted-foreground" />
+                <div>
+                  <h3 className="text-base sm:text-lg font-semibold mb-2">
+                    No projects found
+                  </h3>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Try adjusting your filters or preferences
+                  </p>
+                  <Button variant="outline" onClick={onClearFilters}>
+                    Clear All Filters
+                  </Button>
                 </div>
-              </CardContent>
-            </Card>
-          ) : (
-            projects.map((project) => (
-              <ProjectCard key={project.id} project={project} />
-            ))
-          )}
-        </div>
-      </ScrollArea>
+              </div>
+            </CardContent>
+          </Card>
+        ) : (
+          projects.map((project) => (
+            <ProjectCard key={project.id} project={project} />
+          ))
+        )}
+      </div>
     </main>
   );
 }

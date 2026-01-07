@@ -25,7 +25,7 @@ import { NotificationBell } from "@/components/NotificationBell";
 import { toast } from "sonner";
 import { useCallback, memo } from "react";
 
-const Header = memo(function Header() {
+const Header = memo(function Header({ showProfileDropdown = true }) {
   const { setTheme, theme } = useTheme();
   const { user, signOut, loading } = useAuth();
   const { openSettings } = useSettings();
@@ -112,61 +112,66 @@ const Header = memo(function Header() {
           {/* Notification Bell */}
           <NotificationBell />
 
-          {/* Profile Dropdown */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                <Avatar
-                  className="h-8 w-8"
-                  key={user?.user_metadata?.avatar_url}
+          {/* Profile Dropdown - conditionally rendered */}
+          {showProfileDropdown && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  className="relative h-8 w-8 rounded-full"
                 >
-                  <AvatarImage
-                    src={user?.user_metadata?.avatar_url}
-                    alt={user?.email}
-                    crossOrigin="anonymous"
-                  />
-                  <AvatarFallback>{getUserInitials()}</AvatarFallback>
-                </Avatar>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56">
-              <DropdownMenuLabel>
-                <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-medium leading-none">
-                    {user?.user_metadata?.full_name || "User"}
-                  </p>
-                  <p className="text-xs leading-none text-muted-foreground">
-                    {user?.email}
-                  </p>
-                </div>
-              </DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <Link href="/profile">
-                <DropdownMenuItem>
-                  <UserIcon className="mr-2 h-4 w-4" />
-                  <span>Profile</span>
+                  <Avatar
+                    className="h-8 w-8"
+                    key={user?.user_metadata?.avatar_url}
+                  >
+                    <AvatarImage
+                      src={user?.user_metadata?.avatar_url}
+                      alt={user?.email}
+                      crossOrigin="anonymous"
+                    />
+                    <AvatarFallback>{getUserInitials()}</AvatarFallback>
+                  </Avatar>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuLabel>
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-sm font-medium leading-none">
+                      {user?.user_metadata?.full_name || "User"}
+                    </p>
+                    <p className="text-xs leading-none text-muted-foreground">
+                      {user?.email}
+                    </p>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <Link href="/profile">
+                  <DropdownMenuItem>
+                    <UserIcon className="mr-2 h-4 w-4" />
+                    <span>Profile</span>
+                  </DropdownMenuItem>
+                </Link>
+                <DropdownMenuItem
+                  onClick={openSettings}
+                  className="cursor-pointer"
+                >
+                  <Cog6ToothIcon className="mr-2 h-4 w-4" />
+                  <span>Settings</span>
                 </DropdownMenuItem>
-              </Link>
-              <DropdownMenuItem
-                onClick={openSettings}
-                className="cursor-pointer"
-              >
-                <Cog6ToothIcon className="mr-2 h-4 w-4" />
-                <span>Settings</span>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                onClick={(e) => {
-                  e.preventDefault();
-                  handleSignOut();
-                }}
-                className="text-destructive cursor-pointer"
-              >
-                <ArrowRightOnRectangleIcon className="mr-2 h-4 w-4" />
-                <span>Log out</span>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleSignOut();
+                  }}
+                  className="text-destructive cursor-pointer"
+                >
+                  <ArrowRightOnRectangleIcon className="mr-2 h-4 w-4" />
+                  <span>Log out</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
         </>
       )}
 

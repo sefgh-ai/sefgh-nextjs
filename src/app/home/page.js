@@ -7,6 +7,7 @@ import { SearchNavbar } from "@/components/search/SearchNavbar";
 import { SearchSidebar } from "@/components/search/SearchSidebar";
 import { PreferencesDialog } from "@/components/PreferencesDialog";
 import OnboardingBanner from "@/components/OnboardingBanner";
+import Footer from "@/components/Footer";
 import {
   CategoriesSidebar,
   ProjectsFeed,
@@ -51,17 +52,18 @@ export default function HomePage() {
 
   return (
     <SidebarProvider>
-      <div className="flex min-h-screen w-full bg-background gradient-mesh p-2 sm:p-4 gap-2 sm:gap-4 flex-col">
-        <div className="flex gap-2 sm:gap-4 flex-1">
+      <div className="flex h-full w-full bg-background gradient-mesh flex-col overflow-hidden">
+        {/* Main content area with sidebar */}
+        <div className="flex flex-1 min-h-0 p-2 sm:p-4 gap-2 sm:gap-4">
           <SearchSidebar user={user} />
 
-          <SidebarInset className="flex flex-col glass-premium rounded-xl sm:rounded-2xl shadow-premium border border-white/10 overflow-hidden flex-1">
+          <SidebarInset className="flex flex-col glass-premium rounded-xl sm:rounded-2xl shadow-premium border border-white/10 overflow-hidden flex-1 min-h-0">
             <SearchNavbar />
 
-            <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-6 pb-4 overflow-auto flex-1">
+            <div className="w-full px-3 sm:px-6 lg:px-8 py-4 sm:py-6 pb-4 overflow-y-auto flex-1 min-h-0">
               <OnboardingBanner />
 
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6 max-w-[1600px] mx-auto">
                 {/* Left Sidebar - Categories (hidden on mobile, shown on large screens) */}
                 <aside className="hidden lg:block lg:col-span-2 space-y-4">
                   <CategoriesSidebar
@@ -94,6 +96,9 @@ export default function HomePage() {
             </div>
           </SidebarInset>
         </div>
+
+        {/* Footer - placed below sidebar and main content */}
+        <Footer />
       </div>
 
       <PreferencesDialog

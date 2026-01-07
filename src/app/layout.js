@@ -211,7 +211,6 @@ export default function RootLayout({ children }) {
           defaultTheme="dark"
           enableSystem={false}
           disableTransitionOnChange
-          forcedTheme="dark"
         >
           <AuthProvider>
             <NotificationProvider>

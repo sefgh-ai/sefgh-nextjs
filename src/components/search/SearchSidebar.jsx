@@ -34,10 +34,10 @@ export function SearchSidebar({ user }) {
   return (
     <Sidebar
       suppressHydrationWarning
-      className="glass-premium border-r-0 shadow-premium overflow-hidden group-data-[state=collapsed]:m-0 m-4 rounded-2xl max-h-[calc(100vh-2rem)] group-data-[state=collapsed]:h-screen group-data-[state=collapsed]:rounded-none"
+      className="glass-premium border-r-0 shadow-premium overflow-hidden rounded-2xl"
       style={{ "--sidebar-width": "14rem" }}
     >
-      <SidebarContent className="gap-0 overflow-auto">
+      <SidebarContent className="gap-0 overflow-y-auto">
         {/* Logo Section */}
         <div className="flex h-16 items-center border-b border-white/5 px-6 backdrop-blur-xl rounded-t-2xl">
           <a

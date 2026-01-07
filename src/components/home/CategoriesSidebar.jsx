@@ -1,10 +1,8 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
 import { Code, Settings, Loader2 } from "lucide-react";
 import { useCategories } from "@/app/home/hooks/useCategories";
 
@@ -32,65 +30,55 @@ export function CategoriesSidebar({
 
   return (
     <Card className="glass-premium border-border backdrop-blur-sm">
-      <CardHeader className="pb-3">
-        <CardTitle className="text-base font-semibold flex items-center justify-between gap-2">
-          <div className="flex items-center gap-2">
-            <Code className="w-4 h-4" />
+      <CardContent className="p-3">
+        {/* Header */}
+        <div className="flex items-center justify-between gap-2 mb-2 px-1">
+          <div className="flex items-center gap-1.5 text-sm font-semibold">
+            <Code className="w-3.5 h-3.5" />
             Topics
             {loading && (
               <Loader2 className="w-3 h-3 animate-spin text-muted-foreground" />
             )}
           </div>
-          {userPreferences?.tags?.length > 0 ? (
-            <Badge className="bg-primary text-primary-foreground text-xs">
-              {userPreferences.tags.length}
-            </Badge>
-          ) : (
-            <Badge variant="outline" className="text-xs">
-              {filteredLiveCategories.length}
-            </Badge>
-          )}
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="p-0">
-        <ScrollArea className="h-[calc(100vh-24rem)] min-h-[200px]">
-          <div className="space-y-1 p-4 pt-0">
-            {categories.map((category) => (
-              <Button
-                key={category.id || category.name}
-                variant={
-                  selectedCategory === category.name ? "secondary" : "ghost"
-                }
-                className={`w-full justify-start text-base ${
-                  selectedCategory === category.name
-                    ? "bg-accent text-accent-foreground hover:bg-accent/90"
-                    : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
-                }`}
-                onClick={() => onCategoryChange(category.name)}
-              >
-                <span className="mr-2">{category.icon}</span>
-                {category.name}
-                {category.usage_count !== undefined &&
-                  category.usage_count > 0 && (
-                    <span className="ml-auto text-xs text-muted-foreground">
-                      {category.usage_count}
-                    </span>
-                  )}
-              </Button>
-            ))}
-          </div>
-        </ScrollArea>
-        <Separator />
-        <div className="p-4">
-          <Button
-            variant="outline"
-            className="w-full justify-start text-base hover:bg-accent hover:glow-border-blue"
-            onClick={onOpenPreferences}
-          >
-            <Settings className="w-4 h-4 mr-2" />
-            Preferences
-          </Button>
+          <Badge variant="outline" className="text-[10px] h-4 px-1.5">
+            {filteredLiveCategories.length}
+          </Badge>
         </div>
+
+        {/* Categories List */}
+        <div className="space-y-0.5">
+          {categories.map((category) => (
+            <button
+              key={category.id || category.name}
+              onClick={() => onCategoryChange(category.name)}
+              className={`w-full flex items-center justify-between px-2 py-1.5 rounded-lg text-sm transition-colors ${
+                selectedCategory === category.name
+                  ? "bg-accent text-accent-foreground font-medium"
+                  : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+              }`}
+            >
+              <span className="flex items-center gap-2">
+                <span className="text-sm">{category.icon}</span>
+                <span className="truncate">{category.name}</span>
+              </span>
+              {category.usage_count !== undefined &&
+                category.usage_count > 0 && (
+                  <span className="text-[11px] text-muted-foreground">
+                    {category.usage_count}
+                  </span>
+                )}
+            </button>
+          ))}
+        </div>
+
+        {/* Preferences Button */}
+        <button
+          onClick={onOpenPreferences}
+          className="w-full flex items-center gap-2 px-2 py-1.5 mt-2 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors border-t border-border/50 pt-2"
+        >
+          <Settings className="w-3.5 h-3.5" />
+          Preferences
+        </button>
       </CardContent>
     </Card>
   );

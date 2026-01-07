@@ -189,7 +189,7 @@ export function NotificationBell() {
 
       {/* Hover Tooltip - Latest Notification Preview */}
       {showTooltip && !isOpen && latestNotification && (
-        <div className="absolute right-0 mt-2 w-80 rounded-xl bg-background/98 backdrop-blur-xl border border-border shadow-2xl z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+        <div className="absolute right-0 mt-2 w-80 rounded-xl bg-card border border-border shadow-2xl z-50 animate-in fade-in slide-in-from-top-2 duration-200">
           <div className="p-4">
             <div className="flex items-start gap-3">
               <div
@@ -201,7 +201,7 @@ export function NotificationBell() {
                 {getNotificationIcon(latestNotification.type)}
               </div>
               <div className="flex-1 min-w-0">
-                <h4 className="font-semibold text-sm mb-1 line-clamp-1">
+                <h4 className="font-semibold text-sm mb-1 line-clamp-1 text-card-foreground">
                   {latestNotification.title}
                 </h4>
                 <p className="text-xs text-muted-foreground line-clamp-2 mb-2">
@@ -225,12 +225,14 @@ export function NotificationBell() {
       {isOpen && (
         <div
           ref={dropdownRef}
-          className="absolute right-0 mt-2 w-96 max-w-[calc(100vw-2rem)] rounded-2xl bg-background/98 backdrop-blur-xl border border-border shadow-2xl z-50 animate-in fade-in slide-in-from-top-2 duration-200"
+          className="absolute right-0 mt-2 w-96 max-w-[calc(100vw-2rem)] rounded-2xl bg-card border border-border shadow-2xl z-50 animate-in fade-in slide-in-from-top-2 duration-200"
         >
           {/* Header */}
-          <div className="flex items-center justify-between p-4 border-b border-border">
+          <div className="flex items-center justify-between p-4 border-b border-border bg-card rounded-t-2xl">
             <div>
-              <h3 className="font-semibold text-lg">Notifications</h3>
+              <h3 className="font-semibold text-lg text-card-foreground">
+                Notifications
+              </h3>
               <p className="text-xs text-muted-foreground">
                 {unreadCount > 0 ? `${unreadCount} unread` : "All caught up!"}
               </p>
@@ -265,7 +267,7 @@ export function NotificationBell() {
                 </p>
               </div>
             ) : (
-              <div className="p-2">
+              <div className="p-2 bg-card">
                 {notifications.map((notification) => (
                   <div
                     key={notification.id}
@@ -273,8 +275,8 @@ export function NotificationBell() {
                     className={cn(
                       "group relative p-3 rounded-xl mb-2 transition-all cursor-pointer",
                       notification.is_read
-                        ? "bg-muted/30 hover:bg-muted/50"
-                        : "bg-primary/5 hover:bg-primary/10 border border-primary/20"
+                        ? "bg-muted/50 hover:bg-muted/70"
+                        : "bg-primary/10 hover:bg-primary/15 border border-primary/30"
                     )}
                   >
                     <div className="flex items-start gap-3">
@@ -291,7 +293,7 @@ export function NotificationBell() {
                       {/* Content */}
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between gap-2">
-                          <h4 className="font-semibold text-sm leading-tight">
+                          <h4 className="font-semibold text-sm leading-tight text-card-foreground">
                             {notification.title}
                           </h4>
                           <Button
@@ -331,7 +333,7 @@ export function NotificationBell() {
 
           {/* Footer */}
           {notifications.length > 0 && (
-            <div className="p-3 border-t border-border text-center">
+            <div className="p-3 border-t border-border text-center bg-card rounded-b-2xl">
               <Button
                 variant="ghost"
                 size="sm"
@@ -339,7 +341,7 @@ export function NotificationBell() {
                   setIsOpen(false);
                   router.push("/notifications");
                 }}
-                className="text-xs w-full hover:bg-primary/10"
+                className="text-xs w-full hover:bg-muted"
               >
                 View all notifications →
               </Button>
