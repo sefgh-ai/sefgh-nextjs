@@ -5,14 +5,15 @@
 
 import { createClient } from "@/lib/supabase/client";
 
+// Module-level client - created once and reused
+const supabase = createClient();
+
 /**
  * Get user's onboarding data
  * @param {string} userId - User ID
  * @returns {Promise<Object|null>} - Onboarding data or null
  */
 export async function getOnboardingData(userId) {
-  const supabase = createClient();
-
   const { data, error } = await supabase
     .from("onboarding_data")
     .select("*")
@@ -54,8 +55,6 @@ export async function getOnboardingData(userId) {
  * @returns {Promise<Object>} - Created onboarding data
  */
 export async function createOnboardingData(userId) {
-  const supabase = createClient();
-
   const { data, error } = await supabase
     .from("onboarding_data")
     .insert([
@@ -101,8 +100,6 @@ export async function createOnboardingData(userId) {
  * @returns {Promise<Object>} - Updated onboarding data
  */
 export async function updateOnboardingData(userId, updates) {
-  const supabase = createClient();
-
   const { data, error } = await supabase
     .from("onboarding_data")
     .update(updates)
@@ -260,8 +257,6 @@ export async function saveStepPreferences(userId, notificationPref, language) {
  * @returns {Promise<Object>}
  */
 export async function resetOnboarding(userId) {
-  const supabase = createClient();
-
   const { error } = await supabase
     .from("onboarding_data")
     .delete()

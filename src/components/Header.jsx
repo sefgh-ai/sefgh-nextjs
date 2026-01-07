@@ -74,21 +74,6 @@ const Header = memo(function Header({ showProfileDropdown = true }) {
 
   return (
     <>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="outline" size="sm">
-            sefgh v1
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuLabel>Versions</DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem>sefgh v1</DropdownMenuItem>
-          <DropdownMenuItem>v2</DropdownMenuItem>
-          <DropdownMenuItem>v3</DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-
       {!user ? (
         <>
           <Link href="/login">

@@ -59,7 +59,7 @@ export function ProjectCard({ project }) {
 
   return (
     <Card
-      className="glass-premium border-border hover:border-primary/50 transition-all duration-200 hover:shadow-lg backdrop-blur-sm group cursor-pointer"
+      className="glass-premium border-border hover:border-primary/50 transition-all duration-200 hover:shadow-lg backdrop-blur-sm group cursor-pointer overflow-hidden"
       onClick={handleClick}
     >
       <CardContent className="p-3 lg:p-4">

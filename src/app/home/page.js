@@ -14,8 +14,8 @@ import {
   UserProfileCard,
   AboutCard,
 } from "@/components/home";
-import { useProjects } from "./hooks/useProjects";
-import { useFilteredProjects } from "./hooks/useFilteredProjects";
+import { useProjects } from "@/hooks/home/useProjects";
+import { useFilteredProjects } from "@/hooks/home/useFilteredProjects";
 import {
   getInitialPreferences,
   clearSavedPreferences,
@@ -28,7 +28,8 @@ export default function HomePage() {
   const [preferencesOpen, setPreferencesOpen] = useState(false);
   const [userPreferences, setUserPreferences] = useState(getInitialPreferences);
 
-  const { allProjects, loading } = useProjects(selectedTab);
+  const { allProjects, loading, loadingMore, hasMore, loadMore } =
+    useProjects(selectedTab);
   const projects = useFilteredProjects(
     allProjects,
     selectedCategory,
@@ -58,9 +59,12 @@ export default function HomePage() {
           <SearchSidebar user={user} />
 
           <SidebarInset className="flex flex-col glass-premium rounded-xl sm:rounded-2xl shadow-premium border border-white/10 overflow-hidden flex-1 min-h-0">
-            <SearchNavbar />
+            <SearchNavbar
+              selectedTab={selectedTab}
+              onTabChange={setSelectedTab}
+            />
 
-            <div className="w-full px-3 sm:px-6 lg:px-8 py-4 sm:py-6 pb-4 overflow-y-auto flex-1 min-h-0">
+            <div className="w-full px-3 sm:px-6 lg:px-8 py-4 sm:py-6 pb-4 overflow-hidden flex-1 min-h-0">
               <OnboardingBanner />
 
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6 max-w-[1600px] mx-auto">
@@ -78,8 +82,9 @@ export default function HomePage() {
                 <ProjectsFeed
                   projects={projects}
                   loading={loading}
-                  selectedTab={selectedTab}
-                  onTabChange={setSelectedTab}
+                  loadingMore={loadingMore}
+                  hasMore={hasMore}
+                  onLoadMore={loadMore}
                   userPreferences={userPreferences}
                   onClearFilters={handleClearFilters}
                   selectedCategory={selectedCategory}

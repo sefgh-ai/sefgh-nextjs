@@ -20,14 +20,14 @@ import { CodeExplorer } from "@/components/CodeExplorer";
 import { Canvas } from "@/components/Canvas";
 import { getUserProfile } from "@/lib/supabase/profiles";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { ChatSidebar } from "./components/ChatSidebar";
-import { ChatHeader } from "./components/ChatHeader";
-import { MessageList } from "./components/MessageList";
-import { ChatInput } from "./components/ChatInput";
-import { GitHubSearchDialog } from "./components/GitHubSearchDialog";
-import { useChatConversations } from "./hooks/useChatConversations";
-import { useChatMessages } from "./hooks/useChatMessages";
-import { useVoiceInput } from "./hooks/useVoiceInput";
+import { ChatSidebar } from "@/components/chat/ChatSidebar";
+import { ChatHeader } from "@/components/chat/ChatHeader";
+import { MessageList } from "@/components/chat/MessageList";
+import { ChatInput } from "@/components/chat/ChatInput";
+import { GitHubSearchDialog } from "@/components/chat/GitHubSearchDialog";
+import { useChatConversations } from "@/hooks/chat/useChatConversations";
+import { useChatMessages } from "@/hooks/chat/useChatMessages";
+import { useVoiceInput } from "@/hooks/chat/useVoiceInput";
 import { useAuthGuard } from "@/hooks/useAuthGuard";
 import { PageLoadingSpinner } from "@/components/shared/LoadingSpinner";
 import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
@@ -35,7 +35,10 @@ import ErrorBoundary from "@/components/shared/ErrorBoundary";
 
 function ChatPageContent() {
   const { user, loading: authLoading } = useAuth();
-  const { isAuthenticated, isLoading } = useAuthGuard({ user, loading: authLoading });
+  const { isAuthenticated, isLoading } = useAuthGuard({
+    user,
+    loading: authLoading,
+  });
   const { openSettings } = useSettings();
   const router = useRouter();
   const isMobile = useIsMobile();
@@ -227,8 +230,8 @@ function ChatPageContent() {
   if (!user) return null;
 
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
-      <div className="flex flex-1 overflow-hidden">
+    <div className="flex flex-col h-full bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 overflow-hidden">
+      <div className="flex flex-1 min-h-0 overflow-hidden">
         {/* Sidebar */}
         <ChatSidebar
           sidebarOpen={sidebarOpen}

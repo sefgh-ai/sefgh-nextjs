@@ -20,6 +20,7 @@ import {
 import {
   Sidebar,
   SidebarContent,
+  SidebarHeader,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -37,19 +38,20 @@ export function SearchSidebar({ user }) {
       className="glass-premium border-r-0 shadow-premium overflow-hidden rounded-2xl"
       style={{ "--sidebar-width": "14rem" }}
     >
-      <SidebarContent className="gap-0 overflow-y-auto">
-        {/* Logo Section */}
-        <div className="flex h-16 items-center border-b border-white/5 px-6 backdrop-blur-xl rounded-t-2xl">
-          <a
-            href="/home"
-            className="flex items-center gap-2 font-bold text-lg transition-smooth hover:scale-105"
-          >
-            <span className="bg-gradient-to-r from-blue-500 via-blue-400 to-slate-400 bg-clip-text text-transparent">
-              SEFGH
-            </span>
-          </a>
-        </div>
+      {/* Logo Section - Fixed, outside scrollable area */}
+      <SidebarHeader className="flex h-16 items-center border-b border-white/5 px-6 backdrop-blur-xl rounded-t-2xl shrink-0">
+        <a
+          href="/home"
+          className="flex items-center gap-2 font-bold text-lg transition-smooth hover:scale-105"
+        >
+          <span className="bg-gradient-to-r from-blue-500 via-blue-400 to-slate-400 bg-clip-text text-transparent">
+            SEFGH
+          </span>
+        </a>
+      </SidebarHeader>
 
+      {/* Scrollable content area */}
+      <SidebarContent className="gap-0 overflow-y-auto scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent">
         <SidebarGroup className="px-3 py-4">
           <SidebarGroupLabel className="px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
             Navigation

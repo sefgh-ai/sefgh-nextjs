@@ -44,7 +44,12 @@ export default function TrendingPage() {
     isDataStale,
     handleRefreshTrending,
     getCustomTrendingRepos,
-  } = useTrendingData(activeTab, programmingLanguage, spokenLanguage, dateRange);
+  } = useTrendingData(
+    activeTab,
+    programmingLanguage,
+    spokenLanguage,
+    dateRange
+  );
 
   // Fetch programming languages list
   useEffect(() => {
@@ -96,14 +101,14 @@ export default function TrendingPage() {
 
   return (
     <SidebarProvider>
-      <div className="flex min-h-screen w-full bg-background gradient-mesh p-4 gap-4 flex-col">
-        <div className="flex gap-4 flex-1">
+      <div className="flex h-full w-full bg-background gradient-mesh flex-col overflow-hidden">
+        <div className="flex flex-1 min-h-0 p-2 sm:p-4 gap-2 sm:gap-4">
           <SearchSidebar user={user} />
 
-          <SidebarInset className="flex flex-col glass-premium rounded-2xl shadow-premium border border-white/10 overflow-hidden flex-1">
+          <SidebarInset className="flex flex-col glass-premium rounded-xl sm:rounded-2xl shadow-premium border border-white/10 overflow-hidden flex-1 min-h-0">
             <SearchNavbar />
 
-            <main className="flex-1 py-6 px-4 pb-4 overflow-auto">
+            <main className="flex-1 py-6 px-4 pb-4 overflow-y-auto min-h-0">
               <div className="max-w-7xl mx-auto px-4">
                 {/* Filters */}
                 <TrendingFilters
@@ -127,10 +132,9 @@ export default function TrendingPage() {
                 />
 
                 {/* Content */}
-                <ScrollArea className="h-[calc(100vh-20rem)]">
-                  <div className="space-y-4 pr-4">
-                    {loading ? (
-                      // Loading skeleton
+                <div className="space-y-4 mt-4">
+                  {loading
+                    ? // Loading skeleton
                       Array.from({ length: 5 }).map((_, i) => (
                         <Card
                           key={i}
@@ -143,8 +147,8 @@ export default function TrendingPage() {
                           </CardContent>
                         </Card>
                       ))
-                    ) : activeTab === "repositories" ? (
-                      // Repositories List
+                    : activeTab === "repositories"
+                    ? // Repositories List
                       displayRepos.map((repo, index) => (
                         <TrendingRepositoryCard
                           key={repo.id}
@@ -154,18 +158,15 @@ export default function TrendingPage() {
                           getHeatIndicator={getHeatIndicator}
                         />
                       ))
-                    ) : (
-                      // Developers List
+                    : // Developers List
                       developers.map((dev) => (
                         <TrendingDeveloperCard
                           key={dev.id}
                           dev={dev}
                           onNavigate={(path) => router.push(path)}
                         />
-                      ))
-                    )}
-                  </div>
-                </ScrollArea>
+                      ))}
+                </div>
               </div>
             </main>
           </SidebarInset>

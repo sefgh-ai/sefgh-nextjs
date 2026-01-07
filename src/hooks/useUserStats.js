@@ -1,12 +1,16 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
 
 export function useUserStats(userId) {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  // Create Supabase client once and store in state
+  const [supabase] = useState(() => createClient());
+  // Track if component is mounted to prevent state updates after unmount
+  const isMountedRef = useRef(true);
 
   const fetchStats = useCallback(async () => {
     if (!userId) {
@@ -17,7 +21,6 @@ export function useUserStats(userId) {
 
     try {
       setLoading(true);
-      const supabase = createClient();
 
       // Try to fetch existing stats
       let { data, error: fetchError } = await supabase
@@ -26,6 +29,9 @@ export function useUserStats(userId) {
         .eq("user_id", userId)
         .single();
 
+      // Only update state if component is still mounted
+      if (!isMountedRef.current) return;
+
       // If no stats exist, create them
       if (fetchError && fetchError.code === "PGRST116") {
         const { data: newData, error: insertError } = await supabase
@@ -33,6 +39,8 @@ export function useUserStats(userId) {
           .insert({ user_id: userId })
           .select()
           .single();
+
+        if (!isMountedRef.current) return;
 
         if (insertError) {
           throw insertError;
@@ -45,6 +53,7 @@ export function useUserStats(userId) {
       setStats(data);
       setError(null);
     } catch (err) {
+      if (!isMountedRef.current) return;
       console.error("[useUserStats] Error fetching stats:", err);
       setError(err.message);
       // Fallback to default stats
@@ -60,17 +69,32 @@ export function useUserStats(userId) {
         projects: 0,
       });
     } finally {
-      setLoading(false);
+      if (isMountedRef.current) {
+        setLoading(false);
+      }
     }
-  }, [userId]);
+  }, [supabase, userId]);
 
   // Subscribe to real-time updates
   useEffect(() => {
+    isMountedRef.current = true;
     fetchStats();
 
-    if (!userId) return;
+    // Timeout to ensure loading doesn't get stuck
+    const loadingTimeout = setTimeout(() => {
+      if (isMountedRef.current && loading) {
+        console.warn(
+          "[useUserStats] Loading timeout - forcing loading to false"
+        );
+        setLoading(false);
+      }
+    }, 5000);
 
-    const supabase = createClient();
+    if (!userId) {
+      clearTimeout(loadingTimeout);
+      return;
+    }
+
     const channel = supabase
       .channel(`user_stats:${userId}`)
       .on(
@@ -83,7 +107,7 @@ export function useUserStats(userId) {
         },
         (payload) => {
           console.log("[useUserStats] Real-time update:", payload);
-          if (payload.new) {
+          if (payload.new && isMountedRef.current) {
             setStats(payload.new);
           }
         }
@@ -91,9 +115,12 @@ export function useUserStats(userId) {
       .subscribe();
 
     return () => {
+      isMountedRef.current = false;
+      clearTimeout(loadingTimeout);
       supabase.removeChannel(channel);
     };
-  }, [userId, fetchStats]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [supabase, userId, fetchStats]);
 
   // Function to update stats
   const updateStats = useCallback(
@@ -101,7 +128,6 @@ export function useUserStats(userId) {
       if (!userId) return { error: "No user ID" };
 
       try {
-        const supabase = createClient();
         const { data, error } = await supabase
           .from("user_stats")
           .update(updates)
@@ -110,14 +136,16 @@ export function useUserStats(userId) {
           .single();
 
         if (error) throw error;
-        setStats(data);
+        if (isMountedRef.current) {
+          setStats(data);
+        }
         return { data };
       } catch (err) {
         console.error("[useUserStats] Error updating stats:", err);
         return { error: err.message };
       }
     },
-    [userId]
+    [supabase, userId]
   );
 
   // Function to increment a specific stat

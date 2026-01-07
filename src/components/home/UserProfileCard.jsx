@@ -15,7 +15,11 @@ export function UserProfileCard({ user, loading: authLoading }) {
   const { stats, loading: statsLoading } = useUserStats(user?.id);
   const { signOut } = useAuth();
 
-  const loading = authLoading || statsLoading;
+  // Show skeleton only when:
+  // 1. Auth is still loading (we don't know if there's a user yet)
+  // 2. OR user exists but stats are still loading
+  // Don't show skeleton when auth is done and there's no user
+  const loading = authLoading || (user && statsLoading);
 
   const handleSignOut = async () => {
     try {

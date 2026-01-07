@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -12,29 +12,16 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import {
-  Code,
-  Clock,
-  TrendingUp,
-  Flame,
-  Filter,
-  X,
-  Settings,
-} from "lucide-react";
+import { Code, Filter, X, Settings, Loader2 } from "lucide-react";
 import { ProjectCard, ProjectCardSkeleton } from "./ProjectCard";
-import { useCategories } from "@/app/home/hooks/useCategories";
-
-const TABS = [
-  { id: "latest", label: "Latest", icon: Clock },
-  { id: "monthly", label: "Monthly", icon: TrendingUp },
-  { id: "yearly", label: "Yearly", icon: Flame },
-];
+import { useCategories } from "@/hooks/home/useCategories";
 
 export function ProjectsFeed({
   projects,
   loading,
-  selectedTab,
-  onTabChange,
+  loadingMore,
+  hasMore,
+  onLoadMore,
   userPreferences,
   onClearFilters,
   selectedCategory,
@@ -43,6 +30,26 @@ export function ProjectsFeed({
 }) {
   const [filterSheetOpen, setFilterSheetOpen] = useState(false);
   const { categories: liveCategories } = useCategories();
+  const scrollRef = useRef(null);
+  const loadMoreRef = useRef(null);
+
+  // Intersection Observer for infinite scroll
+  useEffect(() => {
+    if (!loadMoreRef.current || !hasMore || loadingMore) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore && !loadingMore) {
+          onLoadMore?.();
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    observer.observe(loadMoreRef.current);
+
+    return () => observer.disconnect();
+  }, [hasMore, loadingMore, onLoadMore]);
 
   // Filter out "All" from live categories to avoid duplication
   const filteredLiveCategories = liveCategories.filter(
@@ -51,9 +58,9 @@ export function ProjectsFeed({
   const categories = [{ name: "All", icon: "🎯" }, ...filteredLiveCategories];
 
   return (
-    <main className="col-span-1 lg:col-span-7 space-y-3 sm:space-y-4">
+    <main className="col-span-1 lg:col-span-7 flex flex-col h-[calc(100vh-180px)] min-h-0">
       {/* Mobile Category Filter Bar */}
-      <div className="lg:hidden">
+      <div className="lg:hidden shrink-0 mb-3">
         <Card className="glass-premium border-border backdrop-blur-sm">
           <CardContent className="p-3">
             <div className="flex items-center gap-2">
@@ -157,89 +164,65 @@ export function ProjectsFeed({
         </Card>
       </div>
 
-      {/* Tabs - Desktop optimized, simplified on mobile */}
-      <Card className="glass-premium border-border backdrop-blur-sm">
-        <CardContent className="p-3 sm:p-4">
-          <div className="flex items-center gap-2 flex-wrap">
-            {TABS.map((tab) => {
-              const Icon = tab.icon;
-              return (
-                <Button
-                  key={tab.id}
-                  variant={selectedTab === tab.id ? "default" : "ghost"}
-                  size="sm"
-                  className={
-                    selectedTab === tab.id
-                      ? "bg-primary hover:bg-primary/90 text-primary-foreground"
-                      : "text-muted-foreground hover:text-foreground hover:bg-accent"
-                  }
-                  onClick={() => onTabChange(tab.id)}
-                >
-                  <Icon className="w-4 h-4 sm:mr-2" />
-                  <span className="hidden sm:inline">{tab.label}</span>
-                </Button>
-              );
-            })}
-            <div className="ml-auto flex gap-2 items-center">
-              {userPreferences?.tags?.length > 0 && (
-                <Badge
-                  variant="outline"
-                  className="text-xs hidden sm:inline-flex"
-                >
-                  {userPreferences.mode} Filter Active
-                </Badge>
-              )}
-              <Button
-                variant="outline"
-                size="sm"
-                className="hover:bg-accent hidden sm:inline-flex"
-              >
-                Featured
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                className="hover:bg-accent hidden sm:inline-flex"
-              >
-                All
-              </Button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Projects Feed */}
-      <div className="space-y-2 lg:space-y-2">
-        {loading ? (
-          // Loading skeleton - show only 3 for faster perceived load
-          Array.from({ length: 3 }).map((_, i) => (
-            <ProjectCardSkeleton key={i} />
-          ))
-        ) : projects.length === 0 ? (
-          // No results
-          <Card className="glass-premium border-border backdrop-blur-sm">
-            <CardContent className="p-8 sm:p-12 text-center">
-              <div className="flex flex-col items-center gap-4">
-                <Code className="w-12 h-12 sm:w-16 sm:h-16 text-muted-foreground" />
-                <div>
-                  <h3 className="text-base sm:text-lg font-semibold mb-2">
-                    No projects found
-                  </h3>
-                  <p className="text-sm text-muted-foreground mb-4">
-                    Try adjusting your filters or preferences
-                  </p>
-                  <Button variant="outline" onClick={onClearFilters}>
-                    Clear All Filters
-                  </Button>
+      {/* Projects Feed - native scroll for cleaner appearance */}
+      <div className="flex-1 min-h-0 overflow-y-auto" ref={scrollRef}>
+        <div className="space-y-4 pr-2">
+          {loading ? (
+            // Loading skeleton - show only 3 for faster perceived load
+            Array.from({ length: 3 }).map((_, i) => (
+              <ProjectCardSkeleton key={i} />
+            ))
+          ) : projects.length === 0 ? (
+            // No results
+            <Card className="glass-premium border-border backdrop-blur-sm">
+              <CardContent className="p-8 sm:p-12 text-center">
+                <div className="flex flex-col items-center gap-4">
+                  <Code className="w-12 h-12 sm:w-16 sm:h-16 text-muted-foreground" />
+                  <div>
+                    <h3 className="text-base sm:text-lg font-semibold mb-2">
+                      No projects found
+                    </h3>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      Try adjusting your filters or preferences
+                    </p>
+                    <Button variant="outline" onClick={onClearFilters}>
+                      Clear All Filters
+                    </Button>
+                  </div>
                 </div>
+              </CardContent>
+            </Card>
+          ) : (
+            <>
+              {projects.map((project) => (
+                <ProjectCard key={project.id} project={project} />
+              ))}
+
+              {/* Infinite scroll trigger & Load More button */}
+              <div ref={loadMoreRef} className="py-4 flex justify-center">
+                {loadingMore ? (
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span className="text-sm">Loading more...</span>
+                  </div>
+                ) : hasMore ? (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={onLoadMore}
+                    className="glass-premium"
+                  >
+                    Load More
+                  </Button>
+                ) : projects.length > 0 ? (
+                  <p className="text-sm text-muted-foreground">
+                    No more projects to load
+                  </p>
+                ) : null}
               </div>
-            </CardContent>
-          </Card>
-        ) : (
-          projects.map((project) => (
-            <ProjectCard key={project.id} project={project} />
-          ))
-        )}
+            </>
+          )}
+        </div>
       </div>
     </main>
   );

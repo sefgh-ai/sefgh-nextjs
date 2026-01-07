@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
 
 /**
@@ -19,10 +19,16 @@ export function useSupabaseQuery({
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const supabase = createClient();
+  // Create Supabase client once and store in state
+  const [supabase] = useState(() => createClient());
+  // Track if component is mounted to prevent state updates after unmount
+  const isMountedRef = useRef(true);
 
   const fetchData = useCallback(async () => {
-    if (!enabled) return;
+    if (!enabled) {
+      setLoading(false);
+      return;
+    }
 
     try {
       setLoading(true);
@@ -36,19 +42,30 @@ export function useSupabaseQuery({
 
       const { data: result, error: fetchError } = await query;
 
+      // Only update state if component is still mounted
+      if (!isMountedRef.current) return;
+
       if (fetchError) throw fetchError;
 
       setData(result);
     } catch (err) {
+      if (!isMountedRef.current) return;
       console.error(`Error fetching from ${table}:`, err);
       setError(err.message);
     } finally {
-      setLoading(false);
+      if (isMountedRef.current) {
+        setLoading(false);
+      }
     }
-  }, [table, queryBuilder, enabled, ...dependencies]);
+  }, [supabase, table, queryBuilder, enabled, ...dependencies]);
 
   useEffect(() => {
+    isMountedRef.current = true;
     fetchData();
+
+    return () => {
+      isMountedRef.current = false;
+    };
   }, [fetchData]);
 
   const refetch = useCallback(() => {
@@ -74,7 +91,8 @@ export function useSupabaseQuery({
 export function useSupabaseMutation({ table, onSuccess, onError }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const supabase = createClient();
+  // Create Supabase client once and store in state
+  const [supabase] = useState(() => createClient());
 
   const insert = useCallback(
     async (data) => {
@@ -100,7 +118,7 @@ export function useSupabaseMutation({ table, onSuccess, onError }) {
         setLoading(false);
       }
     },
-    [table, onSuccess, onError]
+    [supabase, table, onSuccess, onError]
   );
 
   const update = useCallback(
@@ -128,7 +146,7 @@ export function useSupabaseMutation({ table, onSuccess, onError }) {
         setLoading(false);
       }
     },
-    [table, onSuccess, onError]
+    [supabase, table, onSuccess, onError]
   );
 
   const remove = useCallback(
@@ -155,7 +173,7 @@ export function useSupabaseMutation({ table, onSuccess, onError }) {
         setLoading(false);
       }
     },
-    [table, onSuccess, onError]
+    [supabase, table, onSuccess, onError]
   );
 
   return {

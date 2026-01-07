@@ -1,43 +1,49 @@
-'use client'
+"use client";
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 
 export function PopularSearches({ setSearchQuery, handleSearch }) {
   const handleQuickSearch = (query) => {
-    setSearchQuery(query)
+    setSearchQuery(query);
     // Call handleSearch without event object (it uses optional chaining)
-    handleSearch()
-  }
+    handleSearch();
+  };
 
   return (
-    <div className="mx-auto mt-16">
-      <h2 className="text-2xl font-bold mb-6">Popular Searches</h2>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Button 
-          variant="outline" 
-          className="h-auto py-4 px-6 flex flex-col items-start"
-          onClick={() => handleQuickSearch('react')}
+    <div className="mx-auto mb-8">
+      <h2 className="text-lg font-semibold mb-4">Popular Searches</h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+        <Button
+          variant="outline"
+          className="h-auto py-3 px-4 flex flex-col items-start justify-start text-left"
+          onClick={() => handleQuickSearch("react")}
         >
-          <span className="font-semibold mb-1">React Projects</span>
-          <span className="text-sm text-muted-foreground">Frontend frameworks</span>
+          <span className="font-medium text-sm">React Projects</span>
+          <span className="text-xs text-muted-foreground">
+            Frontend frameworks
+          </span>
         </Button>
-        <Button 
-          variant="outline" 
-          className="h-auto py-4 px-6 flex flex-col items-start"
-          onClick={() => handleQuickSearch('machine learning')}
+        <Button
+          variant="outline"
+          className="h-auto py-3 px-4 flex flex-col items-start justify-start text-left"
+          onClick={() => handleQuickSearch("machine learning")}
         >
-          <span className="font-semibold mb-1">Machine Learning</span>
-          <span className="text-sm text-muted-foreground">AI & ML repositories</span>
+          <span className="font-medium text-sm">Machine Learning</span>
+          <span className="text-xs text-muted-foreground">
+            AI & ML repositories
+          </span>
         </Button>
-        <Button 
-          variant="outline" 
-          className="h-auto py-4 px-6 flex flex-col items-start"
-          onClick={() => handleQuickSearch('blockchain')}
+        <Button
+          variant="outline"
+          className="h-auto py-3 px-4 flex flex-col items-start justify-start text-left"
+          onClick={() => handleQuickSearch("blockchain")}
         >
-          <span className="font-semibold mb-1">Web3 & Blockchain</span>
-          <span className="text-sm text-muted-foreground">Decentralized apps</span>
+          <span className="font-medium text-sm">Web3 & Blockchain</span>
+          <span className="text-xs text-muted-foreground">
+            Decentralized apps
+          </span>
         </Button>
       </div>
     </div>
-  )
+  );
 }

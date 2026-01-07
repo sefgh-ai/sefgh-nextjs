@@ -141,10 +141,10 @@
   }
 }
 
-/* 🌊 Smooth Scrollbar */
+/* 🌊 Smooth Scrollbar - Chrome, Edge, Safari */
 ::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
@@ -161,6 +161,32 @@
 ::-webkit-scrollbar-thumb:hover {
   @apply bg-accent;
   background-clip: padding-box;
+}
+
+/* Thin scrollbar variant */
+.scrollbar-thin::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  @apply bg-border/50;
+  border-radius: 10px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  @apply bg-border;
+}
+
+/* Firefox scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--border)) transparent;
+}
+
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--border) / 0.5) transparent;
 }
 
 /* 🎭 Gradient Backgrounds */

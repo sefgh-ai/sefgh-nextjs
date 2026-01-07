@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -8,41 +8,58 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Switch } from '@/components/ui/switch';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import { X, Plus, GripVertical, Info, Loader2, Sparkles } from 'lucide-react';
-import { toast } from 'sonner';
-import { useCategories } from '@/app/home/hooks/useCategories';
-import { useAuth } from '@/contexts/AuthContext';
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { X, Plus, GripVertical, Info, Loader2, Sparkles } from "lucide-react";
+import { toast } from "sonner";
+import { useCategories } from "@/hooks/home/useCategories";
+import { useAuth } from "@/contexts/AuthContext";
 
 // Emoji picker for new categories
-const EMOJI_OPTIONS = ['🏷️', '🎯', '🚀', '⭐', '💡', '🔥', '✨', '🎨', '🔧', '📱', '💻', '🌟', '🎪', '🎭', '🎬'];
+const EMOJI_OPTIONS = [
+  "🏷️",
+  "🎯",
+  "🚀",
+  "⭐",
+  "💡",
+  "🔥",
+  "✨",
+  "🎨",
+  "🔧",
+  "📱",
+  "💻",
+  "🌟",
+  "🎪",
+  "🎭",
+  "🎬",
+];
 
 export function PreferencesDialog({ open, onOpenChange, onSave }) {
   const { user } = useAuth();
-  const { categories, loading, addCategory, refreshCategories } = useCategories();
+  const { categories, loading, addCategory, refreshCategories } =
+    useCategories();
   const [selectedTags, setSelectedTags] = useState([]);
-  const [filterMode, setFilterMode] = useState('OR'); // OR or AND
+  const [filterMode, setFilterMode] = useState("OR"); // OR or AND
   const [draggedIndex, setDraggedIndex] = useState(null);
   const [showAddCategory, setShowAddCategory] = useState(false);
-  const [newCategoryName, setNewCategoryName] = useState('');
-  const [newCategoryIcon, setNewCategoryIcon] = useState('🏷️');
-  const [newCategoryType, setNewCategoryType] = useState('custom');
+  const [newCategoryName, setNewCategoryName] = useState("");
+  const [newCategoryIcon, setNewCategoryIcon] = useState("🏷️");
+  const [newCategoryType, setNewCategoryType] = useState("custom");
   const [isAdding, setIsAdding] = useState(false);
 
   useEffect(() => {
     // Load saved preferences from localStorage
     if (open) {
-      const saved = localStorage.getItem('projectPreferences');
+      const saved = localStorage.getItem("projectPreferences");
       if (saved) {
         const { tags, mode } = JSON.parse(saved);
         setSelectedTags(tags || []);
-        setFilterMode(mode || 'OR');
+        setFilterMode(mode || "OR");
       }
     }
   }, [open]);
@@ -62,7 +79,7 @@ export function PreferencesDialog({ open, onOpenChange, onSave }) {
     } else {
       // Add tag
       if (selectedTags.length >= 20) {
-        toast.error('Maximum 20 tags allowed');
+        toast.error("Maximum 20 tags allowed");
         return;
       }
       setSelectedTags([...selectedTags, tag]);
@@ -71,17 +88,21 @@ export function PreferencesDialog({ open, onOpenChange, onSave }) {
 
   const handleAddCategory = async () => {
     if (!user) {
-      toast.error('Please login to add custom categories');
+      toast.error("Please login to add custom categories");
       return;
     }
 
     if (!newCategoryName.trim()) {
-      toast.error('Category name is required');
+      toast.error("Category name is required");
       return;
     }
 
-    if (categories.find(cat => cat.name.toLowerCase() === newCategoryName.trim().toLowerCase())) {
-      toast.error('Category already exists');
+    if (
+      categories.find(
+        (cat) => cat.name.toLowerCase() === newCategoryName.trim().toLowerCase()
+      )
+    ) {
+      toast.error("Category already exists");
       return;
     }
 
@@ -96,10 +117,10 @@ export function PreferencesDialog({ open, onOpenChange, onSave }) {
     setIsAdding(false);
 
     if (result.success) {
-      toast.success('Category added successfully!');
-      setNewCategoryName('');
-      setNewCategoryIcon('🏷️');
-      setNewCategoryType('custom');
+      toast.success("Category added successfully!");
+      setNewCategoryName("");
+      setNewCategoryIcon("🏷️");
+      setNewCategoryType("custom");
       setShowAddCategory(false);
       refreshCategories();
     } else {
@@ -113,7 +134,7 @@ export function PreferencesDialog({ open, onOpenChange, onSave }) {
 
   const handleDragStart = (e, index) => {
     setDraggedIndex(index);
-    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.effectAllowed = "move";
   };
 
   const handleDragOver = (e, index) => {
@@ -138,9 +159,9 @@ export function PreferencesDialog({ open, onOpenChange, onSave }) {
       tags: selectedTags,
       mode: filterMode,
     };
-    localStorage.setItem('projectPreferences', JSON.stringify(preferences));
+    localStorage.setItem("projectPreferences", JSON.stringify(preferences));
     onSave(preferences);
-    toast.success('Preferences saved successfully!');
+    toast.success("Preferences saved successfully!");
     onOpenChange(false);
   };
 
@@ -154,11 +175,14 @@ export function PreferencesDialog({ open, onOpenChange, onSave }) {
         <DialogHeader>
           <DialogTitle className="text-xl font-bold text-slate-100 flex items-center gap-2">
             Customize Your Feed Preferences
-            {loading && <Loader2 className="w-4 h-4 animate-spin text-slate-400" />}
+            {loading && (
+              <Loader2 className="w-4 h-4 animate-spin text-slate-400" />
+            )}
           </DialogTitle>
           <DialogDescription className="text-slate-400 flex items-center gap-2">
             <Info className="w-4 h-4" />
-            Click tags to select, drag to reorder. {categories.length} categories available from database.
+            Click tags to select, drag to reorder. {categories.length}{" "}
+            categories available from database.
           </DialogDescription>
         </DialogHeader>
 
@@ -177,7 +201,9 @@ export function PreferencesDialog({ open, onOpenChange, onSave }) {
                 >
                   <Plus className="w-4 h-4 mr-2" />
                   Add Custom Category
-                  {!user && <span className="ml-2 text-xs">(Login required)</span>}
+                  {!user && (
+                    <span className="ml-2 text-xs">(Login required)</span>
+                  )}
                 </Button>
               ) : (
                 <div className="p-3 bg-slate-800 rounded-lg border border-slate-700 space-y-3">
@@ -187,8 +213,10 @@ export function PreferencesDialog({ open, onOpenChange, onSave }) {
                       onChange={(e) => setNewCategoryIcon(e.target.value)}
                       className="w-12 h-10 bg-slate-900 border border-slate-700 rounded text-xl text-center cursor-pointer"
                     >
-                      {EMOJI_OPTIONS.map(emoji => (
-                        <option key={emoji} value={emoji}>{emoji}</option>
+                      {EMOJI_OPTIONS.map((emoji) => (
+                        <option key={emoji} value={emoji}>
+                          {emoji}
+                        </option>
                       ))}
                     </select>
                     <Input
@@ -234,9 +262,9 @@ export function PreferencesDialog({ open, onOpenChange, onSave }) {
                       variant="ghost"
                       onClick={() => {
                         setShowAddCategory(false);
-                        setNewCategoryName('');
-                        setNewCategoryIcon('🏷️');
-                        setNewCategoryType('custom');
+                        setNewCategoryName("");
+                        setNewCategoryIcon("🏷️");
+                        setNewCategoryType("custom");
                       }}
                       className="text-slate-400 hover:text-slate-300"
                     >
@@ -260,38 +288,42 @@ export function PreferencesDialog({ open, onOpenChange, onSave }) {
                     <p className="text-xs">Add your first category above</p>
                   </div>
                 ) : (
-                  Object.entries(groupedCategories).map(([categoryType, tags]) => (
-                    <div key={categoryType}>
-                      <h3 className="text-sm font-semibold text-slate-300 mb-3 flex items-center gap-2">
-                        {categoryType}
-                        <Badge variant="outline" className="text-xs">
-                          {tags.length}
-                        </Badge>
-                      </h3>
-                      <div className="flex flex-wrap gap-2">
-                        {tags.map((tag) => (
-                          <Badge
-                            key={tag.id}
-                            variant={isTagSelected(tag.name) ? 'default' : 'outline'}
-                            className={`cursor-pointer transition-all ${
-                              isTagSelected(tag.name)
-                                ? 'bg-blue-600 hover:bg-blue-700 text-white border-blue-500'
-                                : 'bg-slate-800 hover:bg-slate-700 text-slate-300 border-slate-700'
-                            }`}
-                            onClick={() => handleTagClick(tag)}
-                          >
-                            <span className="mr-1">{tag.icon}</span>
-                            {tag.name}
-                            {tag.usage_count > 0 && (
-                              <span className="ml-1 text-xs opacity-70">
-                                ({tag.usage_count})
-                              </span>
-                            )}
+                  Object.entries(groupedCategories).map(
+                    ([categoryType, tags]) => (
+                      <div key={categoryType}>
+                        <h3 className="text-sm font-semibold text-slate-300 mb-3 flex items-center gap-2">
+                          {categoryType}
+                          <Badge variant="outline" className="text-xs">
+                            {tags.length}
                           </Badge>
-                        ))}
+                        </h3>
+                        <div className="flex flex-wrap gap-2">
+                          {tags.map((tag) => (
+                            <Badge
+                              key={tag.id}
+                              variant={
+                                isTagSelected(tag.name) ? "default" : "outline"
+                              }
+                              className={`cursor-pointer transition-all ${
+                                isTagSelected(tag.name)
+                                  ? "bg-blue-600 hover:bg-blue-700 text-white border-blue-500"
+                                  : "bg-slate-800 hover:bg-slate-700 text-slate-300 border-slate-700"
+                              }`}
+                              onClick={() => handleTagClick(tag)}
+                            >
+                              <span className="mr-1">{tag.icon}</span>
+                              {tag.name}
+                              {tag.usage_count > 0 && (
+                                <span className="ml-1 text-xs opacity-70">
+                                  ({tag.usage_count})
+                                </span>
+                              )}
+                            </Badge>
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  ))
+                    )
+                  )
                 )}
               </div>
             </ScrollArea>
@@ -322,23 +354,35 @@ export function PreferencesDialog({ open, onOpenChange, onSave }) {
             <div className="mb-4 p-3 bg-slate-800/50 rounded-lg border border-slate-700">
               <div className="flex items-center justify-between">
                 <div className="flex flex-col">
-                  <Label className="text-sm font-medium text-slate-200 mb-1">Filter Mode</Label>
+                  <Label className="text-sm font-medium text-slate-200 mb-1">
+                    Filter Mode
+                  </Label>
                   <span className="text-xs text-slate-400">
-                    {filterMode === 'OR'
-                      ? 'Show projects matching ANY tag'
-                      : 'Show projects matching ALL tags'}
+                    {filterMode === "OR"
+                      ? "Show projects matching ANY tag"
+                      : "Show projects matching ALL tags"}
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className={`text-xs ${filterMode === 'OR' ? 'text-blue-400' : 'text-slate-500'}`}>
+                  <span
+                    className={`text-xs ${
+                      filterMode === "OR" ? "text-blue-400" : "text-slate-500"
+                    }`}
+                  >
                     OR
                   </span>
                   <Switch
-                    checked={filterMode === 'AND'}
-                    onCheckedChange={(checked) => setFilterMode(checked ? 'AND' : 'OR')}
+                    checked={filterMode === "AND"}
+                    onCheckedChange={(checked) =>
+                      setFilterMode(checked ? "AND" : "OR")
+                    }
                     className="data-[state=checked]:bg-blue-600"
                   />
-                  <span className={`text-xs ${filterMode === 'AND' ? 'text-blue-400' : 'text-slate-500'}`}>
+                  <span
+                    className={`text-xs ${
+                      filterMode === "AND" ? "text-blue-400" : "text-slate-500"
+                    }`}
+                  >
                     AND
                   </span>
                 </div>
@@ -362,15 +406,19 @@ export function PreferencesDialog({ open, onOpenChange, onSave }) {
                       onDragOver={(e) => handleDragOver(e, index)}
                       onDragEnd={handleDragEnd}
                       className={`flex items-center gap-2 p-3 bg-slate-800 rounded-lg border border-slate-700 cursor-move hover:bg-slate-750 transition-colors ${
-                        draggedIndex === index ? 'opacity-50' : ''
+                        draggedIndex === index ? "opacity-50" : ""
                       }`}
                     >
                       <GripVertical className="w-4 h-4 text-slate-500" />
                       <span className="flex items-center gap-2 flex-1">
                         <span className="text-lg">{tag.icon}</span>
-                        <span className="text-sm font-medium text-slate-200">{tag.name}</span>
+                        <span className="text-sm font-medium text-slate-200">
+                          {tag.name}
+                        </span>
                       </span>
-                      <span className="text-xs text-slate-500">#{index + 1}</span>
+                      <span className="text-xs text-slate-500">
+                        #{index + 1}
+                      </span>
                       <Button
                         variant="ghost"
                         size="sm"
