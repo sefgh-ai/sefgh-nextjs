@@ -160,8 +160,8 @@ export default function VersionsPage() {
             Version <span className="text-blue-500">History</span>
           </h1>
           <p className="text-xl text-slate-400 leading-relaxed max-w-3xl mx-auto">
-            Track our journey of continuous improvement. See what's new, what's
-            changed, and what's coming next to SEFGH-AI.
+            Track our journey of continuous improvement. See what&apos;s new,
+            what&apos;s changed, and what&apos;s coming next to SEFGH-AI.
           </p>
         </div>
       </section>
@@ -176,7 +176,7 @@ export default function VersionsPage() {
               </div>
               <div>
                 <h2 className="text-2xl font-bold text-white">
-                  Version 3.0.0 "Nova"
+                  Version 3.0.0 &ldquo;Nova&rdquo;
                 </h2>
                 <p className="text-slate-400">Current Release • January 2026</p>
               </div>
@@ -235,7 +235,7 @@ export default function VersionsPage() {
                       <h3 className="text-xl font-semibold text-white">
                         Version {release.version}
                         <span className="text-slate-400 font-normal ml-2">
-                          "{release.codename}"
+                          &ldquo;{release.codename}&rdquo;
                         </span>
                       </h3>
                       <p className="text-slate-400 text-sm">{release.date}</p>
@@ -271,11 +271,11 @@ export default function VersionsPage() {
       <section className="py-16 px-4 sm:px-6 lg:px-8 border-t border-slate-800/50">
         <div className="max-w-4xl mx-auto">
           <h2 className="text-3xl font-bold text-white mb-4 text-center">
-            What's Next
+            What&apos;s Next
           </h2>
           <p className="text-slate-400 text-center mb-12 max-w-2xl mx-auto">
-            Our roadmap is shaped by community feedback. Here's what we're
-            working on.
+            Our roadmap is shaped by community feedback. Here&apos;s what
+            we&apos;re working on.
           </p>
 
           <div className="grid md:grid-cols-3 gap-6">

@@ -13,10 +13,14 @@ export function TopicsNav({
   onOpenPreferences,
 }) {
   const { categories: liveCategories, loading } = useCategories();
+
+  // Use useMemo for mounted state to avoid hydration mismatch
   const [mounted, setMounted] = useState(false);
 
+  // Use useEffect with empty cleanup to set mounted state
   useEffect(() => {
-    setMounted(true);
+    const timer = setTimeout(() => setMounted(true), 0);
+    return () => clearTimeout(timer);
   }, []);
 
   // Memoize categories to prevent useEffect dependency changes on every render

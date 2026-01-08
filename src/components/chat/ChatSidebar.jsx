@@ -1,5 +1,6 @@
 "use client";
 
+import { useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
@@ -27,31 +28,11 @@ import {
 import { toast } from "sonner";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/contexts/AuthContext";
 
-export function ChatSidebar({
-  sidebarOpen,
-  setSidebarOpen,
-  model,
-  setModel,
-  conversations,
-  currentConversation,
-  handleNewChat,
-  loadConversation,
-  handlePin,
-  handleDelete,
-  setClearDialogOpen,
-  userProfile,
-  user,
-  isMobile,
-}) {
-  const router = useRouter();
-
-  const handleModelChange = (newModel) => {
-    setModel(newModel);
-    toast.success(`Version changed to ${newModel}`);
-  };
-
-  const ModelSelector = ({ onClose }) => (
+// Extracted to module level to avoid recreation on each render
+function ModelSelectorDropdown({ model, onModelChange, onClose }) {
+  return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button
@@ -73,7 +54,7 @@ export function ChatSidebar({
         <DropdownMenuSeparator />
         <DropdownMenuItem
           onClick={() => {
-            handleModelChange("SEFGH V1");
+            onModelChange("SEFGH V1");
             onClose?.();
           }}
         >
@@ -82,7 +63,7 @@ export function ChatSidebar({
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() => {
-            handleModelChange("SEFGH V2");
+            onModelChange("SEFGH V2");
             onClose?.();
           }}
         >
@@ -91,7 +72,7 @@ export function ChatSidebar({
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() => {
-            handleModelChange("SEFGH V3");
+            onModelChange("SEFGH V3");
             onClose?.();
           }}
         >
@@ -101,8 +82,16 @@ export function ChatSidebar({
       </DropdownMenuContent>
     </DropdownMenu>
   );
+}
 
-  const ConversationsList = ({ onSelectConversation }) => (
+function ConversationsListSection({
+  conversations,
+  currentConversation,
+  onSelectConversation,
+  onPin,
+  onDelete,
+}) {
+  return (
     <ScrollArea className="flex-1 p-3">
       {conversations.length === 0 ? (
         <div className="flex flex-col items-center justify-center h-full text-center px-4">
@@ -145,7 +134,7 @@ export function ChatSidebar({
                     className="h-7 w-7"
                     onClick={(e) => {
                       e.stopPropagation();
-                      handlePin(conv.id, conv.is_pinned);
+                      onPin(conv.id, conv.is_pinned);
                     }}
                   >
                     <Pin className="h-3.5 w-3.5" />
@@ -156,7 +145,7 @@ export function ChatSidebar({
                     className="h-7 w-7 text-destructive"
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleDelete(conv.id);
+                      onDelete(conv.id);
                     }}
                   >
                     <Trash2 className="h-3.5 w-3.5" />
@@ -169,8 +158,10 @@ export function ChatSidebar({
       )}
     </ScrollArea>
   );
+}
 
-  const UserProfileSection = () => (
+function UserProfileDropdown({ userProfile, user, onSignOut }) {
+  return (
     <div className="p-3">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
@@ -232,23 +223,7 @@ export function ChatSidebar({
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem
-            onClick={async () => {
-              try {
-                const userName =
-                  userProfile?.full_name ||
-                  user?.email?.split("@")[0] ||
-                  "User";
-                await user.signOut?.();
-                toast.success(`Goodbye, ${userName}! 👋`, {
-                  description: "You've been signed out successfully.",
-                });
-                router.push("/");
-              } catch (error) {
-                toast.error("Sign out failed", {
-                  description: error.message,
-                });
-              }
-            }}
+            onClick={onSignOut}
             className="text-destructive cursor-pointer"
           >
             <LogOut className="mr-2 h-4 w-4" />
@@ -258,35 +233,56 @@ export function ChatSidebar({
       </DropdownMenu>
     </div>
   );
+}
 
-  const SidebarContent = ({ onClose }) => (
+function SidebarContentLayout({
+  isMobile,
+  model,
+  onModelChange,
+  conversations,
+  currentConversation,
+  onNewChat,
+  onSelectConversation,
+  onPin,
+  onDelete,
+  onClearAll,
+  userProfile,
+  user,
+  onSignOut,
+  onClose,
+}) {
+  return (
     <>
       {/* Version Selector Header */}
       <div
         className={
-          onClose
+          isMobile
             ? "p-4 border-b flex items-center gap-2"
             : "glass-premium rounded-2xl shadow-premium border border-white/10 p-4 flex items-center gap-2"
         }
       >
-        <ModelSelector onClose={onClose} />
+        <ModelSelectorDropdown
+          model={model}
+          onModelChange={onModelChange}
+          onClose={onClose}
+        />
       </div>
 
       {/* Conversations List */}
       <div
         className={
-          onClose
+          isMobile
             ? "flex-1 flex flex-col overflow-hidden"
             : "glass-premium rounded-2xl shadow-premium border border-white/10 flex-1 flex flex-col overflow-hidden"
         }
       >
         {/* New Chat Button */}
         <div
-          className={onClose ? "p-4 border-b" : "p-4 border-b border-white/10"}
+          className={isMobile ? "p-4 border-b" : "p-4 border-b border-white/10"}
         >
           <Button
             onClick={() => {
-              handleNewChat();
+              onNewChat();
               onClose?.();
             }}
             className="w-full bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 shadow-glow-blue"
@@ -297,31 +293,35 @@ export function ChatSidebar({
         </div>
 
         {/* Conversations List */}
-        <ConversationsList
+        <ConversationsListSection
+          conversations={conversations}
+          currentConversation={currentConversation}
           onSelectConversation={(id) => {
-            loadConversation(id);
+            onSelectConversation(id);
             onClose?.();
           }}
+          onPin={onPin}
+          onDelete={onDelete}
         />
 
         {/* Bottom Section */}
         <div
           className={
-            onClose ? "border-t mt-auto" : "border-t border-white/10 mt-auto"
+            isMobile ? "border-t mt-auto" : "border-t border-white/10 mt-auto"
           }
         >
           {/* Clear All Button */}
           {conversations.length > 0 && (
             <div
               className={
-                onClose ? "p-3 border-b" : "p-3 border-b border-white/10"
+                isMobile ? "p-3 border-b" : "p-3 border-b border-white/10"
               }
             >
               <Button
                 variant="ghost"
                 className="w-full justify-start text-red-600 dark:text-red-400 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/20"
                 onClick={() => {
-                  setClearDialogOpen(true);
+                  onClearAll();
                   onClose?.();
                 }}
               >
@@ -332,17 +332,83 @@ export function ChatSidebar({
           )}
 
           {/* User Profile */}
-          <UserProfileSection />
+          <UserProfileDropdown
+            userProfile={userProfile}
+            user={user}
+            onSignOut={onSignOut}
+          />
         </div>
       </div>
     </>
   );
+}
+
+export function ChatSidebar({
+  sidebarOpen,
+  setSidebarOpen,
+  model,
+  setModel,
+  conversations,
+  currentConversation,
+  handleNewChat,
+  loadConversation,
+  handlePin,
+  handleDelete,
+  setClearDialogOpen,
+  userProfile,
+  user,
+  isMobile,
+}) {
+  const router = useRouter();
+  const { signOut } = useAuth();
+
+  const handleModelChange = useCallback(
+    (newModel) => {
+      setModel(newModel);
+      toast.success(`Version changed to ${newModel}`);
+    },
+    [setModel]
+  );
+
+  const handleSignOut = useCallback(async () => {
+    try {
+      const userName =
+        userProfile?.full_name || user?.email?.split("@")[0] || "User";
+      await signOut();
+      toast.success(`Goodbye, ${userName}! 👋`, {
+        description: "You've been signed out successfully.",
+      });
+      router.push("/");
+    } catch (error) {
+      toast.error("Sign out failed", {
+        description: error.message,
+      });
+    }
+  }, [userProfile, user, signOut, router]);
+
+  const handleClearAll = useCallback(() => {
+    setClearDialogOpen(true);
+  }, [setClearDialogOpen]);
 
   // Desktop sidebar
   if (!isMobile && sidebarOpen) {
     return (
       <div className="hidden md:flex md:w-64 lg:w-80 flex-col m-4 mr-0 gap-3">
-        <SidebarContent />
+        <SidebarContentLayout
+          isMobile={false}
+          model={model}
+          onModelChange={handleModelChange}
+          conversations={conversations}
+          currentConversation={currentConversation}
+          onNewChat={handleNewChat}
+          onSelectConversation={loadConversation}
+          onPin={handlePin}
+          onDelete={handleDelete}
+          onClearAll={handleClearAll}
+          userProfile={userProfile}
+          user={user}
+          onSignOut={handleSignOut}
+        />
       </div>
     );
   }
@@ -356,7 +422,22 @@ export function ChatSidebar({
           className="w-80 p-0 flex flex-col [&>button]:hidden"
         >
           <SheetTitle className="sr-only">Chat Sidebar</SheetTitle>
-          <SidebarContent onClose={() => setSidebarOpen(false)} />
+          <SidebarContentLayout
+            isMobile={true}
+            model={model}
+            onModelChange={handleModelChange}
+            conversations={conversations}
+            currentConversation={currentConversation}
+            onNewChat={handleNewChat}
+            onSelectConversation={loadConversation}
+            onPin={handlePin}
+            onDelete={handleDelete}
+            onClearAll={handleClearAll}
+            userProfile={userProfile}
+            user={user}
+            onSignOut={handleSignOut}
+            onClose={() => setSidebarOpen(false)}
+          />
         </SheetContent>
       </Sheet>
     );

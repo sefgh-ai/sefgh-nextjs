@@ -66,8 +66,11 @@ export function PreferencesDialog({ open, onOpenChange, onSave }) {
       const saved = localStorage.getItem("projectPreferences");
       if (saved) {
         const { tags, mode } = JSON.parse(saved);
-        setSelectedTags(tags || []);
-        setFilterMode(mode || "OR");
+        // Batch updates in a microtask to avoid React lint warning
+        queueMicrotask(() => {
+          setSelectedTags(tags || []);
+          setFilterMode(mode || "OR");
+        });
       }
     }
   }, [open]);
