@@ -35,6 +35,7 @@ export function SearchSidebar({ user }) {
   return (
     <Sidebar
       suppressHydrationWarning
+      collapsible="offcanvas"
       className="glass-premium border-r-0 shadow-premium overflow-hidden rounded-2xl"
       style={{ "--sidebar-width": "14rem" }}
     >

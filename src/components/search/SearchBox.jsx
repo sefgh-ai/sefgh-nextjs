@@ -7,21 +7,41 @@ import {
   XMarkIcon,
   ArrowPathIcon,
   SparklesIcon,
+  ChevronDownIcon,
 } from "@heroicons/react/24/outline";
 import { toast } from "sonner";
+import { SearchHistoryDropdown } from "./SearchHistoryDropdown";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
+const modeOptions = [
+  { label: "Scout", value: "scout", description: "Free" },
+  { label: "Analyst", value: "analyst", description: "Advanced" },
+  { label: "Strategist", value: "strategist", description: "Expert" },
+];
 
 export function SearchBox({
   searchQuery,
   setSearchQuery,
   loading,
   handleSearch,
+  mode,
+  setMode,
 }) {
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
   const [loadingSuggestions, setLoadingSuggestions] = useState(false);
   const [suggestionSource, setSuggestionSource] = useState("");
   const [enhancing, setEnhancing] = useState(false);
   const wrapperRef = useRef(null);
+  const inputRef = useRef(null);
   const debounceTimer = useRef(null);
 
   // Close suggestions when clicking outside
@@ -29,6 +49,7 @@ export function SearchBox({
     function handleClickOutside(event) {
       if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
         setShowSuggestions(false);
+        setShowHistory(false);
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
@@ -123,39 +144,121 @@ export function SearchBox({
       <form
         onSubmit={(e) => {
           e.preventDefault();
+          setShowHistory(false);
           handleSearch();
         }}
       >
         <div className="max-w-4xl mx-auto">
-          <div className="relative">
-            <MagnifyingGlassIcon className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-            <input
-              type="text"
-              placeholder="Search repositories by name, topic, or user..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              onFocus={() => {
-                if (suggestions.length > 0) {
-                  setShowSuggestions(true);
-                }
-              }}
-              disabled={loading}
-              suppressHydrationWarning
-              className="w-full pl-12 pr-4 py-4 text-lg rounded-2xl glass-premium border-white/10 focus:outline-none disabled:opacity-50 transition-smooth shadow-soft hover:shadow-soft-lg"
-            />
-            {searchQuery && (
-              <button
-                type="button"
-                onClick={() => {
-                  setSearchQuery("");
-                  setSuggestions([]);
-                  setShowSuggestions(false);
+          <div className="relative flex items-center gap-2">
+            {/* Mode Dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="h-[52px] px-4 rounded-2xl glass-premium hover:glow-border-purple transition-smooth shadow-soft shrink-0"
+                >
+                  <span className="hidden sm:inline mr-1">Mode:</span>
+                  {modeOptions.find((m) => m.value === mode)?.label || "Scout"}
+                  <ChevronDownIcon className="ml-2 h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="rounded-xl glass-premium border-white/10 shadow-premium">
+                <DropdownMenuLabel>Search Mode</DropdownMenuLabel>
+                <DropdownMenuSeparator className="bg-white/10" />
+                {modeOptions.map((option) => (
+                  <DropdownMenuItem
+                    key={option.value}
+                    onClick={() => setMode(option.value)}
+                    className="rounded-lg flex justify-between items-center"
+                  >
+                    <span>{option.label}</span>
+                    <span className="text-xs text-muted-foreground ml-2">
+                      ({option.description})
+                    </span>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {/* Search Input */}
+            <div className="relative flex-1">
+              <MagnifyingGlassIcon className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground z-10" />
+              <input
+                ref={inputRef}
+                type="text"
+                placeholder="Search repositories by name, topic, or user..."
+                value={searchQuery}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  if (e.target.value.trim() === "") {
+                    setShowHistory(true);
+                    setShowSuggestions(false);
+                  } else {
+                    setShowHistory(false);
+                  }
                 }}
-                className="absolute right-4 top-1/2 transform -translate-y-1/2 hover:scale-110 transition-smooth"
-              >
-                <XMarkIcon className="h-4 w-4 text-muted-foreground hover:text-foreground" />
-              </button>
-            )}
+                onFocus={() => {
+                  if (searchQuery.trim() === "") {
+                    setShowHistory(true);
+                  } else if (suggestions.length > 0) {
+                    setShowSuggestions(true);
+                  }
+                }}
+                disabled={loading}
+                suppressHydrationWarning
+                className="w-full pl-12 pr-20 py-4 text-lg rounded-2xl glass-premium border-white/10 focus:outline-none focus:ring-2 focus:ring-blue-500/30 disabled:opacity-50 transition-smooth shadow-soft hover:shadow-soft-lg"
+              />
+
+              {/* Right side icons container */}
+              <div className="absolute right-3 top-1/2 transform -translate-y-1/2 flex items-center gap-2">
+                {/* Enhance Query Icon */}
+                {searchQuery.trim() && (
+                  <button
+                    type="button"
+                    onClick={handleEnhanceQuery}
+                    disabled={enhancing || loading}
+                    className="p-1.5 rounded-lg hover:bg-purple-500/20 transition-all disabled:opacity-50 group"
+                    title="Enhance query with AI"
+                  >
+                    {enhancing ? (
+                      <ArrowPathIcon className="h-4 w-4 animate-spin text-purple-400" />
+                    ) : (
+                      <SparklesIcon className="h-4 w-4 text-muted-foreground group-hover:text-purple-400 transition-colors" />
+                    )}
+                  </button>
+                )}
+
+                {/* Clear Icon */}
+                {searchQuery && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSearchQuery("");
+                      setSuggestions([]);
+                      setShowSuggestions(false);
+                      setShowHistory(true);
+                    }}
+                    className="p-1.5 rounded-lg hover:bg-white/10 transition-all"
+                  >
+                    <XMarkIcon className="h-4 w-4 text-muted-foreground hover:text-foreground" />
+                  </button>
+                )}
+              </div>
+
+              {/* Search History Dropdown */}
+              <SearchHistoryDropdown
+                isOpen={showHistory && !searchQuery.trim()}
+                onSelect={(query) => {
+                  setSearchQuery(query);
+                  setShowHistory(false);
+                  // Trigger search after selecting from history
+                  setTimeout(() => handleSearch(), 100);
+                }}
+                onClose={() => setShowHistory(false)}
+                inputRef={inputRef}
+              />
+            </div>
           </div>
 
           {/* Autocomplete Suggestions Dropdown */}
@@ -196,27 +299,6 @@ export function SearchBox({
         </div>
 
         <div className="flex gap-3 mt-4">
-          <Button
-            type="button"
-            size="lg"
-            variant="outline"
-            className="rounded-2xl glass-premium hover:glow-border-purple transition-premium shadow-soft hover:shadow-soft-lg"
-            onClick={handleEnhanceQuery}
-            disabled={enhancing || loading || !searchQuery.trim()}
-          >
-            {enhancing ? (
-              <>
-                <ArrowPathIcon className="h-4 w-4 mr-2 animate-spin" />
-                Enhancing...
-              </>
-            ) : (
-              <>
-                <SparklesIcon className="h-4 w-4 mr-2" />
-                Enhance Query
-              </>
-            )}
-          </Button>
-
           <Button
             type="submit"
             size="lg"

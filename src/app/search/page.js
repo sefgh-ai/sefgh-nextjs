@@ -11,6 +11,8 @@ import { SearchBox } from "@/components/search/SearchBox";
 import { SearchFilters } from "@/components/search/SearchFilters";
 import { SearchResults } from "@/components/search/SearchResults";
 import { PopularSearches } from "@/components/search/PopularSearches";
+import { SearchStats } from "@/components/search/SearchStats";
+import { ViewToggle } from "@/components/search/ViewToggle";
 import { useGitHubSearch } from "./hooks/useGitHubSearch";
 
 export default function SearchPage() {
@@ -22,14 +24,23 @@ export default function SearchPage() {
     setSearchQuery,
     searchResults,
     loading,
+    loadingMore,
     language,
     setLanguage,
     sort,
     setSort,
     stars,
     setStars,
+    mode,
+    setMode,
+    view,
+    setView,
+    advancedFilters,
+    setAdvancedFilters,
     handleSearch,
     handleClearFilters,
+    handleLoadMore,
+    hasMore,
     searchTime,
     totalCount,
   } = useGitHubSearch(user?.id);
@@ -40,7 +51,7 @@ export default function SearchPage() {
         className="flex h-full w-full bg-background gradient-mesh flex-col overflow-hidden"
         suppressHydrationWarning
       >
-        <div className="flex flex-1 min-h-0 p-2 sm:p-4 gap-2 sm:gap-4">
+        <div className="flex flex-1 min-h-0 p-2 sm:p-4">
           <SearchSidebar user={user} />
 
           <SidebarInset className="flex flex-col glass-premium rounded-xl sm:rounded-2xl shadow-premium border border-white/10 overflow-hidden flex-1 min-h-0">
@@ -51,6 +62,8 @@ export default function SearchPage() {
               setStars={setStars}
               sort={sort}
               setSort={setSort}
+              advancedFilters={advancedFilters}
+              setAdvancedFilters={setAdvancedFilters}
             />
             <main className="flex-1 flex px-4 pb-4 overflow-y-auto min-h-0">
               {/* Main Search Canvas */}
@@ -61,6 +74,9 @@ export default function SearchPage() {
               >
                 <div className="max-w-6xl mx-auto">
                   <SearchHeader />
+
+                  {/* Stats Banner */}
+                  <SearchStats />
 
                   {searchResults.length === 0 && !loading && (
                     <PopularSearches
@@ -74,7 +90,16 @@ export default function SearchPage() {
                     setSearchQuery={setSearchQuery}
                     loading={loading}
                     handleSearch={handleSearch}
+                    mode={mode}
+                    setMode={setMode}
                   />
+
+                  {/* View Toggle - Show when there are results */}
+                  {searchResults.length > 0 && (
+                    <div className="flex justify-end mb-4">
+                      <ViewToggle view={view} setView={setView} />
+                    </div>
+                  )}
 
                   <SearchResults
                     loading={loading}
@@ -82,6 +107,10 @@ export default function SearchPage() {
                     setSelectedRepo={setSelectedRepo}
                     searchTime={searchTime}
                     totalCount={totalCount}
+                    view={view}
+                    onLoadMore={handleLoadMore}
+                    hasMore={hasMore}
+                    loadingMore={loadingMore}
                   />
                 </div>
               </div>

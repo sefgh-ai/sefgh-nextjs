@@ -84,10 +84,12 @@ const Header = memo(function Header({ showProfileDropdown = true }) {
           <Button variant="outline" size="sm">
             GitHub Search
           </Button>
-          <Button size="sm">Private Chat</Button>
         </>
       ) : (
         <>
+          <Link href="/chat">
+            <Button size="sm">Private Chat</Button>
+          </Link>
           <Link href="/search">
             <Button variant="outline" size="sm">
               GitHub Search

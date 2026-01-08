@@ -1,4 +1,5 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { ActivityLogger } from "@/lib/activity-logger";
 import { logError } from "@/lib/error-tracking";
@@ -22,20 +23,37 @@ import { saveSearchHistory } from "@/lib/supabase/search-history";
  * @returns {Function} result.handleClearFilters - Clear all filters
  */
 export function useGitHubSearch(userId) {
-  const [searchQuery, setSearchQuery] = useState("");
+  const searchParams = useSearchParams();
+  const initialQuery = searchParams.get("q") || "";
+
+  const [searchQuery, setSearchQuery] = useState(initialQuery);
   const [searchResults, setSearchResults] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [language, setLanguage] = useState("");
   const [sort, setSort] = useState("all");
   const [stars, setStars] = useState("");
+  const [mode, setMode] = useState("scout");
+  const [view, setView] = useState("grid");
   const [searchTime, setSearchTime] = useState(null);
   const [totalCount, setTotalCount] = useState(0);
+  const [hasAutoSearched, setHasAutoSearched] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [advancedFilters, setAdvancedFilters] = useState({
+    license: "",
+    dateRange: "",
+    hasWiki: false,
+    hasIssues: false,
+    topics: [],
+    forks: "",
+  });
 
   const handleSearch = useCallback(
-    async (e) => {
+    async (e, queryOverride = null) => {
       e?.preventDefault();
 
-      if (!searchQuery.trim()) {
+      const query = queryOverride || searchQuery;
+      if (!query.trim()) {
         toast.error("Please enter a search query");
         return;
       }
@@ -44,7 +62,7 @@ export function useGitHubSearch(userId) {
       const startTime = performance.now();
       try {
         const params = new URLSearchParams({
-          q: searchQuery,
+          q: query,
           sort: sort,
         });
 
@@ -63,11 +81,11 @@ export function useGitHubSearch(userId) {
           toast.success(`Found ${data.total_count} repositories`);
 
           // Log search activity
-          ActivityLogger.search(searchQuery);
+          ActivityLogger.search(query);
 
           // Save to search history in database (if user is authenticated)
           if (userId) {
-            saveSearchHistory(userId, searchQuery.trim(), "search", {
+            saveSearchHistory(userId, query.trim(), "search", {
               filters: { language, sort, stars },
               resultsCount: data.total_count || 0,
             });
@@ -78,7 +96,7 @@ export function useGitHubSearch(userId) {
       } catch (error) {
         console.error("Search error:", error);
         logError("search_failed", error, {
-          searchQuery,
+          searchQuery: query,
           language,
           sort,
           stars,
@@ -91,25 +109,86 @@ export function useGitHubSearch(userId) {
     [searchQuery, sort, language, stars, userId]
   );
 
+  // Auto-search when there's an initial query from URL params
+  useEffect(() => {
+    if (initialQuery && !hasAutoSearched) {
+      setHasAutoSearched(true);
+      handleSearch();
+    }
+  }, [initialQuery, hasAutoSearched, handleSearch]);
+
   const handleClearFilters = useCallback(() => {
     setLanguage("");
     setSort("all");
     setStars("");
+    setAdvancedFilters({
+      license: "",
+      dateRange: "",
+      hasWiki: false,
+      hasIssues: false,
+      topics: [],
+      forks: "",
+    });
   }, []);
+
+  const handleLoadMore = useCallback(async () => {
+    if (loadingMore || !searchQuery.trim()) return;
+
+    setLoadingMore(true);
+    const nextPage = currentPage + 1;
+
+    try {
+      const params = new URLSearchParams({
+        q: searchQuery,
+        sort: sort,
+        page: nextPage.toString(),
+        per_page: "30",
+      });
+
+      if (language) params.append("language", language);
+      if (stars) params.append("stars", stars);
+
+      const response = await fetch(`/api/github/search?${params}`);
+      const data = await response.json();
+
+      if (response.ok) {
+        setSearchResults((prev) => [...prev, ...(data.items || [])]);
+        setCurrentPage(nextPage);
+      } else {
+        throw new Error(data.error || "Failed to load more");
+      }
+    } catch (error) {
+      console.error("Load more error:", error);
+      toast.error("Failed to load more results");
+    } finally {
+      setLoadingMore(false);
+    }
+  }, [loadingMore, searchQuery, sort, language, stars, currentPage]);
+
+  const hasMore = searchResults.length < totalCount;
 
   return {
     searchQuery,
     setSearchQuery,
     searchResults,
     loading,
+    loadingMore,
     language,
     setLanguage,
     sort,
     setSort,
     stars,
     setStars,
+    mode,
+    setMode,
+    view,
+    setView,
+    advancedFilters,
+    setAdvancedFilters,
     handleSearch,
     handleClearFilters,
+    handleLoadMore,
+    hasMore,
     searchTime,
     totalCount,
   };
