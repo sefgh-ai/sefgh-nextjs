@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -30,9 +31,11 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { UpgradeDialog } from "@/components/search/UpgradeDialog";
 
 export function SearchSidebar({ user }) {
   const pathname = usePathname();
+  const [upgradeOpen, setUpgradeOpen] = useState(false);
 
   const NavItem = ({ href, icon: Icon, label, isActive, badge }) => (
     <SidebarMenuItem>
@@ -230,13 +233,19 @@ export function SearchSidebar({ user }) {
               <p className="text-xs text-muted-foreground mb-3">
                 Unlimited AI searches & more
               </p>
-              <button className="w-full py-2 px-3 text-xs font-medium rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-white hover:from-amber-600 hover:to-orange-600 transition-all shadow-sm">
+              <button
+                onClick={() => setUpgradeOpen(true)}
+                className="w-full py-2 px-3 text-xs font-medium rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-white hover:from-amber-600 hover:to-orange-600 transition-all shadow-sm"
+              >
                 Upgrade Now
               </button>
             </div>
           </div>
         )}
       </SidebarContent>
+
+      {/* Upgrade Dialog */}
+      <UpgradeDialog open={upgradeOpen} onOpenChange={setUpgradeOpen} />
     </Sidebar>
   );
 }

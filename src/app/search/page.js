@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { CodeExplorer } from "@/components/CodeExplorer";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
@@ -17,8 +17,9 @@ import { ViewToggle } from "@/components/search/ViewToggle";
 import { QueryUnderstandingPanel } from "@/components/search/QueryUnderstandingPanel";
 import Footer from "@/components/Footer";
 import { useGitHubSearch } from "./hooks/useGitHubSearch";
+import { PageLoadingSpinner } from "@/components/shared/LoadingSpinner";
 
-export default function SearchPage() {
+function SearchPageContent() {
   const [selectedRepo, setSelectedRepo] = useState(null);
   const { user } = useAuth();
 
@@ -153,5 +154,13 @@ export default function SearchPage() {
         <MobileBottomNav user={user} />
       </div>
     </SidebarProvider>
+  );
+}
+
+export default function SearchPage() {
+  return (
+    <Suspense fallback={<PageLoadingSpinner />}>
+      <SearchPageContent />
+    </Suspense>
   );
 }
