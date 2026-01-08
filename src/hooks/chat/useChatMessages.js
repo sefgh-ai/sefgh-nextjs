@@ -9,8 +9,13 @@ import {
   deleteMessage,
   updateConversationTitle,
 } from "@/lib/supabase/conversations";
+import { saveSearchHistory } from "@/lib/supabase/search-history";
 
-export function useChatMessages(user, currentConversation, refreshConversations) {
+export function useChatMessages(
+  user,
+  currentConversation,
+  refreshConversations
+) {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [isSending, setIsSending] = useState(false);
@@ -19,7 +24,13 @@ export function useChatMessages(user, currentConversation, refreshConversations)
   const [regeneratingMessageId, setRegeneratingMessageId] = useState(null);
 
   // Send message
-  const handleSend = async (model = "SEFGH V1", activeConversation, setCurrentConversation, setConversations, conversations) => {
+  const handleSend = async (
+    model = "SEFGH V1",
+    activeConversation,
+    setCurrentConversation,
+    setConversations,
+    conversations
+  ) => {
     if (!input.trim() || isSending) return;
 
     const userMessageContent = input.trim();
@@ -44,6 +55,12 @@ export function useChatMessages(user, currentConversation, refreshConversations)
 
       await addMessage(conv.id, user.id, userMsg);
       setMessages((prev) => [...prev, userMsg]);
+
+      // Save chat query to search history (async, non-blocking)
+      saveSearchHistory(user.id, userMessageContent, "chat", {
+        filters: { model, conversationId: conv.id },
+        resultsCount: 1,
+      });
 
       // Generate title for first message
       if (isFirstMessage) {

@@ -119,9 +119,33 @@ export function SearchSidebar({ user }) {
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton className="rounded-xl hover:bg-white/10 hover:glow-border-cyan transition-smooth">
-                  <Star className="h-4 w-4" />
-                  <span>Starred</span>
+                <SidebarMenuButton
+                  asChild
+                  className={`rounded-xl transition-smooth ${
+                    pathname === "/starred"
+                      ? "bg-gradient-to-r from-yellow-500/20 to-amber-500/20 glow-border-yellow"
+                      : "hover:bg-white/10 hover:glow-border-cyan"
+                  }`}
+                >
+                  <a href="/starred">
+                    <Star className="h-4 w-4" />
+                    <span>Starred</span>
+                  </a>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  asChild
+                  className={`rounded-xl transition-smooth ${
+                    pathname === "/history"
+                      ? "bg-gradient-to-r from-blue-500/20 to-slate-500/20 glow-border-blue"
+                      : "hover:bg-white/10 hover:glow-border-slate"
+                  }`}
+                >
+                  <a href="/history">
+                    <Clock className="h-4 w-4" />
+                    <span>History</span>
+                  </a>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
@@ -191,12 +215,6 @@ export function SearchSidebar({ user }) {
                       <Upload className="h-4 w-4" />
                       <span>Submissions</span>
                     </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-                <SidebarMenuItem>
-                  <SidebarMenuButton className="hover:bg-accent">
-                    <Clock className="h-4 w-4" />
-                    <span>History</span>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
                 <SidebarMenuItem>

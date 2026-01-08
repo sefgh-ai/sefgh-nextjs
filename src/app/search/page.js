@@ -30,7 +30,9 @@ export default function SearchPage() {
     setStars,
     handleSearch,
     handleClearFilters,
-  } = useGitHubSearch();
+    searchTime,
+    totalCount,
+  } = useGitHubSearch(user?.id);
 
   return (
     <SidebarProvider>
@@ -42,7 +44,14 @@ export default function SearchPage() {
           <SearchSidebar user={user} />
 
           <SidebarInset className="flex flex-col glass-premium rounded-xl sm:rounded-2xl shadow-premium border border-white/10 overflow-hidden flex-1 min-h-0">
-            <SearchNavbar />
+            <SearchNavbar
+              language={language}
+              setLanguage={setLanguage}
+              stars={stars}
+              setStars={setStars}
+              sort={sort}
+              setSort={setSort}
+            />
             <main className="flex-1 flex px-4 pb-4 overflow-y-auto min-h-0">
               {/* Main Search Canvas */}
               <div
@@ -67,20 +76,12 @@ export default function SearchPage() {
                     handleSearch={handleSearch}
                   />
 
-                  <SearchFilters
-                    language={language}
-                    setLanguage={setLanguage}
-                    stars={stars}
-                    setStars={setStars}
-                    sort={sort}
-                    setSort={setSort}
-                    handleClearFilters={handleClearFilters}
-                  />
-
                   <SearchResults
                     loading={loading}
                     searchResults={searchResults}
                     setSelectedRepo={setSelectedRepo}
+                    searchTime={searchTime}
+                    totalCount={totalCount}
                   />
                 </div>
               </div>
