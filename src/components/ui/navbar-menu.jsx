@@ -1,8 +1,8 @@
-"use client"
-import React from "react"
-import { motion } from "framer-motion"
-import Link from "next/link"
-import Image from "next/image"
+"use client";
+import React from "react";
+import { motion } from "framer-motion";
+import Link from "next/link";
+import Image from "next/image";
 
 const transition = {
   type: "spring",
@@ -11,14 +11,9 @@ const transition = {
   stiffness: 100,
   restDelta: 0.001,
   restSpeed: 0.001,
-}
+};
 
-export const MenuItem = ({
-  setActive,
-  active,
-  item,
-  children,
-}) => {
+export const MenuItem = ({ setActive, active, item, children }) => {
   return (
     <div onMouseEnter={() => setActive(item)} className="relative">
       <motion.p
@@ -34,16 +29,15 @@ export const MenuItem = ({
           transition={transition}
         >
           {active === item && (
-            <div className="absolute top-[calc(100%_+_1.2rem)] left-1/2 transform -translate-x-1/2 pt-4">
+            <div className="absolute top-full left-1/2 transform -translate-x-1/2 pt-2">
+              {/* Invisible bridge to prevent hover gap */}
+              <div className="absolute -top-2 left-0 right-0 h-4" />
               <motion.div
                 transition={transition}
                 layoutId="active"
                 className="bg-slate-900/95 backdrop-blur-xl rounded-xl overflow-hidden border border-white/10 shadow-soft-lg"
               >
-                <motion.div
-                  layout
-                  className="w-max h-full p-4"
-                >
+                <motion.div layout className="w-max h-full p-4">
                   {children}
                 </motion.div>
               </motion.div>
@@ -52,13 +46,10 @@ export const MenuItem = ({
         </motion.div>
       )}
     </div>
-  )
-}
+  );
+};
 
-export const Menu = ({
-  setActive,
-  children,
-}) => {
+export const Menu = ({ setActive, children }) => {
   return (
     <nav
       onMouseLeave={() => setActive(null)}
@@ -66,15 +57,10 @@ export const Menu = ({
     >
       {children}
     </nav>
-  )
-}
+  );
+};
 
-export const ProductItem = ({
-  title,
-  description,
-  href,
-  src,
-}) => {
+export const ProductItem = ({ title, description, href, src }) => {
   return (
     <Link href={href} className="flex space-x-2 group">
       <Image
@@ -88,13 +74,11 @@ export const ProductItem = ({
         <h4 className="text-xl font-bold mb-1 text-white group-hover:text-blue-400 transition-smooth">
           {title}
         </h4>
-        <p className="text-slate-400 text-sm max-w-[10rem]">
-          {description}
-        </p>
+        <p className="text-slate-400 text-sm max-w-[10rem]">{description}</p>
       </div>
     </Link>
-  )
-}
+  );
+};
 
 export const HoveredLink = ({ children, ...rest }) => {
   return (
@@ -104,5 +88,5 @@ export const HoveredLink = ({ children, ...rest }) => {
     >
       {children}
     </Link>
-  )
-}
+  );
+};

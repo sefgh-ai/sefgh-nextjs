@@ -1,21 +1,23 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { useSettings } from "@/contexts/SettingsContext";
+import Link from "next/link";
+import Image from "next/image";
 import {
   Home,
   Search,
-  MessageSquare,
-  TrendingUp,
+  Send,
+  ChartNoAxesCombined,
   Star,
-  Code,
-  Users,
-  Filter,
   Clock,
   Settings,
   Lock,
   Upload,
   Key,
+  Sparkles,
+  ChevronRight,
+  Zap,
+  Telescope,
 } from "lucide-react";
 import {
   Sidebar,
@@ -31,227 +33,208 @@ import {
 
 export function SearchSidebar({ user }) {
   const pathname = usePathname();
-  const { openSettings } = useSettings();
+
+  const NavItem = ({ href, icon: Icon, label, isActive, badge }) => (
+    <SidebarMenuItem>
+      <SidebarMenuButton
+        asChild
+        className={`group relative rounded-xl transition-all duration-200 ${
+          isActive
+            ? "bg-primary/10 text-primary shadow-sm border border-primary/20"
+            : "hover:bg-accent text-muted-foreground hover:text-foreground"
+        }`}
+      >
+        <Link href={href} className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div
+              className={`flex items-center justify-center w-8 h-8 rounded-lg transition-colors ${
+                isActive
+                  ? "bg-primary/10 text-primary"
+                  : "bg-muted text-muted-foreground group-hover:bg-accent group-hover:text-foreground"
+              }`}
+            >
+              <Icon className="h-4 w-4" />
+            </div>
+            <span className="font-medium text-sm">{label}</span>
+          </div>
+          {badge && (
+            <span className="px-2 py-0.5 text-[10px] font-semibold rounded-full bg-primary/10 text-primary">
+              {badge}
+            </span>
+          )}
+          {isActive && <ChevronRight className="h-4 w-4 opacity-50" />}
+        </Link>
+      </SidebarMenuButton>
+    </SidebarMenuItem>
+  );
+
   return (
     <Sidebar
       suppressHydrationWarning
       collapsible="offcanvas"
-      className="glass-premium border-r-0 shadow-premium overflow-hidden rounded-2xl"
+      className="overflow-hidden"
       style={{ "--sidebar-width": "14rem" }}
     >
-      {/* Logo Section - Fixed, outside scrollable area */}
-      <SidebarHeader className="flex h-16 items-center border-b border-white/5 px-6 backdrop-blur-xl rounded-t-2xl shrink-0">
-        <a
-          href="/home"
-          className="flex items-center gap-2 font-bold text-lg transition-smooth hover:scale-105"
-        >
-          <span className="bg-gradient-to-r from-blue-500 via-blue-400 to-slate-400 bg-clip-text text-transparent">
-            SEFGH
-          </span>
-        </a>
+      {/* Logo Section */}
+      <SidebarHeader className="h-16 flex items-center border-b px-5">
+        <Link href="/home" className="flex items-center gap-3 group">
+          <div className="relative">
+            <div className="w-9 h-9 rounded-xl overflow-hidden shadow-lg shadow-primary/20 group-hover:shadow-primary/30 transition-shadow">
+              <Image
+                src="/logo.jpg"
+                alt="SEFGH Logo"
+                width={36}
+                height={36}
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-green-500 border-2 border-background" />
+          </div>
+          <div className="flex flex-col">
+            <span className="font-bold text-lg text-foreground">SEFGH</span>
+            <span className="text-[10px] text-muted-foreground font-medium -mt-0.5">
+              AI Search Engine
+            </span>
+          </div>
+        </Link>
       </SidebarHeader>
 
       {/* Scrollable content area */}
-      <SidebarContent className="gap-0 overflow-y-auto scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent">
-        <SidebarGroup className="px-3 py-4">
-          <SidebarGroupLabel className="px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-            Navigation
+      <SidebarContent className="gap-0 overflow-y-auto px-3 py-4">
+        {/* Main Navigation */}
+        <SidebarGroup className="mb-2">
+          <SidebarGroupLabel className="px-3 mb-2 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
+            Discover
           </SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  asChild
-                  className={`rounded-xl transition-smooth ${
-                    pathname === "/home"
-                      ? "bg-gradient-to-r from-blue-500/20 to-slate-500/20 glow-border-blue"
-                      : "hover:bg-white/10 hover:shadow-soft"
-                  }`}
-                >
-                  <a href="/home">
-                    <Home className="h-4 w-4" />
-                    <span>Home</span>
-                  </a>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  asChild
-                  className={`rounded-xl transition-smooth ${
-                    pathname === "/search"
-                      ? "bg-gradient-to-r from-blue-500/20 to-slate-500/20 glow-border-blue"
-                      : "hover:bg-white/10 hover:shadow-soft"
-                  }`}
-                >
-                  <a href="/search">
-                    <Search className="h-4 w-4" />
-                    <span>Search</span>
-                  </a>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  asChild
-                  className={`rounded-xl transition-smooth ${
-                    pathname === "/chat"
-                      ? "bg-gradient-to-r from-blue-500/20 to-slate-500/20 glow-border-blue"
-                      : "hover:bg-white/10 hover:shadow-soft"
-                  }`}
-                >
-                  <a href="/chat">
-                    <MessageSquare className="h-4 w-4" />
-                    <span>AI Chat</span>
-                  </a>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  asChild
-                  className={`rounded-xl transition-smooth ${
-                    pathname === "/trending"
-                      ? "bg-gradient-to-r from-blue-500/20 to-slate-500/20 glow-border-blue"
-                      : "hover:bg-white/10 hover:glow-border-slate"
-                  }`}
-                >
-                  <a href="/trending">
-                    <TrendingUp className="h-4 w-4" />
-                    <span>Trending</span>
-                  </a>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  asChild
-                  className={`rounded-xl transition-smooth ${
-                    pathname === "/starred"
-                      ? "bg-gradient-to-r from-yellow-500/20 to-amber-500/20 glow-border-yellow"
-                      : "hover:bg-white/10 hover:glow-border-cyan"
-                  }`}
-                >
-                  <a href="/starred">
-                    <Star className="h-4 w-4" />
-                    <span>Starred</span>
-                  </a>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  asChild
-                  className={`rounded-xl transition-smooth ${
-                    pathname === "/history"
-                      ? "bg-gradient-to-r from-blue-500/20 to-slate-500/20 glow-border-blue"
-                      : "hover:bg-white/10 hover:glow-border-slate"
-                  }`}
-                >
-                  <a href="/history">
-                    <Clock className="h-4 w-4" />
-                    <span>History</span>
-                  </a>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        <SidebarGroup className="px-3 py-4">
-          <SidebarGroupLabel className="px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-            Categories
-          </SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton className="hover:bg-accent">
-                  <Code className="h-4 w-4" />
-                  <span>Repositories</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton className="hover:bg-accent">
-                  <Users className="h-4 w-4" />
-                  <span>Users</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton className="hover:bg-accent">
-                  <Filter className="h-4 w-4" />
-                  <span>Topics</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
+            <SidebarMenu className="space-y-1">
+              <NavItem
+                href="/home"
+                icon={Home}
+                label="Home"
+                isActive={pathname === "/home"}
+              />
+              <NavItem
+                href="/search"
+                icon={Search}
+                label="Search"
+                isActive={pathname === "/search"}
+              />
+              <NavItem
+                href="/chat"
+                icon={Send}
+                label="AI Chat"
+                isActive={pathname === "/chat"}
+                badge="AI"
+              />
+              <NavItem
+                href="/trending"
+                icon={ChartNoAxesCombined}
+                label="Trending"
+                isActive={pathname === "/trending"}
+              />
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
 
         {user ? (
-          <SidebarGroup className="px-3 py-4">
-            <SidebarGroupLabel className="px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-              Your Content
-            </SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    asChild
-                    className={`rounded-xl transition-smooth ${
-                      pathname === "/playground"
-                        ? "bg-gradient-to-r from-blue-500/20 to-slate-500/20 glow-border-blue"
-                        : "hover:bg-accent"
-                    }`}
-                  >
-                    <a href="/playground">
-                      <Key className="h-4 w-4" />
-                      <span>Playground</span>
-                    </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    asChild
-                    className={`rounded-xl transition-smooth ${
-                      pathname === "/submissions"
-                        ? "bg-gradient-to-r from-blue-500/20 to-slate-500/20 glow-border-blue"
-                        : "hover:bg-accent"
-                    }`}
-                  >
-                    <a href="/submissions">
-                      <Upload className="h-4 w-4" />
-                      <span>Submissions</span>
-                    </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    onClick={openSettings}
-                    className="hover:bg-accent cursor-pointer"
-                  >
-                    <Settings className="h-4 w-4" />
-                    <span>Settings</span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
+          <>
+            {/* Your Content - includes History, Starred, Playground, Submissions */}
+            <SidebarGroup className="mb-2">
+              <SidebarGroupLabel className="px-3 mb-2 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
+                Your Content
+              </SidebarGroupLabel>
+              <SidebarGroupContent>
+                <SidebarMenu className="space-y-1">
+                  <NavItem
+                    href="/starred"
+                    icon={Star}
+                    label="Starred"
+                    isActive={pathname === "/starred"}
+                  />
+                  <NavItem
+                    href="/history"
+                    icon={Clock}
+                    label="History"
+                    isActive={pathname === "/history"}
+                  />
+                  <NavItem
+                    href="/playground"
+                    icon={Key}
+                    label="Playground"
+                    isActive={pathname === "/playground"}
+                  />
+                  <NavItem
+                    href="/submissions"
+                    icon={Upload}
+                    label="Submissions"
+                    isActive={pathname === "/submissions"}
+                  />
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+
+            {/* Settings Section */}
+            <SidebarGroup>
+              <SidebarGroupContent>
+                <SidebarMenu className="space-y-1">
+                  <NavItem
+                    href="/settings"
+                    icon={Settings}
+                    label="Settings"
+                    isActive={pathname === "/settings"}
+                  />
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          </>
         ) : (
-          <SidebarGroup className="px-3 py-4">
-            <SidebarGroupLabel className="px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-              Get Started
-            </SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                <SidebarMenuItem>
-                  <SidebarMenuButton asChild className="hover:bg-accent">
-                    <a href="/login">
-                      <Lock className="h-4 w-4" />
-                      <span>Login to Access</span>
-                    </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              </SidebarMenu>
-              <div className="px-3 py-2 text-xs text-muted-foreground">
-                Sign in to access your history, bookmarks, and personalized
-                features.
+          /* Get Started for logged out users */
+          <SidebarGroup className="mt-4">
+            <div className="mx-1 p-4 rounded-2xl bg-primary/5 border border-primary/10">
+              <div className="flex items-center gap-2 mb-2">
+                <Telescope className="h-4 w-4 text-primary" />
+                <span className="font-semibold text-sm text-foreground">
+                  Get Started
+                </span>
               </div>
-            </SidebarGroupContent>
+              <p className="text-xs text-muted-foreground mb-3 leading-relaxed">
+                Sign in to access your history, starred repos, and personalized
+                features.
+              </p>
+              <SidebarMenuButton
+                asChild
+                className="w-full justify-center rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 transition-all shadow-md"
+              >
+                <Link href="/login" className="flex items-center gap-2">
+                  <Lock className="h-4 w-4" />
+                  <span className="font-medium">Sign In</span>
+                </Link>
+              </SidebarMenuButton>
+            </div>
           </SidebarGroup>
+        )}
+
+        {/* Pro Upgrade Card for logged in users */}
+        {user && (
+          <div className="mt-auto pt-4">
+            <div className="mx-1 p-4 rounded-2xl bg-amber-500/10 border border-amber-500/20">
+              <div className="flex items-center gap-2 mb-1.5">
+                <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center">
+                  <Zap className="h-3.5 w-3.5 text-white" />
+                </div>
+                <span className="font-semibold text-sm text-foreground">
+                  Upgrade to Pro
+                </span>
+              </div>
+              <p className="text-xs text-muted-foreground mb-3">
+                Unlimited AI searches & more
+              </p>
+              <button className="w-full py-2 px-3 text-xs font-medium rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-white hover:from-amber-600 hover:to-orange-600 transition-all shadow-sm">
+                Upgrade Now
+              </button>
+            </div>
+          </div>
         )}
       </SidebarContent>
     </Sidebar>

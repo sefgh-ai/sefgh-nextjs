@@ -10,7 +10,6 @@ import {
 } from "@heroicons/react/24/outline";
 import { useTheme } from "next-themes";
 import { useAuth } from "@/contexts/AuthContext";
-import { useSettings } from "@/contexts/SettingsContext";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -28,7 +27,6 @@ import { useCallback, memo } from "react";
 const Header = memo(function Header({ showProfileDropdown = true }) {
   const { setTheme, theme } = useTheme();
   const { user, signOut, loading } = useAuth();
-  const { openSettings } = useSettings();
 
   const handleSignOut = useCallback(async () => {
     try {
@@ -77,20 +75,22 @@ const Header = memo(function Header({ showProfileDropdown = true }) {
       {!user ? (
         <>
           <Link href="/login">
-            <Button variant="outline" size="sm">
-              Login/Signup
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-8 px-2 sm:px-3 text-xs sm:text-sm"
+            >
+              <span className="hidden sm:inline">Login/Signup</span>
+              <span className="sm:hidden">Login</span>
             </Button>
           </Link>
-          <Button variant="outline" size="sm">
+          <Button variant="outline" size="sm" className="hidden sm:inline-flex">
             GitHub Search
           </Button>
         </>
       ) : (
         <>
-          <Link href="/chat">
-            <Button size="sm">Private Chat</Button>
-          </Link>
-          <Link href="/search">
+          <Link href="/search" className="hidden sm:inline-flex">
             <Button variant="outline" size="sm">
               GitHub Search
             </Button>
@@ -138,13 +138,12 @@ const Header = memo(function Header({ showProfileDropdown = true }) {
                     <span>Profile</span>
                   </DropdownMenuItem>
                 </Link>
-                <DropdownMenuItem
-                  onClick={openSettings}
-                  className="cursor-pointer"
-                >
-                  <Cog6ToothIcon className="mr-2 h-4 w-4" />
-                  <span>Settings</span>
-                </DropdownMenuItem>
+                <Link href="/settings">
+                  <DropdownMenuItem className="cursor-pointer">
+                    <Cog6ToothIcon className="mr-2 h-4 w-4" />
+                    <span>Settings</span>
+                  </DropdownMenuItem>
+                </Link>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onClick={(e) => {
@@ -162,12 +161,12 @@ const Header = memo(function Header({ showProfileDropdown = true }) {
         </>
       )}
 
-      <div className="ml-2 pl-2 border-l">
+      <div className="ml-1 sm:ml-2 pl-1 sm:pl-2 border-l">
         <Button
           variant="ghost"
           size="icon"
           onClick={() => setTheme(theme === "light" ? "dark" : "light")}
-          className="h-9 w-9"
+          className="h-8 w-8 sm:h-9 sm:w-9"
         >
           <SunIcon className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
           <MoonIcon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />

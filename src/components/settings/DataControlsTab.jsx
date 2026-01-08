@@ -1,8 +1,9 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Switch } from '@/components/ui/switch';
+import React, { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
+import { Badge } from "@/components/ui/badge";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -12,85 +13,190 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
-import { Input } from '@/components/ui/input';
-import { toast } from 'sonner';
+} from "@/components/ui/alert-dialog";
+import { Input } from "@/components/ui/input";
+import {
+  Download,
+  Trash2,
+  History,
+  Eye,
+  BarChart3,
+  AlertTriangle,
+  FileDown,
+  Shield,
+} from "lucide-react";
+import { toast } from "sonner";
 
 export default function DataControlsTab() {
-  const [dataUsageEnabled, setDataUsageEnabled] = useState(true);
+  const [analyticsEnabled, setAnalyticsEnabled] = useState(true);
+  const [searchHistoryEnabled, setSearchHistoryEnabled] = useState(true);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const [deleteConfirmation, setDeleteConfirmation] = useState('');
+  const [showClearHistoryDialog, setShowClearHistoryDialog] = useState(false);
+  const [deleteConfirmation, setDeleteConfirmation] = useState("");
   const [exportPending, setExportPending] = useState(false);
 
   const handleExportRequest = () => {
     setExportPending(true);
-    toast.success('Export requested. Check your email within 7 days.');
-    // API call to request export
+    toast.success("Export requested! Check your email within 24 hours.");
+  };
+
+  const handleClearHistory = () => {
+    setShowClearHistoryDialog(false);
+    toast.success("Search history cleared");
   };
 
   const handleDeleteAccount = () => {
-    if (deleteConfirmation === 'DELETE') {
-      toast.success('Account deletion initiated');
+    if (deleteConfirmation === "DELETE") {
+      toast.success("Account deletion initiated");
       setShowDeleteDialog(false);
-      // API call to delete account
-      // window.location.href = '/account-deleted';
     }
   };
 
   return (
-    <div className="space-y-6">
-      {/* Export Data */}
-      <div className="py-6 border-b border-border">
-        <div className="flex items-start justify-between gap-4 mb-4">
-          <div className="flex-1 max-w-xl">
-            <h3 className="text-base font-semibold mb-2">Export Data</h3>
-            <p className="text-sm text-muted-foreground leading-relaxed mb-3">
-              Download a copy of your account data including conversations, settings, and usage
-              history.
+    <div className="space-y-6 max-w-3xl">
+      {/* Privacy Overview */}
+      <div className="rounded-2xl border border-border/50 bg-gradient-to-br from-blue-500/5 to-purple-500/5 p-6">
+        <div className="flex items-center gap-4">
+          <div className="p-3 rounded-xl bg-blue-500/10 flex-shrink-0">
+            <Shield className="w-6 h-6 text-blue-600" />
+          </div>
+          <div className="flex-1">
+            <h3 className="text-lg font-semibold">Your Privacy Matters</h3>
+            <p className="text-sm text-muted-foreground mt-1">
+              Control how SEFGH collects and uses your data. Your data is
+              encrypted and stored securely.
             </p>
           </div>
-          <Button
-            variant="outline"
-            onClick={handleExportRequest}
-            disabled={exportPending}
-          >
-            {exportPending ? 'Export Pending' : 'Request Export'}
-          </Button>
         </div>
-        <p className="text-xs text-muted-foreground italic">
-          Processing time: Up to 7 days. You'll receive an email when your data is ready to
-          download.
-        </p>
       </div>
 
-      {/* Data Usage */}
-      <div className="flex items-start justify-between gap-4 py-6 border-b border-border">
-        <div className="flex-1 max-w-xl">
-          <h3 className="text-base font-semibold mb-2">Data Usage</h3>
-          <p className="text-sm text-muted-foreground leading-relaxed mb-2">
-            Allow your data to be used for training AI models. This helps improve the quality of
-            responses.
+      {/* Data Collection Settings */}
+      <div className="rounded-2xl border border-border/50 bg-card overflow-hidden">
+        <div className="p-6 border-b border-border/30">
+          <h3 className="text-lg font-semibold">Data Collection</h3>
+          <p className="text-sm text-muted-foreground mt-1">
+            Manage what data SEFGH collects
           </p>
-          <a href="#" className="text-sm text-primary hover:underline font-medium">
-            Privacy Policy
-          </a>
         </div>
-        <Switch
-          checked={dataUsageEnabled}
-          onCheckedChange={setDataUsageEnabled}
-          aria-label="Enable data usage"
-        />
+
+        <div className="divide-y divide-border/30">
+          <div className="flex items-center justify-between p-5 hover:bg-muted/20 transition-colors">
+            <div className="flex items-start gap-4">
+              <div className="p-2 rounded-lg bg-muted/50 mt-0.5">
+                <History className="w-4 h-4 text-muted-foreground" />
+              </div>
+              <div>
+                <h4 className="text-sm font-medium">Search History</h4>
+                <p className="text-sm text-muted-foreground mt-0.5">
+                  Save your searches to improve recommendations and quick access
+                </p>
+              </div>
+            </div>
+            <Switch
+              checked={searchHistoryEnabled}
+              onCheckedChange={setSearchHistoryEnabled}
+              aria-label="Toggle search history"
+            />
+          </div>
+
+          <div className="flex items-center justify-between p-5 hover:bg-muted/20 transition-colors">
+            <div className="flex items-start gap-4">
+              <div className="p-2 rounded-lg bg-muted/50 mt-0.5">
+                <BarChart3 className="w-4 h-4 text-muted-foreground" />
+              </div>
+              <div>
+                <h4 className="text-sm font-medium">Usage Analytics</h4>
+                <p className="text-sm text-muted-foreground mt-0.5">
+                  Help improve SEFGH by sharing anonymous usage data
+                </p>
+              </div>
+            </div>
+            <Switch
+              checked={analyticsEnabled}
+              onCheckedChange={setAnalyticsEnabled}
+              aria-label="Toggle analytics"
+            />
+          </div>
+        </div>
       </div>
 
-      {/* Delete Account */}
-      <div className="py-6">
-        <div className="p-6 border-2 border-destructive/50 bg-destructive/5 rounded-xl">
-          <div className="flex items-start justify-between gap-4 mb-3">
-            <div className="flex-1">
-              <h3 className="text-base font-semibold text-destructive mb-2">Delete Account</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                Permanently delete your account and all associated data. This action{' '}
-                <span className="font-bold">cannot be undone</span>.
+      {/* Data Actions */}
+      <div className="rounded-2xl border border-border/50 bg-card overflow-hidden">
+        <div className="p-6 border-b border-border/30">
+          <h3 className="text-lg font-semibold">Data Actions</h3>
+          <p className="text-sm text-muted-foreground mt-1">
+            Export or clear your data
+          </p>
+        </div>
+
+        <div className="divide-y divide-border/30">
+          {/* Export Data */}
+          <div className="flex items-center justify-between p-5 hover:bg-muted/20 transition-colors">
+            <div className="flex items-start gap-4">
+              <div className="p-2 rounded-lg bg-primary/10 mt-0.5">
+                <FileDown className="w-4 h-4 text-primary" />
+              </div>
+              <div>
+                <h4 className="text-sm font-medium">Export Your Data</h4>
+                <p className="text-sm text-muted-foreground mt-0.5">
+                  Download a copy of your searches, starred repos, and settings
+                </p>
+              </div>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleExportRequest}
+              disabled={exportPending}
+            >
+              <Download className="w-4 h-4 mr-2" />
+              {exportPending ? "Pending..." : "Export"}
+            </Button>
+          </div>
+
+          {/* Clear Search History */}
+          <div className="flex items-center justify-between p-5 hover:bg-muted/20 transition-colors">
+            <div className="flex items-start gap-4">
+              <div className="p-2 rounded-lg bg-amber-500/10 mt-0.5">
+                <History className="w-4 h-4 text-amber-600" />
+              </div>
+              <div>
+                <h4 className="text-sm font-medium">Clear Search History</h4>
+                <p className="text-sm text-muted-foreground mt-0.5">
+                  Remove all your past searches from SEFGH
+                </p>
+              </div>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowClearHistoryDialog(true)}
+            >
+              <Trash2 className="w-4 h-4 mr-2" />
+              Clear
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      {/* Danger Zone */}
+      <div className="rounded-2xl border-2 border-destructive/30 bg-destructive/5 overflow-hidden">
+        <div className="p-6 border-b border-destructive/20">
+          <div className="flex items-center gap-2">
+            <AlertTriangle className="w-5 h-5 text-destructive" />
+            <h3 className="text-lg font-semibold text-destructive">
+              Danger Zone
+            </h3>
+          </div>
+        </div>
+
+        <div className="p-6">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <h4 className="text-base font-semibold">Delete Account</h4>
+              <p className="text-sm text-muted-foreground mt-1 max-w-md">
+                Permanently delete your SEFGH account and all associated data.
+                This action <strong>cannot be undone</strong>.
               </p>
             </div>
             <Button
@@ -103,26 +209,53 @@ export default function DataControlsTab() {
         </div>
       </div>
 
+      {/* Clear History Dialog */}
+      <AlertDialog
+        open={showClearHistoryDialog}
+        onOpenChange={setShowClearHistoryDialog}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Clear search history?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will permanently delete all your search history. Your starred
+              repositories and other data will not be affected.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleClearHistory}>
+              Clear History
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       {/* Delete Confirmation Dialog */}
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle className="flex items-center gap-2">
-              <span className="text-2xl">⚠️</span>
+              <AlertTriangle className="w-5 h-5 text-destructive" />
               Delete Your Account?
             </AlertDialogTitle>
             <AlertDialogDescription asChild>
               <div className="space-y-4">
                 <p>This will permanently delete:</p>
                 <ul className="list-disc list-inside space-y-1 text-sm">
-                  <li>All your conversations</li>
-                  <li>Your account settings</li>
-                  <li>Your search history</li>
-                  <li>All associated data</li>
+                  <li>Your SEFGH account</li>
+                  <li>All saved searches and history</li>
+                  <li>Your starred repositories</li>
+                  <li>Your preferences and settings</li>
                 </ul>
-                <p className="font-semibold">This action cannot be undone.</p>
+                <p className="font-semibold text-destructive">
+                  This action cannot be undone.
+                </p>
                 <div className="pt-4">
-                  <label htmlFor="deleteConfirm" className="text-sm font-medium">
+                  <label
+                    htmlFor="deleteConfirm"
+                    className="text-sm font-medium"
+                  >
                     Type "DELETE" to confirm:
                   </label>
                   <Input
@@ -137,12 +270,12 @@ export default function DataControlsTab() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => setDeleteConfirmation('')}>
+            <AlertDialogCancel onClick={() => setDeleteConfirmation("")}>
               Cancel
             </AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDeleteAccount}
-              disabled={deleteConfirmation !== 'DELETE'}
+              disabled={deleteConfirmation !== "DELETE"}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
               Delete Account

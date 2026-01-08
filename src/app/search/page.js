@@ -5,6 +5,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { CodeExplorer } from "@/components/CodeExplorer";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { SearchSidebar } from "@/components/search/SearchSidebar";
+import { MobileBottomNav } from "@/components/search/MobileBottomNav";
 import { SearchNavbar } from "@/components/search/SearchNavbar";
 import { SearchHeader } from "@/components/search/SearchHeader";
 import { SearchBox } from "@/components/search/SearchBox";
@@ -13,6 +14,8 @@ import { SearchResults } from "@/components/search/SearchResults";
 import { PopularSearches } from "@/components/search/PopularSearches";
 import { SearchStats } from "@/components/search/SearchStats";
 import { ViewToggle } from "@/components/search/ViewToggle";
+import { QueryUnderstandingPanel } from "@/components/search/QueryUnderstandingPanel";
+import Footer from "@/components/Footer";
 import { useGitHubSearch } from "./hooks/useGitHubSearch";
 
 export default function SearchPage() {
@@ -40,9 +43,11 @@ export default function SearchPage() {
     handleSearch,
     handleClearFilters,
     handleLoadMore,
+    handlePageChange,
     hasMore,
     searchTime,
     totalCount,
+    currentPage,
   } = useGitHubSearch(user?.id);
 
   return (
@@ -51,7 +56,7 @@ export default function SearchPage() {
         className="flex h-full w-full bg-background gradient-mesh flex-col overflow-hidden"
         suppressHydrationWarning
       >
-        <div className="flex flex-1 min-h-0 p-2 sm:p-4">
+        <div className="flex flex-1 min-h-0 p-2 sm:p-4 gap-2 sm:gap-4 pb-[72px] md:pb-2">
           <SearchSidebar user={user} />
 
           <SidebarInset className="flex flex-col glass-premium rounded-xl sm:rounded-2xl shadow-premium border border-white/10 overflow-hidden flex-1 min-h-0">
@@ -94,11 +99,9 @@ export default function SearchPage() {
                     setMode={setMode}
                   />
 
-                  {/* View Toggle - Show when there are results */}
+                  {/* Query Understanding Panel - shows when there are results */}
                   {searchResults.length > 0 && (
-                    <div className="flex justify-end mb-4">
-                      <ViewToggle view={view} setView={setView} />
-                    </div>
+                    <QueryUnderstandingPanel query={searchQuery} />
                   )}
 
                   <SearchResults
@@ -108,9 +111,12 @@ export default function SearchPage() {
                     searchTime={searchTime}
                     totalCount={totalCount}
                     view={view}
+                    setView={setView}
                     onLoadMore={handleLoadMore}
                     hasMore={hasMore}
                     loadingMore={loadingMore}
+                    currentPage={currentPage}
+                    onPageChange={handlePageChange}
                   />
                 </div>
               </div>
@@ -137,6 +143,14 @@ export default function SearchPage() {
             </main>
           </SidebarInset>
         </div>
+
+        {/* Footer - hidden on mobile */}
+        <div className="hidden md:block">
+          <Footer />
+        </div>
+
+        {/* Mobile Bottom Navigation */}
+        <MobileBottomNav user={user} />
       </div>
     </SidebarProvider>
   );

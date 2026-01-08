@@ -34,7 +34,7 @@ const Sidebar = React.forwardRef(
       return (
         <div
           className={cn(
-            "flex h-full w-[--sidebar-width] flex-col glass-premium text-sidebar-foreground",
+            "flex h-full w-[--sidebar-width] flex-col bg-sidebar text-sidebar-foreground rounded-2xl",
             className
           )}
           ref={ref}
@@ -51,7 +51,7 @@ const Sidebar = React.forwardRef(
           <SheetContent
             data-sidebar="sidebar"
             data-mobile="true"
-            className="w-[--sidebar-width] glass-premium p-0 text-sidebar-foreground [&>button]:hidden"
+            className="w-[--sidebar-width] bg-sidebar p-0 text-sidebar-foreground [&>button]:hidden rounded-r-2xl"
             style={{
               "--sidebar-width": SIDEBAR_WIDTH_MOBILE,
             }}
@@ -82,14 +82,14 @@ const Sidebar = React.forwardRef(
             "group-data-[collapsible=offcanvas]:w-0 group-data-[collapsible=offcanvas]:overflow-hidden",
             variant === "floating" || variant === "inset"
               ? "group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)_+_theme(spacing.4)_+2px)]"
-              : "group-data-[collapsible=icon]:w-[--sidebar-width-icon] group-data-[side=left]:border-r group-data-[side=right]:border-l",
+              : "group-data-[collapsible=icon]:w-[--sidebar-width-icon]",
             className
           )}
           {...props}
         >
           <div
             data-sidebar="sidebar"
-            className="flex h-full w-full flex-col glass-premium rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:border-sidebar-border group-data-[variant=floating]:shadow-premium overflow-hidden"
+            className="flex h-full w-full flex-col bg-sidebar rounded-2xl border border-sidebar-border shadow-sm overflow-hidden"
           >
             {children}
           </div>

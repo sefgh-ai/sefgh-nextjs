@@ -1,20 +1,10 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useEffect, useRef } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
-import { Code, Filter, X, Settings, Loader2 } from "lucide-react";
+import { Code, Loader2 } from "lucide-react";
 import { ProjectCard, ProjectCardSkeleton } from "./ProjectCard";
-import { useCategories } from "@/hooks/home/useCategories";
 
 export function ProjectsFeed({
   projects,
@@ -28,8 +18,6 @@ export function ProjectsFeed({
   onCategoryChange,
   onOpenPreferences,
 }) {
-  const [filterSheetOpen, setFilterSheetOpen] = useState(false);
-  const { categories: liveCategories } = useCategories();
   const scrollRef = useRef(null);
   const loadMoreRef = useRef(null);
 
@@ -51,122 +39,11 @@ export function ProjectsFeed({
     return () => observer.disconnect();
   }, [hasMore, loadingMore, onLoadMore]);
 
-  // Filter out "All" from live categories to avoid duplication
-  const filteredLiveCategories = liveCategories.filter(
-    (cat) => cat.name !== "All"
-  );
-  const categories = [{ name: "All", icon: "🎯" }, ...filteredLiveCategories];
-
   return (
-    <main className="col-span-1 lg:col-span-7 flex flex-col h-[calc(100vh-180px)] min-h-0">
-      {/* Mobile Category Filter Bar */}
-      <div className="lg:hidden shrink-0 mb-3">
-        <Card className="glass-premium border-border backdrop-blur-sm">
-          <CardContent className="p-3">
-            <div className="flex items-center gap-2">
-              <Sheet open={filterSheetOpen} onOpenChange={setFilterSheetOpen}>
-                <SheetTrigger asChild>
-                  <Button variant="outline" size="sm" className="shrink-0">
-                    <Filter className="w-4 h-4 mr-2" />
-                    Filters
-                    {selectedCategory !== "All" && (
-                      <Badge className="ml-2 bg-primary text-primary-foreground text-xs px-1.5">
-                        1
-                      </Badge>
-                    )}
-                  </Button>
-                </SheetTrigger>
-                <SheetContent side="bottom" className="h-[70vh] rounded-t-2xl">
-                  <SheetHeader>
-                    <SheetTitle className="flex items-center justify-between">
-                      <span>Filter Projects</span>
-                      {selectedCategory !== "All" && (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => {
-                            onCategoryChange("All");
-                            onClearFilters();
-                          }}
-                        >
-                          <X className="w-4 h-4 mr-1" />
-                          Clear
-                        </Button>
-                      )}
-                    </SheetTitle>
-                  </SheetHeader>
-                  <div className="mt-4 space-y-4">
-                    <div>
-                      <h4 className="text-sm font-medium mb-3">Categories</h4>
-                      <div className="grid grid-cols-2 gap-2">
-                        {categories.map((category) => (
-                          <Button
-                            key={category.id || category.name}
-                            variant={
-                              selectedCategory === category.name
-                                ? "default"
-                                : "outline"
-                            }
-                            size="sm"
-                            className="justify-start"
-                            onClick={() => {
-                              onCategoryChange(category.name);
-                              setFilterSheetOpen(false);
-                            }}
-                          >
-                            <span className="mr-2">{category.icon}</span>
-                            {category.name}
-                          </Button>
-                        ))}
-                      </div>
-                    </div>
-                    <Button
-                      variant="outline"
-                      className="w-full"
-                      onClick={() => {
-                        onOpenPreferences();
-                        setFilterSheetOpen(false);
-                      }}
-                    >
-                      <Settings className="w-4 h-4 mr-2" />
-                      Advanced Preferences
-                    </Button>
-                  </div>
-                </SheetContent>
-              </Sheet>
-
-              {/* Horizontal scrollable category pills for mobile */}
-              <ScrollArea className="flex-1 whitespace-nowrap">
-                <div className="flex gap-2">
-                  {categories.slice(0, 6).map((category) => (
-                    <Button
-                      key={category.id || category.name}
-                      variant={
-                        selectedCategory === category.name ? "default" : "ghost"
-                      }
-                      size="sm"
-                      className={`shrink-0 ${
-                        selectedCategory === category.name
-                          ? "bg-primary text-primary-foreground"
-                          : "text-muted-foreground"
-                      }`}
-                      onClick={() => onCategoryChange(category.name)}
-                    >
-                      <span className="mr-1">{category.icon}</span>
-                      {category.name}
-                    </Button>
-                  ))}
-                </div>
-                <ScrollBar orientation="horizontal" className="invisible" />
-              </ScrollArea>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
+    <main className="col-span-1 lg:col-span-9 flex flex-col min-h-0">
       {/* Projects Feed - native scroll for cleaner appearance */}
       <div className="flex-1 min-h-0 overflow-y-auto" ref={scrollRef}>
-        <div className="space-y-4 pr-2">
+        <div className="space-y-3 px-1">
           {loading ? (
             // Loading skeleton - show only 3 for faster perceived load
             Array.from({ length: 3 }).map((_, i) => (

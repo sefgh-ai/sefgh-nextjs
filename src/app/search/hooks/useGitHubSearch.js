@@ -1,9 +1,46 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { ActivityLogger } from "@/lib/activity-logger";
 import { logError } from "@/lib/error-tracking";
 import { saveSearchHistory } from "@/lib/supabase/search-history";
+
+const CACHE_KEY = "sefgh_search_cache";
+const CACHE_EXPIRY_MS = 30 * 60 * 1000; // 30 minutes
+
+// Helper to get cached search results
+function getCachedResults() {
+  if (typeof window === "undefined") return null;
+  try {
+    const cached = localStorage.getItem(CACHE_KEY);
+    if (!cached) return null;
+    const parsed = JSON.parse(cached);
+    // Check if cache is expired
+    if (Date.now() - parsed.timestamp > CACHE_EXPIRY_MS) {
+      localStorage.removeItem(CACHE_KEY);
+      return null;
+    }
+    return parsed;
+  } catch {
+    return null;
+  }
+}
+
+// Helper to save search results to cache
+function setCachedResults(data) {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.setItem(
+      CACHE_KEY,
+      JSON.stringify({
+        ...data,
+        timestamp: Date.now(),
+      })
+    );
+  } catch {
+    // localStorage might be full or disabled
+  }
+}
 
 /**
  * Custom hook for GitHub repository search with history tracking
@@ -25,6 +62,7 @@ import { saveSearchHistory } from "@/lib/supabase/search-history";
 export function useGitHubSearch(userId) {
   const searchParams = useSearchParams();
   const initialQuery = searchParams.get("q") || "";
+  const hasRestoredCache = useRef(false);
 
   const [searchQuery, setSearchQuery] = useState(initialQuery);
   const [searchResults, setSearchResults] = useState([]);
@@ -39,6 +77,32 @@ export function useGitHubSearch(userId) {
   const [totalCount, setTotalCount] = useState(0);
   const [hasAutoSearched, setHasAutoSearched] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+
+  // Restore cached results on mount
+  useEffect(() => {
+    if (hasRestoredCache.current) return;
+    hasRestoredCache.current = true;
+
+    const cached = getCachedResults();
+    if (cached && cached.results?.length > 0) {
+      // Only restore if no URL query or URL query matches cached query
+      if (!initialQuery || initialQuery === cached.query) {
+        setSearchQuery(cached.query || "");
+        setSearchResults(cached.results || []);
+        setTotalCount(cached.totalCount || 0);
+        setSearchTime(cached.searchTime || null);
+        setCurrentPage(cached.currentPage || 1);
+        setLanguage(cached.language || "");
+        setSort(cached.sort || "all");
+        setStars(cached.stars || "");
+        setView(cached.view || "grid");
+        // Mark as auto-searched to prevent duplicate search
+        if (initialQuery === cached.query) {
+          setHasAutoSearched(true);
+        }
+      }
+    }
+  }, [initialQuery]);
   const [advancedFilters, setAdvancedFilters] = useState({
     license: "",
     dateRange: "",
@@ -78,7 +142,21 @@ export function useGitHubSearch(userId) {
           setSearchResults(data.items || []);
           setTotalCount(data.total_count || 0);
           setSearchTime(timeTaken);
+          setCurrentPage(1);
           toast.success(`Found ${data.total_count} repositories`);
+
+          // Cache the results
+          setCachedResults({
+            query,
+            results: data.items || [],
+            totalCount: data.total_count || 0,
+            searchTime: timeTaken,
+            currentPage: 1,
+            language,
+            sort,
+            stars,
+            view,
+          });
 
           // Log search activity
           ActivityLogger.search(query);
@@ -152,8 +230,22 @@ export function useGitHubSearch(userId) {
       const data = await response.json();
 
       if (response.ok) {
-        setSearchResults((prev) => [...prev, ...(data.items || [])]);
+        const newResults = [...searchResults, ...(data.items || [])];
+        setSearchResults(newResults);
         setCurrentPage(nextPage);
+
+        // Update cache with new results
+        setCachedResults({
+          query: searchQuery,
+          results: newResults,
+          totalCount,
+          searchTime,
+          currentPage: nextPage,
+          language,
+          sort,
+          stars,
+          view,
+        });
       } else {
         throw new Error(data.error || "Failed to load more");
       }
@@ -164,6 +256,59 @@ export function useGitHubSearch(userId) {
       setLoadingMore(false);
     }
   }, [loadingMore, searchQuery, sort, language, stars, currentPage]);
+
+  const handlePageChange = useCallback(
+    async (page) => {
+      if (loadingMore || !searchQuery.trim() || page === currentPage) return;
+
+      setLoadingMore(true);
+
+      try {
+        const params = new URLSearchParams({
+          q: searchQuery,
+          sort: sort,
+          page: page.toString(),
+          per_page: "30",
+        });
+
+        if (language) params.append("language", language);
+        if (stars) params.append("stars", stars);
+
+        const response = await fetch(`/api/github/search?${params}`);
+        const data = await response.json();
+
+        if (response.ok) {
+          setSearchResults(data.items || []);
+          setTotalCount(data.total_count || 0);
+          setCurrentPage(page);
+
+          // Update cache
+          setCachedResults({
+            query: searchQuery,
+            results: data.items || [],
+            totalCount: data.total_count || 0,
+            searchTime,
+            currentPage: page,
+            language,
+            sort,
+            stars,
+            view,
+          });
+
+          // Scroll to top of results
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        } else {
+          throw new Error(data.error || "Failed to load page");
+        }
+      } catch (error) {
+        console.error("Page change error:", error);
+        toast.error("Failed to load page");
+      } finally {
+        setLoadingMore(false);
+      }
+    },
+    [loadingMore, searchQuery, sort, language, stars, currentPage]
+  );
 
   const hasMore = searchResults.length < totalCount;
 
@@ -188,8 +333,10 @@ export function useGitHubSearch(userId) {
     handleSearch,
     handleClearFilters,
     handleLoadMore,
+    handlePageChange,
     hasMore,
     searchTime,
     totalCount,
+    currentPage,
   };
 }

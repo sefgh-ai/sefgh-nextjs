@@ -59,10 +59,10 @@ export function ProjectCard({ project }) {
 
   return (
     <Card
-      className="glass-premium border-border hover:border-primary/50 transition-all duration-200 hover:shadow-lg backdrop-blur-sm group cursor-pointer overflow-hidden"
+      className="bg-card hover:border-primary/30 transition-all duration-200 hover:shadow-md group cursor-pointer"
       onClick={handleClick}
     >
-      <CardContent className="p-3 lg:p-4">
+      <CardContent className="p-4">
         <div className="flex gap-3">
           {/* Project Avatar */}
           <div className="flex-shrink-0">
@@ -159,8 +159,8 @@ export function ProjectCard({ project }) {
 
 export function ProjectCardSkeleton() {
   return (
-    <Card className="glass-premium border-border backdrop-blur-sm animate-pulse">
-      <CardContent className="p-3 lg:p-4">
+    <Card className="animate-pulse">
+      <CardContent className="p-4">
         <div className="flex gap-3">
           <div className="w-11 h-11 rounded-lg bg-muted flex-shrink-0"></div>
           <div className="flex-1 min-w-0">

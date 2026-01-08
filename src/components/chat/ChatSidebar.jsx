@@ -2,10 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import {
-  Sheet,
-  SheetContent,
-} from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -45,7 +42,6 @@ export function ChatSidebar({
   setClearDialogOpen,
   userProfile,
   user,
-  openSettings,
   isMobile,
 }) {
   const router = useRouter();
@@ -214,9 +210,7 @@ export function ChatSidebar({
           <DropdownMenuLabel>
             <div className="flex flex-col space-y-1">
               <p className="text-sm font-medium leading-none">
-                {userProfile?.full_name ||
-                  user?.email?.split("@")[0] ||
-                  "User"}
+                {userProfile?.full_name || user?.email?.split("@")[0] || "User"}
               </p>
               <p className="text-xs leading-none text-muted-foreground">
                 {user?.email}
@@ -230,9 +224,11 @@ export function ChatSidebar({
               <span>Profile</span>
             </Link>
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={openSettings}>
-            <Settings className="mr-2 h-4 w-4" />
-            <span>Settings</span>
+          <DropdownMenuItem asChild>
+            <Link href="/settings" className="cursor-pointer">
+              <Settings className="mr-2 h-4 w-4" />
+              <span>Settings</span>
+            </Link>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem
@@ -266,14 +262,28 @@ export function ChatSidebar({
   const SidebarContent = ({ onClose }) => (
     <>
       {/* Version Selector Header */}
-      <div className={onClose ? "p-4 border-b flex items-center gap-2" : "glass-premium rounded-2xl shadow-premium border border-white/10 p-4 flex items-center gap-2"}>
+      <div
+        className={
+          onClose
+            ? "p-4 border-b flex items-center gap-2"
+            : "glass-premium rounded-2xl shadow-premium border border-white/10 p-4 flex items-center gap-2"
+        }
+      >
         <ModelSelector onClose={onClose} />
       </div>
 
       {/* Conversations List */}
-      <div className={onClose ? "flex-1 flex flex-col overflow-hidden" : "glass-premium rounded-2xl shadow-premium border border-white/10 flex-1 flex flex-col overflow-hidden"}>
+      <div
+        className={
+          onClose
+            ? "flex-1 flex flex-col overflow-hidden"
+            : "glass-premium rounded-2xl shadow-premium border border-white/10 flex-1 flex flex-col overflow-hidden"
+        }
+      >
         {/* New Chat Button */}
-        <div className={onClose ? "p-4 border-b" : "p-4 border-b border-white/10"}>
+        <div
+          className={onClose ? "p-4 border-b" : "p-4 border-b border-white/10"}
+        >
           <Button
             onClick={() => {
               handleNewChat();
@@ -295,10 +305,18 @@ export function ChatSidebar({
         />
 
         {/* Bottom Section */}
-        <div className={onClose ? "border-t mt-auto" : "border-t border-white/10 mt-auto"}>
+        <div
+          className={
+            onClose ? "border-t mt-auto" : "border-t border-white/10 mt-auto"
+          }
+        >
           {/* Clear All Button */}
           {conversations.length > 0 && (
-            <div className={onClose ? "p-3 border-b" : "p-3 border-b border-white/10"}>
+            <div
+              className={
+                onClose ? "p-3 border-b" : "p-3 border-b border-white/10"
+              }
+            >
               <Button
                 variant="ghost"
                 className="w-full justify-start text-red-600 dark:text-red-400 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/20"
@@ -337,6 +355,7 @@ export function ChatSidebar({
           side="left"
           className="w-80 p-0 flex flex-col [&>button]:hidden"
         >
+          <SheetTitle className="sr-only">Chat Sidebar</SheetTitle>
           <SidebarContent onClose={() => setSidebarOpen(false)} />
         </SheetContent>
       </Sheet>

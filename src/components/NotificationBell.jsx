@@ -187,9 +187,9 @@ export function NotificationBell() {
         </Button>
       </div>
 
-      {/* Hover Tooltip - Latest Notification Preview */}
+      {/* Hover Tooltip - Latest Notification Preview (hidden on mobile) */}
       {showTooltip && !isOpen && latestNotification && (
-        <div className="absolute right-0 mt-2 w-80 rounded-xl bg-card border border-border shadow-2xl z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+        <div className="hidden sm:block absolute right-0 mt-2 w-80 rounded-xl bg-card border border-border shadow-2xl z-50 animate-in fade-in slide-in-from-top-2 duration-200">
           <div className="p-4">
             <div className="flex items-start gap-3">
               <div
@@ -225,12 +225,12 @@ export function NotificationBell() {
       {isOpen && (
         <div
           ref={dropdownRef}
-          className="absolute right-0 mt-2 w-96 max-w-[calc(100vw-2rem)] rounded-2xl bg-card border border-border shadow-2xl z-50 animate-in fade-in slide-in-from-top-2 duration-200"
+          className="absolute right-0 mt-2 w-[calc(100vw-1rem)] sm:w-96 max-w-[calc(100vw-1rem)] rounded-2xl bg-card border border-border shadow-2xl z-50 animate-in fade-in slide-in-from-top-2 duration-200"
         >
           {/* Header */}
-          <div className="flex items-center justify-between p-4 border-b border-border bg-card rounded-t-2xl">
+          <div className="flex items-center justify-between p-3 sm:p-4 border-b border-border bg-card rounded-t-2xl">
             <div>
-              <h3 className="font-semibold text-lg text-card-foreground">
+              <h3 className="font-semibold text-base sm:text-lg text-card-foreground">
                 Notifications
               </h3>
               <p className="text-xs text-muted-foreground">
@@ -242,16 +242,16 @@ export function NotificationBell() {
                 variant="ghost"
                 size="sm"
                 onClick={handleMarkAllAsRead}
-                className="text-xs"
+                className="text-xs h-8 px-2 sm:px-3"
               >
-                <Check className="h-3 w-3 mr-1" />
-                Mark all read
+                <Check className="h-3 w-3 sm:mr-1" />
+                <span className="hidden sm:inline">Mark all read</span>
               </Button>
             )}
           </div>
 
           {/* Notifications List */}
-          <ScrollArea className="h-[400px]">
+          <ScrollArea className="h-[50vh] sm:h-[400px]">
             {loading ? (
               <div className="flex items-center justify-center py-12">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
@@ -273,10 +273,10 @@ export function NotificationBell() {
                     key={notification.id}
                     onClick={() => handleNotificationClick(notification)}
                     className={cn(
-                      "group relative p-3 rounded-xl mb-2 transition-all cursor-pointer",
+                      "group relative p-3 sm:p-3 rounded-xl mb-2 transition-all cursor-pointer touch-manipulation",
                       notification.is_read
-                        ? "bg-muted/50 hover:bg-muted/70"
-                        : "bg-primary/10 hover:bg-primary/15 border border-primary/30"
+                        ? "bg-muted/50 hover:bg-muted/70 active:bg-muted/80"
+                        : "bg-primary/10 hover:bg-primary/15 active:bg-primary/20 border border-primary/30"
                     )}
                   >
                     <div className="flex items-start gap-3">
@@ -302,9 +302,9 @@ export function NotificationBell() {
                             onClick={(e) =>
                               handleDeleteNotification(notification.id, e)
                             }
-                            className="opacity-0 group-hover:opacity-100 h-6 w-6 flex-shrink-0 transition-opacity"
+                            className="opacity-100 sm:opacity-0 sm:group-hover:opacity-100 h-7 w-7 sm:h-6 sm:w-6 flex-shrink-0 transition-opacity touch-manipulation"
                           >
-                            <Trash2 className="h-3 w-3" />
+                            <Trash2 className="h-3.5 w-3.5 sm:h-3 sm:w-3" />
                           </Button>
                         </div>
                         <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
@@ -333,7 +333,7 @@ export function NotificationBell() {
 
           {/* Footer */}
           {notifications.length > 0 && (
-            <div className="p-3 border-t border-border text-center bg-card rounded-b-2xl">
+            <div className="p-2 sm:p-3 border-t border-border text-center bg-card rounded-b-2xl">
               <Button
                 variant="ghost"
                 size="sm"
@@ -341,7 +341,7 @@ export function NotificationBell() {
                   setIsOpen(false);
                   router.push("/notifications");
                 }}
-                className="text-xs w-full hover:bg-muted"
+                className="text-xs w-full hover:bg-muted h-9 sm:h-8 touch-manipulation"
               >
                 View all notifications →
               </Button>

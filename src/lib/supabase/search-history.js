@@ -45,11 +45,11 @@ export async function saveSearchHistory(userId, query, source, options = {}) {
   }
 
   // Increment total searches count in platform_stats (fire and forget)
-  supabase
-    .rpc("increment_platform_stat", { key: "total_searches" })
-    .catch(() => {
-      // Silently ignore errors - stats update is not critical
-    });
+  try {
+    supabase.rpc("increment_platform_stat", { key: "total_searches" });
+  } catch {
+    // Silently ignore errors - stats update is not critical
+  }
 
   return data;
 }

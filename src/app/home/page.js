@@ -5,11 +5,12 @@ import { useAuth } from "@/contexts/AuthContext";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { SearchNavbar } from "@/components/search/SearchNavbar";
 import { SearchSidebar } from "@/components/search/SearchSidebar";
+import { MobileBottomNav } from "@/components/search/MobileBottomNav";
 import { PreferencesDialog } from "@/components/PreferencesDialog";
 import OnboardingBanner from "@/components/OnboardingBanner";
 import Footer from "@/components/Footer";
 import {
-  CategoriesSidebar,
+  TopicsNav,
   ProjectsFeed,
   UserProfileCard,
   AboutCard,
@@ -55,29 +56,28 @@ export default function HomePage() {
     <SidebarProvider>
       <div className="flex h-full w-full bg-background gradient-mesh flex-col overflow-hidden">
         {/* Main content area with sidebar */}
-        <div className="flex flex-1 min-h-0 p-2 sm:p-4 gap-2 sm:gap-4">
+        <div className="flex flex-1 min-h-0 p-1 sm:p-4 gap-1 sm:gap-4 pb-[72px] md:pb-2">
           <SearchSidebar user={user} />
 
-          <SidebarInset className="flex flex-col glass-premium rounded-xl sm:rounded-2xl shadow-premium border border-white/10 overflow-hidden flex-1 min-h-0">
+          <SidebarInset className="flex flex-col glass-premium rounded-lg sm:rounded-2xl shadow-premium border border-white/10 overflow-hidden flex-1 min-h-0">
             <SearchNavbar
+              showFilters={false}
               selectedTab={selectedTab}
               onTabChange={setSelectedTab}
             />
 
-            <div className="w-full px-3 sm:px-6 lg:px-8 py-4 sm:py-6 pb-4 overflow-hidden flex-1 min-h-0">
+            <div className="w-full px-2 sm:px-6 lg:px-8 py-2 sm:py-6 pb-4 overflow-y-auto flex-1 min-h-0">
               <OnboardingBanner />
 
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6 max-w-[1600px] mx-auto">
-                {/* Left Sidebar - Categories (hidden on mobile, shown on large screens) */}
-                <aside className="hidden lg:block lg:col-span-2 space-y-4">
-                  <CategoriesSidebar
-                    selectedCategory={selectedCategory}
-                    onCategoryChange={setSelectedCategory}
-                    userPreferences={userPreferences}
-                    onOpenPreferences={() => setPreferencesOpen(true)}
-                  />
-                </aside>
+              {/* Topics Navigation - Horizontal menu at top */}
+              <TopicsNav
+                selectedCategory={selectedCategory}
+                onCategoryChange={setSelectedCategory}
+                userPreferences={userPreferences}
+                onOpenPreferences={() => setPreferencesOpen(true)}
+              />
 
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 sm:gap-4 lg:gap-6 max-w-[1600px] mx-auto">
                 {/* Main Content - Feed */}
                 <ProjectsFeed
                   projects={projects}
@@ -93,7 +93,7 @@ export default function HomePage() {
                 />
 
                 {/* Right Sidebar - User Info (hidden on mobile, shown on large screens) */}
-                <aside className="hidden lg:block lg:col-span-3 space-y-4">
+                <aside className="hidden lg:block lg:col-span-3 xl:col-span-3 space-y-4">
                   <UserProfileCard user={user} loading={authLoading} />
                   <AboutCard />
                 </aside>
@@ -102,8 +102,13 @@ export default function HomePage() {
           </SidebarInset>
         </div>
 
-        {/* Footer - placed below sidebar and main content */}
-        <Footer />
+        {/* Footer - hidden on mobile to make room for bottom nav */}
+        <div className="hidden md:block">
+          <Footer />
+        </div>
+
+        {/* Mobile Bottom Navigation */}
+        <MobileBottomNav user={user} />
       </div>
 
       <PreferencesDialog

@@ -1,18 +1,7 @@
-'use client';
+"use client";
 
-import React from 'react';
-import Link from 'next/link';
-import { 
-  Facebook, 
-  Instagram, 
-  Twitter, 
-  Github, 
-  Dribbble, 
-  Mail, 
-  Phone, 
-  MapPin, 
-  MessageCircle 
-} from 'lucide-react';
+import React from "react";
+import Link from "next/link";
 
 export default function FooterColumn() {
   return (
@@ -21,12 +10,21 @@ export default function FooterColumn() {
         {/* Bottom Legal Row */}
         <div className="pt-8 border-t border-slate-800/50 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-sm text-slate-500">
-            © 2025 SEFGH. All rights reserved.
+            © {new Date().getFullYear()} SEFGH-AI. All rights reserved.
           </p>
           <div className="flex flex-wrap justify-center gap-6">
-            {['Terms of Service', 'Privacy Policy', 'Cookie Settings', 'Accessibility'].map((item) => (
-              <Link key={item} href="#" className="text-sm text-slate-500 hover:text-slate-300 transition-colors">
-                {item}
+            {[
+              { name: "Terms of Service", href: "/terms" },
+              { name: "Privacy Policy", href: "/privacy" },
+              { name: "Cookie Settings", href: "/cookie-policy" },
+              { name: "Accessibility", href: "/accessibility" },
+            ].map((item) => (
+              <Link
+                key={item.name}
+                href={item.href}
+                className="text-sm text-slate-500 hover:text-slate-300 transition-colors"
+              >
+                {item.name}
               </Link>
             ))}
           </div>

@@ -24,6 +24,7 @@ import {
 import SearchComponent from "@/components/ui/animated-glowing-search-bar";
 import AppFooter from "@/components/ui/app-footer";
 import { AnimatedNavbar } from "@/components/AnimatedNavbar";
+import LogoMarquee from "@/components/marketing/LogoMarquee";
 
 // Dynamically import ParticleText with no SSR (canvas needs browser)
 const ParticleText = dynamic(
@@ -217,67 +218,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="relative px-3 sm:px-6 lg:px-8 py-12 sm:py-20 border-t border-slate-800/50">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-10 sm:mb-16">
-            <h2 className="text-2xl sm:text-4xl lg:text-5xl font-bold text-white mb-3 sm:mb-4">
-              {t("features.title")}
-            </h2>
-            <p className="text-base sm:text-xl text-slate-400 max-w-3xl mx-auto px-2">
-              {t("features.subtitle")}
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-8">
-            {messages.features.items.map((feature, index) => {
-              const icons = [Brain, Gem, Code];
-              const Icon = icons[index];
-              return (
-                <div
-                  key={index}
-                  className="p-4 sm:p-6 glass-premium rounded-lg hover:border-blue-500 transition-all hover:shadow-glow-blue"
-                >
-                  <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-lg bg-gradient-to-br from-blue-600 to-teal-600 flex items-center justify-center mb-3 sm:mb-4 shadow-glow-blue">
-                    <Icon className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
-                  </div>
-                  <h3 className="text-lg sm:text-xl font-bold text-white mb-2 sm:mb-3">
-                    {feature.title}
-                  </h3>
-                  <p className="text-sm sm:text-base text-slate-400 leading-relaxed">
-                    {feature.description}
-                  </p>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* How It Works Section */}
-      <section className="relative px-3 sm:px-6 lg:px-8 py-12 sm:py-20 border-t border-slate-800/50">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-2xl sm:text-4xl lg:text-5xl font-bold text-white text-center mb-10 sm:mb-16">
-            {t("howItWorks.title")}
-          </h2>
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 sm:gap-12">
-            {messages.howItWorks.steps.map((step, index) => (
-              <div key={index} className="text-center">
-                <div className="inline-flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-gradient-to-br from-blue-600 to-teal-600 text-white text-xl sm:text-2xl font-bold mb-4 sm:mb-6 shadow-glow-blue">
-                  {step.number}
-                </div>
-                <h3 className="text-xl sm:text-2xl font-bold text-white mb-2 sm:mb-4">
-                  {step.title}
-                </h3>
-                <p className="text-sm sm:text-base text-slate-400 leading-relaxed">
-                  {step.description}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* Logo Marquee - Trusted Companies */}
+      <LogoMarquee />
 
       {/* CTA Section */}
       <section className="relative px-3 sm:px-6 lg:px-8 py-16 sm:py-32 border-t border-slate-800/50">

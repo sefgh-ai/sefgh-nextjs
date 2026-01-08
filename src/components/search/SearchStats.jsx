@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { TrendingUp, Search, Users, Database } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
@@ -13,10 +13,12 @@ export function SearchStats() {
   const [animated, setAnimated] = useState(false);
   const [loading, setLoading] = useState(true);
 
+  // Memoize supabase client to prevent recreation
+  const supabase = useMemo(() => createClient(), []);
+
   useEffect(() => {
     async function fetchStats() {
       try {
-        const supabase = createClient();
         const { data, error } = await supabase
           .from("platform_stats")
           .select("stat_key, stat_value");
@@ -39,7 +41,7 @@ export function SearchStats() {
     // Trigger animation after mount
     const timer = setTimeout(() => setAnimated(true), 100);
     return () => clearTimeout(timer);
-  }, []);
+  }, [supabase]);
 
   const formatNumber = (num) => {
     if (!num) return "0";

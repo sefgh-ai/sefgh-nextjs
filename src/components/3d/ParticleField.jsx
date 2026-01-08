@@ -33,7 +33,7 @@ export default function ParticleField() {
 
   // Create neural network nodes (particles)
   const particleData = useMemo(() => {
-    const count = 300;
+    const count = 150; // Reduced from 300 for better performance
     const positions = new Float32Array(count * 3);
     const colors = new Float32Array(count * 3);
     const sizes = new Float32Array(count);

@@ -15,7 +15,15 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { X, Plus, GripVertical, Info, Loader2, Sparkles } from "lucide-react";
+import {
+  X,
+  Plus,
+  GripVertical,
+  Loader2,
+  Sparkles,
+  CheckCircle2,
+  Filter,
+} from "lucide-react";
 import { toast } from "sonner";
 import { useCategories } from "@/hooks/home/useCategories";
 import { useAuth } from "@/contexts/AuthContext";
@@ -171,154 +179,185 @@ export function PreferencesDialog({ open, onOpenChange, onSave }) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-5xl h-[80vh] bg-slate-900 border-slate-800 text-slate-100">
-        <DialogHeader>
-          <DialogTitle className="text-xl font-bold text-slate-100 flex items-center gap-2">
-            Customize Your Feed Preferences
-            {loading && (
-              <Loader2 className="w-4 h-4 animate-spin text-slate-400" />
-            )}
-          </DialogTitle>
-          <DialogDescription className="text-slate-400 flex items-center gap-2">
-            <Info className="w-4 h-4" />
-            Click tags to select, drag to reorder. {categories.length}{" "}
-            categories available from database.
-          </DialogDescription>
-        </DialogHeader>
+      <DialogContent className="max-w-4xl w-[95vw] sm:w-auto h-[85vh] sm:h-[75vh] p-0 gap-0 overflow-hidden">
+        {/* Header */}
+        <div className="px-4 sm:px-6 pt-4 sm:pt-6 pb-3 sm:pb-4 border-b">
+          <DialogHeader className="space-y-1">
+            <DialogTitle className="text-base sm:text-lg font-semibold flex items-center gap-2">
+              <Filter className="w-4 sm:w-5 h-4 sm:h-5 text-primary" />
+              Personalize Your Feed
+            </DialogTitle>
+            <DialogDescription className="text-xs sm:text-sm">
+              Select topics to customize what projects appear in your feed.
+            </DialogDescription>
+          </DialogHeader>
 
-        <div className="flex gap-6 h-full overflow-hidden">
-          {/* Left Side - Available Tags */}
-          <div className="flex-1">
-            {/* Add Category Button */}
-            <div className="mb-4">
-              {!showAddCategory ? (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setShowAddCategory(true)}
-                  disabled={!user}
-                  className="w-full border-dashed border-slate-700 hover:border-blue-500 hover:bg-blue-950/20"
-                >
-                  <Plus className="w-4 h-4 mr-2" />
-                  Add Custom Category
-                  {!user && (
-                    <span className="ml-2 text-xs">(Login required)</span>
-                  )}
-                </Button>
-              ) : (
-                <div className="p-3 bg-slate-800 rounded-lg border border-slate-700 space-y-3">
-                  <div className="flex items-center gap-2">
-                    <select
-                      value={newCategoryIcon}
-                      onChange={(e) => setNewCategoryIcon(e.target.value)}
-                      className="w-12 h-10 bg-slate-900 border border-slate-700 rounded text-xl text-center cursor-pointer"
-                    >
-                      {EMOJI_OPTIONS.map((emoji) => (
-                        <option key={emoji} value={emoji}>
-                          {emoji}
-                        </option>
-                      ))}
-                    </select>
-                    <Input
-                      placeholder="Category name"
-                      value={newCategoryName}
-                      onChange={(e) => setNewCategoryName(e.target.value)}
-                      className="flex-1 bg-slate-900 border-slate-700"
-                      maxLength={30}
-                    />
-                    <select
-                      value={newCategoryType}
-                      onChange={(e) => setNewCategoryType(e.target.value)}
-                      className="w-32 h-10 bg-slate-900 border border-slate-700 rounded px-2 text-sm"
-                    >
-                      <option value="custom">Custom</option>
-                      <option value="programming">Programming</option>
-                      <option value="technology">Technology</option>
-                      <option value="application">Application</option>
-                      <option value="other">Other</option>
-                    </select>
-                  </div>
-                  <div className="flex gap-2">
-                    <Button
-                      size="sm"
-                      onClick={handleAddCategory}
-                      disabled={isAdding || !newCategoryName.trim()}
-                      className="flex-1 bg-blue-600 hover:bg-blue-700"
-                    >
-                      {isAdding ? (
-                        <>
-                          <Loader2 className="w-3 h-3 mr-2 animate-spin" />
-                          Adding...
-                        </>
-                      ) : (
-                        <>
-                          <Sparkles className="w-3 h-3 mr-2" />
-                          Add to Database
-                        </>
-                      )}
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={() => {
-                        setShowAddCategory(false);
-                        setNewCategoryName("");
-                        setNewCategoryIcon("🏷️");
-                        setNewCategoryType("custom");
-                      }}
-                      className="text-slate-400 hover:text-slate-300"
-                    >
-                      Cancel
-                    </Button>
-                  </div>
-                </div>
-              )}
+          {/* Steps - inline - hidden on mobile */}
+          <div className="hidden sm:flex items-center gap-6 mt-4 text-sm text-muted-foreground">
+            <div className="flex items-center gap-2">
+              <span className="w-5 h-5 rounded-full bg-primary text-primary-foreground text-xs font-medium flex items-center justify-center">
+                1
+              </span>
+              <span>Select topics</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="w-5 h-5 rounded-full bg-primary text-primary-foreground text-xs font-medium flex items-center justify-center">
+                2
+              </span>
+              <span>Reorder priority</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="w-5 h-5 rounded-full bg-primary text-primary-foreground text-xs font-medium flex items-center justify-center">
+                3
+              </span>
+              <span>Save changes</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Main Content - Stack on mobile, side by side on desktop */}
+        <div className="flex flex-col sm:flex-row flex-1 min-h-0 overflow-hidden">
+          {/* Left Panel - Available Topics */}
+          <div className="flex-1 flex flex-col min-w-0 border-b sm:border-b-0 sm:border-r max-h-[45%] sm:max-h-none">
+            <div className="px-3 sm:px-4 py-2 sm:py-3 border-b bg-muted/30">
+              <div className="flex items-center justify-between">
+                <h3 className="text-xs sm:text-sm font-medium">
+                  Available Topics
+                </h3>
+                {loading && (
+                  <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
+                )}
+              </div>
             </div>
 
-            <ScrollArea className="h-[calc(80vh-280px)]">
-              <div className="space-y-6 pr-4">
-                {loading && categories.length === 0 ? (
-                  <div className="flex items-center justify-center h-40 text-slate-500">
-                    <Loader2 className="w-8 h-8 animate-spin" />
+            <ScrollArea className="flex-1">
+              <div className="p-4 space-y-5">
+                {/* Add Custom Category */}
+                {!showAddCategory ? (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setShowAddCategory(true)}
+                    disabled={!user}
+                    className="w-full border-dashed"
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Add Custom Category
+                    {!user && (
+                      <span className="ml-2 text-xs opacity-60">
+                        (Login required)
+                      </span>
+                    )}
+                  </Button>
+                ) : (
+                  <div className="p-3 rounded-lg border bg-muted/50 space-y-3">
+                    <div className="flex items-center gap-2">
+                      <select
+                        value={newCategoryIcon}
+                        onChange={(e) => setNewCategoryIcon(e.target.value)}
+                        className="w-11 h-9 bg-background border rounded text-lg text-center cursor-pointer"
+                      >
+                        {EMOJI_OPTIONS.map((emoji) => (
+                          <option key={emoji} value={emoji}>
+                            {emoji}
+                          </option>
+                        ))}
+                      </select>
+                      <Input
+                        placeholder="Category name"
+                        value={newCategoryName}
+                        onChange={(e) => setNewCategoryName(e.target.value)}
+                        className="flex-1 h-9"
+                        maxLength={30}
+                      />
+                      <select
+                        value={newCategoryType}
+                        onChange={(e) => setNewCategoryType(e.target.value)}
+                        className="h-9 bg-background border rounded px-2 text-sm"
+                      >
+                        <option value="custom">Custom</option>
+                        <option value="programming">Programming</option>
+                        <option value="technology">Technology</option>
+                        <option value="application">Application</option>
+                      </select>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button
+                        size="sm"
+                        onClick={handleAddCategory}
+                        disabled={isAdding || !newCategoryName.trim()}
+                        className="flex-1"
+                      >
+                        {isAdding ? (
+                          <>
+                            <Loader2 className="w-3 h-3 mr-2 animate-spin" />
+                            Adding...
+                          </>
+                        ) : (
+                          <>
+                            <Sparkles className="w-3 h-3 mr-2" />
+                            Add
+                          </>
+                        )}
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => {
+                          setShowAddCategory(false);
+                          setNewCategoryName("");
+                          setNewCategoryIcon("🏷️");
+                          setNewCategoryType("custom");
+                        }}
+                      >
+                        Cancel
+                      </Button>
+                    </div>
                   </div>
-                ) : Object.keys(groupedCategories).length === 0 ? (
-                  <div className="flex flex-col items-center justify-center h-40 text-slate-500">
-                    <Info className="w-8 h-8 mb-2" />
-                    <p className="text-sm">No categories available</p>
-                    <p className="text-xs">Add your first category above</p>
+                )}
+
+                {/* Categories */}
+                {loading && categories.length === 0 ? (
+                  <div className="flex items-center justify-center py-12">
+                    <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
                   </div>
                 ) : (
                   Object.entries(groupedCategories).map(
                     ([categoryType, tags]) => (
                       <div key={categoryType}>
-                        <h3 className="text-sm font-semibold text-slate-300 mb-3 flex items-center gap-2">
-                          {categoryType}
-                          <Badge variant="outline" className="text-xs">
-                            {tags.length}
-                          </Badge>
-                        </h3>
-                        <div className="flex flex-wrap gap-2">
+                        <div className="flex items-center gap-2 mb-2">
+                          <h4 className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                            {categoryType}
+                          </h4>
+                          <span className="text-xs text-muted-foreground">
+                            ({tags.length})
+                          </span>
+                        </div>
+                        <div className="flex flex-wrap gap-1.5">
                           {tags.map((tag) => (
-                            <Badge
+                            <button
                               key={tag.id}
-                              variant={
-                                isTagSelected(tag.name) ? "default" : "outline"
-                              }
-                              className={`cursor-pointer transition-all ${
-                                isTagSelected(tag.name)
-                                  ? "bg-blue-600 hover:bg-blue-700 text-white border-blue-500"
-                                  : "bg-slate-800 hover:bg-slate-700 text-slate-300 border-slate-700"
-                              }`}
                               onClick={() => handleTagClick(tag)}
+                              className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-sm transition-all ${
+                                isTagSelected(tag.name)
+                                  ? "bg-primary text-primary-foreground shadow-sm"
+                                  : "bg-muted hover:bg-muted/80 text-foreground"
+                              }`}
                             >
-                              <span className="mr-1">{tag.icon}</span>
-                              {tag.name}
+                              <span>{tag.icon}</span>
+                              <span>{tag.name}</span>
                               {tag.usage_count > 0 && (
-                                <span className="ml-1 text-xs opacity-70">
+                                <span
+                                  className={`text-xs ${
+                                    isTagSelected(tag.name)
+                                      ? "opacity-70"
+                                      : "text-muted-foreground"
+                                  }`}
+                                >
                                   ({tag.usage_count})
                                 </span>
                               )}
-                            </Badge>
+                            </button>
                           ))}
                         </div>
                       </div>
@@ -329,128 +368,132 @@ export function PreferencesDialog({ open, onOpenChange, onSave }) {
             </ScrollArea>
           </div>
 
-          {/* Vertical Divider */}
-          <div className="w-px bg-slate-800"></div>
-
-          {/* Right Side - Selected Tags */}
-          <div className="w-80">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-semibold text-slate-300">
-                Selected: {selectedTags.length}/20
-              </h3>
-              {selectedTags.length > 0 && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setSelectedTags([])}
-                  className="text-xs text-red-400 hover:text-red-300 hover:bg-red-950/20"
-                >
-                  Clear All
-                </Button>
-              )}
-            </div>
-
-            {/* Filter Mode Toggle */}
-            <div className="mb-4 p-3 bg-slate-800/50 rounded-lg border border-slate-700">
+          {/* Right Panel - Selected Topics */}
+          <div className="w-full sm:w-[280px] flex flex-col bg-muted/20 flex-1 sm:flex-initial">
+            <div className="px-3 sm:px-4 py-2 sm:py-3 border-b bg-muted/30">
               <div className="flex items-center justify-between">
-                <div className="flex flex-col">
-                  <Label className="text-sm font-medium text-slate-200 mb-1">
-                    Filter Mode
-                  </Label>
-                  <span className="text-xs text-slate-400">
-                    {filterMode === "OR"
-                      ? "Show projects matching ANY tag"
-                      : "Show projects matching ALL tags"}
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span
-                    className={`text-xs ${
-                      filterMode === "OR" ? "text-blue-400" : "text-slate-500"
-                    }`}
+                <h3 className="text-xs sm:text-sm font-medium">
+                  Selected ({selectedTags.length}/20)
+                </h3>
+                {selectedTags.length > 0 && (
+                  <button
+                    onClick={() => setSelectedTags([])}
+                    className="text-xs text-destructive hover:underline"
                   >
-                    OR
-                  </span>
-                  <Switch
-                    checked={filterMode === "AND"}
-                    onCheckedChange={(checked) =>
-                      setFilterMode(checked ? "AND" : "OR")
-                    }
-                    className="data-[state=checked]:bg-blue-600"
-                  />
-                  <span
-                    className={`text-xs ${
-                      filterMode === "AND" ? "text-blue-400" : "text-slate-500"
-                    }`}
-                  >
-                    AND
-                  </span>
-                </div>
+                    Clear all
+                  </button>
+                )}
               </div>
             </div>
 
-            <ScrollArea className="h-[calc(80vh-340px)]">
-              {selectedTags.length === 0 ? (
-                <div className="flex flex-col items-center justify-center h-40 text-slate-500">
-                  <Plus className="w-8 h-8 mb-2" />
-                  <p className="text-sm">No tags selected</p>
-                  <p className="text-xs">Click tags to add them</p>
-                </div>
-              ) : (
-                <div className="space-y-2">
-                  {selectedTags.map((tag, index) => (
-                    <div
-                      key={tag.name}
-                      draggable
-                      onDragStart={(e) => handleDragStart(e, index)}
-                      onDragOver={(e) => handleDragOver(e, index)}
-                      onDragEnd={handleDragEnd}
-                      className={`flex items-center gap-2 p-3 bg-slate-800 rounded-lg border border-slate-700 cursor-move hover:bg-slate-750 transition-colors ${
-                        draggedIndex === index ? "opacity-50" : ""
-                      }`}
-                    >
-                      <GripVertical className="w-4 h-4 text-slate-500" />
-                      <span className="flex items-center gap-2 flex-1">
-                        <span className="text-lg">{tag.icon}</span>
-                        <span className="text-sm font-medium text-slate-200">
+            {/* Filter Mode */}
+            <div className="px-4 py-2 border-b flex items-center justify-between">
+              <span className="text-xs text-muted-foreground">Filter mode</span>
+              <div className="flex items-center gap-1.5 text-xs">
+                <span
+                  className={
+                    filterMode === "OR"
+                      ? "text-primary font-medium"
+                      : "text-muted-foreground"
+                  }
+                >
+                  Any
+                </span>
+                <Switch
+                  checked={filterMode === "AND"}
+                  onCheckedChange={(checked) =>
+                    setFilterMode(checked ? "AND" : "OR")
+                  }
+                  className="scale-75"
+                />
+                <span
+                  className={
+                    filterMode === "AND"
+                      ? "text-primary font-medium"
+                      : "text-muted-foreground"
+                  }
+                >
+                  All
+                </span>
+              </div>
+            </div>
+
+            {/* Selected List */}
+            <ScrollArea className="flex-1">
+              <div className="p-3">
+                {selectedTags.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center py-8 text-center">
+                    <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center mb-3">
+                      <Plus className="w-5 h-5 text-muted-foreground" />
+                    </div>
+                    <p className="text-sm font-medium">No topics selected</p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Click topics on the left to add them
+                    </p>
+                  </div>
+                ) : (
+                  <div className="space-y-1">
+                    {selectedTags.map((tag, index) => (
+                      <div
+                        key={tag.name}
+                        draggable
+                        onDragStart={(e) => handleDragStart(e, index)}
+                        onDragOver={(e) => handleDragOver(e, index)}
+                        onDragEnd={handleDragEnd}
+                        className={`flex items-center gap-2 px-2 py-1.5 rounded-md bg-background border cursor-move hover:border-primary/50 transition-colors group ${
+                          draggedIndex === index ? "opacity-50" : ""
+                        }`}
+                      >
+                        <GripVertical className="w-3 h-3 text-muted-foreground/50 group-hover:text-muted-foreground shrink-0" />
+                        <span className="text-sm shrink-0">{tag.icon}</span>
+                        <span className="text-sm flex-1 truncate">
                           {tag.name}
                         </span>
-                      </span>
-                      <span className="text-xs text-slate-500">
-                        #{index + 1}
-                      </span>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleRemoveTag(tag.name)}
-                        className="h-6 w-6 p-0 hover:bg-red-950/20"
-                      >
-                        <X className="w-4 h-4 text-slate-400 hover:text-red-400" />
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              )}
+                        <span className="text-[10px] text-muted-foreground">
+                          #{index + 1}
+                        </span>
+                        <button
+                          onClick={() => handleRemoveTag(tag.name)}
+                          className="w-4 h-4 flex items-center justify-center rounded hover:bg-destructive/10 shrink-0"
+                        >
+                          <X className="w-3 h-3 text-muted-foreground hover:text-destructive" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </ScrollArea>
           </div>
         </div>
 
-        <DialogFooter>
-          <Button
-            variant="outline"
-            onClick={() => onOpenChange(false)}
-            className="border-slate-700 text-slate-300 hover:bg-slate-800"
-          >
-            Cancel
-          </Button>
-          <Button
-            onClick={handleSave}
-            className="bg-blue-600 hover:bg-blue-700 text-white"
-            disabled={selectedTags.length === 0}
-          >
-            Save Preferences
-          </Button>
-        </DialogFooter>
+        {/* Footer */}
+        <div className="px-4 sm:px-6 py-3 sm:py-4 border-t flex items-center justify-between gap-2">
+          <p className="text-[10px] sm:text-xs text-muted-foreground hidden sm:block">
+            {selectedTags.length === 0
+              ? "Select at least one topic"
+              : `${selectedTags.length} topic${
+                  selectedTags.length > 1 ? "s" : ""
+                } selected`}
+          </p>
+          <div className="flex gap-2 w-full sm:w-auto">
+            <Button
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+              className="flex-1 sm:flex-initial text-sm"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleSave}
+              disabled={selectedTags.length === 0}
+              className="flex-1 sm:flex-initial text-sm"
+            >
+              <CheckCircle2 className="w-4 h-4 mr-2" />
+              Save
+            </Button>
+          </div>
+        </div>
       </DialogContent>
     </Dialog>
   );

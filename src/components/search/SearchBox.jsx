@@ -182,7 +182,27 @@ export function SearchBox({
             </DropdownMenu>
 
             {/* Search Input */}
-            <div className="relative flex-1">
+            <div className="relative flex-1 isolate">
+              {/* Animated Border Glow - Same as landing page */}
+              <div className="absolute -inset-[2px] rounded-2xl overflow-hidden z-[-1]">
+                <div className="absolute inset-0 flex items-center justify-center">
+                  {/* Layer 1: Main Rotating Gradient */}
+                  <div
+                    className="absolute w-[1200px] h-[1200px] bg-[conic-gradient(from_0deg,#000000_0%,#2563eb_10%,#000000_20%,#000000_50%,#0d9488_60%,#000000_70%)] 
+                                  animate-[spin_4s_linear_infinite] opacity-100"
+                  ></div>
+
+                  {/* Layer 2: Secondary Gradient for more color depth */}
+                  <div
+                    className="absolute w-[1000px] h-[1000px] bg-[conic-gradient(from_90deg,transparent_0%,#3b82f6_10%,transparent_20%,transparent_50%,#14b8a6_60%,transparent_70%)] 
+                                  animate-[spin_3s_linear_infinite] opacity-70"
+                  ></div>
+                </div>
+              </div>
+
+              {/* Blur Filter Layer */}
+              <div className="absolute -inset-[2px] rounded-2xl z-[-1] backdrop-blur-[2px]"></div>
+
               <MagnifyingGlassIcon className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground z-10" />
               <input
                 ref={inputRef}
@@ -207,7 +227,7 @@ export function SearchBox({
                 }}
                 disabled={loading}
                 suppressHydrationWarning
-                className="w-full pl-12 pr-20 py-4 text-lg rounded-2xl glass-premium border-white/10 focus:outline-none focus:ring-2 focus:ring-blue-500/30 disabled:opacity-50 transition-smooth shadow-soft hover:shadow-soft-lg"
+                className="relative w-full pl-12 pr-20 py-4 text-lg rounded-2xl bg-card border border-border focus:outline-none focus:ring-2 focus:ring-primary/30 disabled:opacity-50 transition-smooth shadow-soft hover:shadow-soft-lg"
               />
 
               {/* Right side icons container */}

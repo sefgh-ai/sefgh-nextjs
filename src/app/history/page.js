@@ -5,6 +5,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useSearchHistory } from "@/hooks/useSearchHistory";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { SearchSidebar } from "@/components/search/SearchSidebar";
+import { MobileBottomNav } from "@/components/search/MobileBottomNav";
 import { SearchNavbar } from "@/components/search/SearchNavbar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -110,11 +111,11 @@ export default function HistoryPage() {
         className="flex h-full w-full bg-background gradient-mesh flex-col overflow-hidden"
         suppressHydrationWarning
       >
-        <div className="flex flex-1 min-h-0 p-2 sm:p-4 gap-2 sm:gap-4">
+        <div className="flex flex-1 min-h-0 p-2 sm:p-4 gap-2 sm:gap-4 pb-[72px] md:pb-2">
           <SearchSidebar user={user} />
 
           <SidebarInset className="flex flex-col glass-premium rounded-xl sm:rounded-2xl shadow-premium border border-white/10 overflow-hidden flex-1 min-h-0">
-            <SearchNavbar />
+            <SearchNavbar showFilters={false} />
             <main className="flex-1 flex flex-col px-4 pb-4 overflow-y-auto min-h-0">
               <div className="max-w-4xl mx-auto w-full py-6">
                 {/* Header */}
@@ -310,6 +311,9 @@ export default function HistoryPage() {
             </main>
           </SidebarInset>
         </div>
+
+        {/* Mobile Bottom Navigation */}
+        <MobileBottomNav user={user} />
       </div>
     </SidebarProvider>
   );

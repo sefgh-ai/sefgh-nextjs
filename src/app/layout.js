@@ -5,7 +5,6 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { SettingsProvider } from "@/contexts/SettingsContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { NotificationProvider } from "@/contexts/NotificationContext";
-import SettingsModal from "@/components/SettingsModal";
 import PageWrapper from "@/components/PageWrapper";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 import { Toaster } from "sonner";
@@ -83,8 +82,22 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" className="dark" suppressHydrationWarning>
       <head>
+        {/* Prevent flash of light theme */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var theme = localStorage.getItem('sefgh-theme') || 'dark';
+                  document.documentElement.classList.add(theme);
+                  document.documentElement.style.colorScheme = theme;
+                } catch (e) {}
+              })();
+            `,
+          }}
+        />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
           rel="preconnect"
@@ -218,7 +231,6 @@ export default function RootLayout({ children }) {
                 <LanguageProvider>
                   <ServiceWorkerRegister />
                   <PageWrapper>{children}</PageWrapper>
-                  <SettingsModal />
                   <Toaster
                     position="top-right"
                     closeButton

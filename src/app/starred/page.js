@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { SearchSidebar } from "@/components/search/SearchSidebar";
+import { MobileBottomNav } from "@/components/search/MobileBottomNav";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Header } from "@/components/Header";
 import { RepositoryCard } from "@/components/RepositoryCard";
@@ -76,7 +77,7 @@ export default function StarredPage() {
         className="flex h-full w-full bg-background gradient-mesh flex-col overflow-hidden"
         suppressHydrationWarning
       >
-        <div className="flex flex-1 min-h-0 p-2 sm:p-4 gap-2 sm:gap-4">
+        <div className="flex flex-1 min-h-0 p-2 sm:p-4 gap-2 sm:gap-4 pb-[72px] md:pb-2">
           <SearchSidebar user={user} />
 
           <SidebarInset className="flex flex-col glass-premium rounded-xl sm:rounded-2xl shadow-premium border border-white/10 overflow-hidden flex-1 min-h-0">
@@ -199,6 +200,9 @@ export default function StarredPage() {
             </main>
           </SidebarInset>
         </div>
+
+        {/* Mobile Bottom Navigation */}
+        <MobileBottomNav user={user} />
       </div>
     </SidebarProvider>
   );

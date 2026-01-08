@@ -20,10 +20,29 @@ const PageWrapper = memo(function PageWrapper({ children }) {
     pathname === "/playground" ||
     pathname === "/submissions";
 
+  // Pages that use AppFooter (big main site footer) - don't add small Footer
+  const hasAppFooter =
+    pathname === "/about" ||
+    pathname === "/brand" ||
+    pathname === "/careers" ||
+    pathname === "/contact" ||
+    pathname === "/pricing" ||
+    pathname === "/cookie-policy" ||
+    pathname === "/terms" ||
+    pathname === "/terms-of-use" ||
+    pathname === "/privacy" ||
+    pathname === "/accessibility" ||
+    pathname === "/versions" ||
+    pathname === "/feedback" ||
+    pathname === "/business" ||
+    pathname === "/links";
+
   return (
     <div className="h-screen flex flex-col overflow-hidden">
-      <div className="flex-1 flex flex-col min-h-0">{children}</div>
-      {!isLandingPage && !hasOwnLayout && <Footer />}
+      <div className="flex-1 flex flex-col min-h-0 overflow-auto">
+        {children}
+      </div>
+      {!isLandingPage && !hasOwnLayout && !hasAppFooter && <Footer />}
     </div>
   );
 });

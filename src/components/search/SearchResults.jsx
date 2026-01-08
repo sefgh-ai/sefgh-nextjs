@@ -2,8 +2,18 @@
 
 import { RepositoryCard } from "@/components/RepositoryCard";
 import { LoadingState, CompactEmptyState } from "@/components/shared";
-import { Star, GitFork, Clock, ExternalLink } from "lucide-react";
+import {
+  Star,
+  GitFork,
+  Clock,
+  ExternalLink,
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ViewToggle } from "@/components/search/ViewToggle";
 
 // Compact list item for list/compact views
 function RepositoryListItem({ repo, onSelect, compact = false }) {
@@ -129,7 +139,53 @@ export function SearchResults({
   onLoadMore,
   hasMore = false,
   loadingMore = false,
+  currentPage = 1,
+  onPageChange,
+  itemsPerPage = 30,
+  setView,
 }) {
+  const totalPages = Math.ceil(totalCount / itemsPerPage);
+  const showPagination = totalPages > 1 && onPageChange;
+
+  // Generate page numbers to show
+  const getPageNumbers = () => {
+    const pages = [];
+    const maxVisible = 5;
+
+    if (totalPages <= maxVisible + 2) {
+      // Show all pages if total is small
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
+    } else {
+      // Always show first page
+      pages.push(1);
+
+      // Calculate range around current page
+      let start = Math.max(2, currentPage - 1);
+      let end = Math.min(totalPages - 1, currentPage + 1);
+
+      // Adjust if at edges
+      if (currentPage <= 3) {
+        end = Math.min(maxVisible, totalPages - 1);
+      } else if (currentPage >= totalPages - 2) {
+        start = Math.max(2, totalPages - maxVisible + 1);
+      }
+
+      // Add ellipsis before range if needed
+      if (start > 2) pages.push("...");
+
+      // Add range
+      for (let i = start; i <= end; i++) pages.push(i);
+
+      // Add ellipsis after range if needed
+      if (end < totalPages - 1) pages.push("...");
+
+      // Always show last page
+      if (totalPages > 1) pages.push(totalPages);
+    }
+
+    return pages;
+  };
+
   if (loading) {
     return <LoadingState type="card" count={6} />;
   }
@@ -153,6 +209,7 @@ export function SearchResults({
           repositories
           {searchTime && <span className="ml-2">• Found in {searchTime}s</span>}
         </span>
+        {setView && <ViewToggle view={view} setView={setView} />}
       </div>
 
       {/* Grid View */}
@@ -196,8 +253,93 @@ export function SearchResults({
         </div>
       )}
 
-      {/* Load More Button */}
-      {hasMore && searchResults.length < totalCount && (
+      {/* Pagination Controls */}
+      {showPagination && (
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-8">
+          <div className="flex items-center gap-1">
+            {/* First Page */}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => onPageChange(1)}
+              disabled={currentPage === 1 || loadingMore}
+              className="h-9 w-9 p-0 rounded-lg glass-premium border-white/10"
+            >
+              <ChevronsLeft className="h-4 w-4" />
+            </Button>
+
+            {/* Previous Page */}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => onPageChange(currentPage - 1)}
+              disabled={currentPage === 1 || loadingMore}
+              className="h-9 w-9 p-0 rounded-lg glass-premium border-white/10"
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+
+            {/* Page Numbers */}
+            <div className="flex items-center gap-1 mx-2">
+              {getPageNumbers().map((page, idx) =>
+                page === "..." ? (
+                  <span
+                    key={`ellipsis-${idx}`}
+                    className="px-2 text-muted-foreground"
+                  >
+                    ...
+                  </span>
+                ) : (
+                  <Button
+                    key={page}
+                    variant={currentPage === page ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => onPageChange(page)}
+                    disabled={loadingMore}
+                    className={`h-9 w-9 p-0 rounded-lg ${
+                      currentPage === page
+                        ? "bg-blue-500/20 text-blue-400 border-blue-500/30"
+                        : "glass-premium border-white/10 hover:border-blue-500/30"
+                    }`}
+                  >
+                    {page}
+                  </Button>
+                )
+              )}
+            </div>
+
+            {/* Next Page */}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => onPageChange(currentPage + 1)}
+              disabled={currentPage === totalPages || loadingMore}
+              className="h-9 w-9 p-0 rounded-lg glass-premium border-white/10"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+
+            {/* Last Page */}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => onPageChange(totalPages)}
+              disabled={currentPage === totalPages || loadingMore}
+              className="h-9 w-9 p-0 rounded-lg glass-premium border-white/10"
+            >
+              <ChevronsRight className="h-4 w-4" />
+            </Button>
+          </div>
+
+          {/* Page Info */}
+          <span className="text-sm text-muted-foreground">
+            Page {currentPage} of {totalPages.toLocaleString()}
+          </span>
+        </div>
+      )}
+
+      {/* Load More Button (fallback if no pagination handler) */}
+      {!showPagination && hasMore && searchResults.length < totalCount && (
         <div className="flex justify-center mt-8">
           <Button
             variant="outline"

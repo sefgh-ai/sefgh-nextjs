@@ -1,11 +1,10 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
+    color-scheme: dark;
     --font-inter: 'Inter', sans-serif;
     --font-mono: 'JetBrains Mono', monospace;
     --background: 240 5% 96%;
@@ -80,6 +79,12 @@
 
 /* 🎨 Glassmorphism Utilities */
 @layer utilities {
+
+  /* Safe area for iOS devices with home indicator */
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
   .glass {
     @apply bg-white/10 dark:bg-white/10 backdrop-blur-lg border border-white/20 dark:border-white/20;
   }
@@ -89,7 +94,8 @@
   }
 
   .glass-premium {
-    @apply bg-card/80 dark:bg-black/15 backdrop-blur-xl border border-border shadow-premium;
+    @apply bg-card/80 dark:bg-black/15 backdrop-blur-md border border-border shadow-premium;
+    will-change: transform;
   }
 
   .smooth-shadow {
@@ -217,7 +223,7 @@
     radial-gradient(at 100% 100%, hsla(215, 20%, 45%, 0.15) 0px, transparent 50%),
     radial-gradient(at 0% 100%, hsla(189, 94%, 43%, 0.17) 0px, transparent 50%);
   background-size: 200% 200%;
-  animation: gradient-flow 25s ease-in-out infinite;
+  animation: gradient-flow 45s ease-in-out infinite;
 }
 
 .dark .gradient-mesh {
@@ -227,7 +233,7 @@
     radial-gradient(at 100% 100%, hsla(215, 20%, 45%, 0.17) 0px, transparent 50%),
     radial-gradient(at 0% 100%, hsla(189, 94%, 43%, 0.19) 0px, transparent 50%);
   background-size: 200% 200%;
-  animation: gradient-flow 25s ease-in-out infinite;
+  animation: gradient-flow 45s ease-in-out infinite;
 }
 
 .gradient-shimmer {

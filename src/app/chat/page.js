@@ -1,7 +1,6 @@
 "use client";
 
 import { useAuth } from "@/contexts/AuthContext";
-import { useSettings } from "@/contexts/SettingsContext";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
@@ -39,7 +38,6 @@ function ChatPageContent() {
     user,
     loading: authLoading,
   });
-  const { openSettings } = useSettings();
   const router = useRouter();
   const isMobile = useIsMobile();
 
@@ -247,7 +245,6 @@ function ChatPageContent() {
           setClearDialogOpen={setClearDialogOpen}
           userProfile={userProfile}
           user={user}
-          openSettings={openSettings}
           isMobile={isMobile}
         />
 
