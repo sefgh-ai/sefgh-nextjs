@@ -1,8 +1,9 @@
-const CACHE_NAME = "sefgh-v1";
+const CACHE_NAME = "sefgh-v2";
 
 // Assets to cache on install
 const STATIC_ASSETS = [
   "/",
+  "/?source=pwa",
   "/home",
   "/chat",
   "/login",
@@ -40,20 +41,25 @@ self.addEventListener("fetch", (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
-  // Skip non-GET requests
-  if (request.method !== "GET") return;
+  // Skip non-GET requests - let browser handle them
+  if (request.method !== "GET") {
+    return;
+  }
 
-  // Skip API requests and auth-related requests
+  // Skip API requests and auth-related requests - let browser handle them
   if (
     url.pathname.startsWith("/api/") ||
     url.pathname.startsWith("/auth/") ||
-    url.pathname.includes("supabase")
+    url.pathname.includes("supabase") ||
+    url.hostname.includes("supabase")
   ) {
     return;
   }
 
-  // Skip external requests
-  if (url.origin !== location.origin) return;
+  // Skip external requests - let browser handle them
+  if (url.origin !== location.origin) {
+    return;
+  }
 
   event.respondWith(
     fetch(request)

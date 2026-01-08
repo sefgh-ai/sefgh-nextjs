@@ -37,7 +37,9 @@ export async function middleware(request) {
   } = await supabase.auth.getSession();
 
   // Redirect logged-in users from landing page to home
-  if (pathname === "/" && session) {
+  // BUT allow PWA start_url to work (has ?source=pwa)
+  const isPWALaunch = request.nextUrl.searchParams.get("source") === "pwa";
+  if (pathname === "/" && session && !isPWALaunch) {
     const url = request.nextUrl.clone();
     url.pathname = "/home";
     return NextResponse.redirect(url);
@@ -49,8 +51,8 @@ export async function middleware(request) {
 export const config = {
   matcher: [
     /*
-     * Match all request paths except static files
+     * Match all request paths except static files and PWA manifest
      */
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|js|css|woff|woff2|ttf|eot)$).*)",
+    "/((?!_next/static|_next/image|favicon.ico|manifest.json|sw.js|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|js|css|woff|woff2|ttf|eot)$).*)",
   ],
 };

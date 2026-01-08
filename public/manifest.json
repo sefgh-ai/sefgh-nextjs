@@ -1,9 +1,14 @@
 {
+    "id": "/",
     "name": "SEFGH - AI-Powered GitHub Repository Search",
     "short_name": "SEFGH",
     "description": "Discover hidden GitHub gems with SEFGH's intelligent search. Go beyond keywords with natural language queries and find projects that truly match your needs.",
-    "start_url": "/",
+    "start_url": "/?source=pwa",
     "display": "standalone",
+    "display_override": [
+        "standalone",
+        "minimal-ui"
+    ],
     "background_color": "#0a0a0b",
     "theme_color": "#2563eb",
     "orientation": "any",
@@ -74,22 +79,6 @@
             "sizes": "512x512",
             "type": "image/png",
             "purpose": "maskable"
-        }
-    ],
-    "screenshots": [
-        {
-            "src": "/screenshots/desktop-home.png",
-            "sizes": "1280x720",
-            "type": "image/png",
-            "form_factor": "wide",
-            "label": "SEFGH Home - Desktop View"
-        },
-        {
-            "src": "/screenshots/mobile-home.png",
-            "sizes": "390x844",
-            "type": "image/png",
-            "form_factor": "narrow",
-            "label": "SEFGH Home - Mobile View"
         }
     ],
     "shortcuts": [
