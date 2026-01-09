@@ -101,6 +101,11 @@ export const AuthProvider = ({ children }) => {
 
       if (event === "SIGNED_IN" && session?.user) {
         setUser(session.user);
+        // Clear onboarding session dismissal on new sign in
+        // This ensures onboarding shows again for incomplete users
+        sessionStorage.removeItem(
+          `onboarding_dismissed_session_${session.user.id}`
+        );
       } else if (event === "SIGNED_OUT") {
         setUser(null);
       } else if (event === "USER_UPDATED" && session?.user) {
@@ -147,10 +152,15 @@ export const AuthProvider = ({ children }) => {
   }, [supabase]);
 
   const signOut = useCallback(async () => {
+    // Clear onboarding session storage on logout
+    if (user?.id) {
+      sessionStorage.removeItem(`onboarding_dismissed_session_${user.id}`);
+    }
+
     await supabase.auth.signOut();
     router.push("/");
     router.refresh();
-  }, [supabase, router]);
+  }, [supabase, router, user?.id]);
 
   const value = useMemo(
     () => ({

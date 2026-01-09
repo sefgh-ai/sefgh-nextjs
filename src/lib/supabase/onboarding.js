@@ -5,8 +5,13 @@
 
 import { createClient } from "@/lib/supabase/client";
 
-// Module-level client - created once and reused
-const supabase = createClient();
+/**
+ * Get a fresh Supabase client for each operation
+ * This ensures auth state is current
+ */
+function getSupabase() {
+  return createClient();
+}
 
 /**
  * Get user's onboarding data
@@ -14,6 +19,7 @@ const supabase = createClient();
  * @returns {Promise<Object|null>} - Onboarding data or null
  */
 export async function getOnboardingData(userId) {
+  const supabase = getSupabase();
   const { data, error } = await supabase
     .from("onboarding_data")
     .select("*")
@@ -55,6 +61,7 @@ export async function getOnboardingData(userId) {
  * @returns {Promise<Object>} - Created onboarding data
  */
 export async function createOnboardingData(userId) {
+  const supabase = getSupabase();
   const { data, error } = await supabase
     .from("onboarding_data")
     .insert([
@@ -100,6 +107,7 @@ export async function createOnboardingData(userId) {
  * @returns {Promise<Object>} - Updated onboarding data
  */
 export async function updateOnboardingData(userId, updates) {
+  const supabase = getSupabase();
   const { data, error } = await supabase
     .from("onboarding_data")
     .update(updates)
@@ -168,12 +176,23 @@ export async function skipOnboarding(userId) {
  * @returns {Promise<boolean>}
  */
 export async function needsOnboarding(userId) {
-  const data = await getOnboardingData(userId);
+  console.log("[needsOnboarding] Checking for userId:", userId);
+  try {
+    const data = await getOnboardingData(userId);
+    console.log("[needsOnboarding] Got data:", data);
 
-  // Needs onboarding if:
-  // - No data exists, OR
-  // - Data exists but not completed and not skipped
-  return !data || (!data.completed && !data.skipped);
+    // Needs onboarding if:
+    // - No data exists, OR
+    // - Data exists but not completed
+    // Note: skipped only dismisses for current session, not permanently
+    const result = !data || !data.completed;
+    console.log("[needsOnboarding] Result:", result);
+    return result;
+  } catch (error) {
+    console.error("[needsOnboarding] Error:", error);
+    // If there's an error, assume user needs onboarding (will be created on first use)
+    return true;
+  }
 }
 
 /**

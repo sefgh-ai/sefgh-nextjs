@@ -7,7 +7,7 @@ import { SearchNavbar } from "@/components/search/SearchNavbar";
 import { SearchSidebar } from "@/components/search/SearchSidebar";
 import { MobileBottomNav } from "@/components/search/MobileBottomNav";
 import { PreferencesDialog } from "@/components/PreferencesDialog";
-import OnboardingBanner from "@/components/OnboardingBanner";
+import AutoOnboarding from "@/components/AutoOnboarding";
 import Footer from "@/components/Footer";
 import {
   TopicsNav,
@@ -67,7 +67,8 @@ export default function HomePage() {
             />
 
             <div className="w-full px-2 sm:px-6 lg:px-8 py-2 sm:py-6 pb-4 overflow-y-auto flex-1 min-h-0">
-              <OnboardingBanner />
+              {/* Auto Onboarding Modal - opens automatically for new users */}
+              <AutoOnboarding />
 
               {/* Topics Navigation - Horizontal menu at top */}
               <TopicsNav
