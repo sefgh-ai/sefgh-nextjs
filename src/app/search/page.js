@@ -16,7 +16,7 @@ import { SearchStats } from "@/components/search/SearchStats";
 import { ViewToggle } from "@/components/search/ViewToggle";
 import { QueryUnderstandingPanel } from "@/components/search/QueryUnderstandingPanel";
 import Footer from "@/components/Footer";
-import { useGitHubSearch } from "./hooks/useGitHubSearch";
+import { useGitHubSearch } from "@/hooks/search/useGitHubSearch";
 import { PageLoadingSpinner } from "@/components/shared/LoadingSpinner";
 
 function SearchPageContent() {
@@ -57,7 +57,7 @@ function SearchPageContent() {
         className="flex h-full w-full bg-background gradient-mesh flex-col overflow-hidden"
         suppressHydrationWarning
       >
-        <div className="flex flex-1 min-h-0 p-2 sm:p-4 gap-2 sm:gap-4 pb-[72px] md:pb-2">
+        <div className="flex flex-1 min-h-0 p-2 sm:p-4 gap-1 sm:gap-2 pb-[72px] md:pb-2">
           <SearchSidebar user={user} />
 
           <SidebarInset className="flex flex-col glass-premium rounded-xl sm:rounded-2xl shadow-premium border border-white/10 overflow-hidden flex-1 min-h-0">

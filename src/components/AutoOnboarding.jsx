@@ -31,18 +31,6 @@ export default function AutoOnboarding() {
 
     console.log("[AutoOnboarding] Checking for user:", user.id);
 
-    // Check if user dismissed in current session
-    const dismissedThisSession = sessionStorage.getItem(
-      `onboarding_dismissed_session_${user.id}`
-    );
-
-    if (dismissedThisSession) {
-      console.log("[AutoOnboarding] Dismissed this session");
-      setShowModal(false);
-      setIsLoading(false);
-      return;
-    }
-
     // Check if onboarding is needed
     const checkOnboarding = async () => {
       try {
@@ -82,11 +70,18 @@ export default function AutoOnboarding() {
     router.refresh();
   };
 
-  const handleSkip = () => {
+  const handleSkip = async () => {
     setShowModal(false);
     if (user?.id) {
-      // Only dismiss for current session - will show again next visit
-      sessionStorage.setItem(`onboarding_dismissed_session_${user.id}`, "true");
+      try {
+        // Import skipOnboarding function
+        const { skipOnboarding } = await import("@/lib/supabase/onboarding");
+        // Save skip to database so it persists across sessions
+        await skipOnboarding(user.id);
+        console.log("[AutoOnboarding] Onboarding skipped and saved");
+      } catch (error) {
+        console.error("[AutoOnboarding] Error skipping onboarding:", error);
+      }
     }
   };
 

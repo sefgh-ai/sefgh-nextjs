@@ -22,11 +22,12 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { NotificationBell } from "@/components/NotificationBell";
 import { toast } from "sonner";
-import { useCallback, memo } from "react";
+import { useCallback, memo, useState } from "react";
 
 const Header = memo(function Header({ showProfileDropdown = true }) {
   const { setTheme, theme } = useTheme();
   const { user, signOut, loading } = useAuth();
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const handleSignOut = useCallback(async () => {
     try {
@@ -84,79 +85,76 @@ const Header = memo(function Header({ showProfileDropdown = true }) {
               <span className="sm:hidden">Login</span>
             </Button>
           </Link>
-          <Button variant="outline" size="sm" className="hidden sm:inline-flex">
-            GitHub Search
-          </Button>
         </>
       ) : (
         <>
-          <Link href="/search" className="hidden sm:inline-flex">
-            <Button variant="outline" size="sm">
-              GitHub Search
-            </Button>
-          </Link>
-
           {/* Notification Bell */}
           <NotificationBell />
 
-          {/* Profile Dropdown - conditionally rendered */}
+          {/* Profile Dropdown - conditionally rendered - Desktop Only (hidden on mobile) */}
           {showProfileDropdown && (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  className="relative h-8 w-8 rounded-full"
-                >
-                  <Avatar
-                    className="h-8 w-8"
-                    key={user?.user_metadata?.avatar_url}
+            <div
+              className="hidden md:block"
+              onMouseEnter={() => setDropdownOpen(true)}
+              onMouseLeave={() => setDropdownOpen(false)}
+            >
+              <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    className="relative h-8 w-8 rounded-full"
                   >
-                    <AvatarImage
-                      src={user?.user_metadata?.avatar_url}
-                      alt={user?.email}
-                      crossOrigin="anonymous"
-                    />
-                    <AvatarFallback>{getUserInitials()}</AvatarFallback>
-                  </Avatar>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuLabel>
-                  <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-medium leading-none">
-                      {user?.user_metadata?.full_name || "User"}
-                    </p>
-                    <p className="text-xs leading-none text-muted-foreground">
-                      {user?.email}
-                    </p>
-                  </div>
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <Link href="/profile">
-                  <DropdownMenuItem>
-                    <UserIcon className="mr-2 h-4 w-4" />
-                    <span>Profile</span>
+                    <Avatar
+                      className="h-8 w-8"
+                      key={user?.user_metadata?.avatar_url}
+                    >
+                      <AvatarImage
+                        src={user?.user_metadata?.avatar_url}
+                        alt={user?.email}
+                        crossOrigin="anonymous"
+                      />
+                      <AvatarFallback>{getUserInitials()}</AvatarFallback>
+                    </Avatar>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuLabel>
+                    <div className="flex flex-col space-y-1">
+                      <p className="text-sm font-medium leading-none">
+                        {user?.user_metadata?.full_name || "User"}
+                      </p>
+                      <p className="text-xs leading-none text-muted-foreground">
+                        {user?.email}
+                      </p>
+                    </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <Link href="/profile">
+                    <DropdownMenuItem>
+                      <UserIcon className="mr-2 h-4 w-4" />
+                      <span>Profile</span>
+                    </DropdownMenuItem>
+                  </Link>
+                  <Link href="/settings">
+                    <DropdownMenuItem className="cursor-pointer">
+                      <Cog6ToothIcon className="mr-2 h-4 w-4" />
+                      <span>Settings</span>
+                    </DropdownMenuItem>
+                  </Link>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleSignOut();
+                    }}
+                    className="text-destructive cursor-pointer"
+                  >
+                    <ArrowRightOnRectangleIcon className="mr-2 h-4 w-4" />
+                    <span>Log out</span>
                   </DropdownMenuItem>
-                </Link>
-                <Link href="/settings">
-                  <DropdownMenuItem className="cursor-pointer">
-                    <Cog6ToothIcon className="mr-2 h-4 w-4" />
-                    <span>Settings</span>
-                  </DropdownMenuItem>
-                </Link>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleSignOut();
-                  }}
-                  className="text-destructive cursor-pointer"
-                >
-                  <ArrowRightOnRectangleIcon className="mr-2 h-4 w-4" />
-                  <span>Log out</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
           )}
         </>
       )}

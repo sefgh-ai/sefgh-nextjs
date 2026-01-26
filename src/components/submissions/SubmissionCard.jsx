@@ -1,9 +1,9 @@
-'use client'
+"use client";
 
-import React from 'react'
-import { Trash2, Calendar, ExternalLink } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { formatSubmissionDate } from '../utils/submissionHelpers'
+import React from "react";
+import { Trash2, Calendar, ExternalLink } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { formatSubmissionDate } from "@/lib/utils/submissions/submissionHelpers";
 
 /**
  * Individual submission card component
@@ -64,16 +64,16 @@ const SubmissionCard = React.memo(({ submission, onDelete }) => {
           variant="outline"
           size="sm"
           className="flex-1"
-          onClick={() => window.open(submission.url, '_blank')}
+          onClick={() => window.open(submission.url, "_blank")}
         >
           <ExternalLink className="h-3 w-3 mr-1.5" />
           View on GitHub
         </Button>
       </div>
     </div>
-  )
-})
+  );
+});
 
-SubmissionCard.displayName = 'SubmissionCard'
+SubmissionCard.displayName = "SubmissionCard";
 
-export default SubmissionCard
+export default SubmissionCard;

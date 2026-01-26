@@ -20,7 +20,7 @@ import { useFilteredProjects } from "@/hooks/home/useFilteredProjects";
 import {
   getInitialPreferences,
   clearSavedPreferences,
-} from "./utils/preferencesHelper";
+} from "@/lib/utils/home/preferencesHelper";
 
 export default function HomePage() {
   const { user, loading: authLoading } = useAuth();

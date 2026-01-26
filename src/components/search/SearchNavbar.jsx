@@ -369,7 +369,7 @@ export function SearchNavbar({
               <span className="hidden sm:inline">Submit</span>
             </Button>
           </SubmitProjectDialog>
-          <Header showProfileDropdown={false} />
+          <Header showProfileDropdown={true} />
         </div>
       </div>
     </div>

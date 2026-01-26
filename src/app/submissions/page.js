@@ -2,10 +2,10 @@
 
 import { useAuth } from "@/contexts/AuthContext";
 import { useAuthGuard } from "@/hooks/useAuthGuard";
-import { useSubmissions } from "./hooks/useSubmissions";
-import SubmissionCard from "./components/SubmissionCard";
-import SubmissionsEmptyState from "./components/SubmissionsEmptyState";
-import SubmissionsLoadingSkeleton from "./components/SubmissionsLoadingSkeleton";
+import { useSubmissions } from "@/hooks/submissions/useSubmissions";
+import SubmissionCard from "@/components/submissions/SubmissionCard";
+import SubmissionsEmptyState from "@/components/submissions/SubmissionsEmptyState";
+import SubmissionsLoadingSkeleton from "@/components/submissions/SubmissionsLoadingSkeleton";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { SearchNavbar } from "@/components/search/SearchNavbar";
 import { SearchSidebar } from "@/components/search/SearchSidebar";

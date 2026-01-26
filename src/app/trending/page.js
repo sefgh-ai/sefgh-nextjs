@@ -9,15 +9,15 @@ import { SearchNavbar } from "@/components/search/SearchNavbar";
 import { SearchSidebar } from "@/components/search/SearchSidebar";
 import { MobileBottomNav } from "@/components/search/MobileBottomNav";
 import { useAuth } from "@/contexts/AuthContext";
-import { TrendingFilters } from "./components/TrendingFilters";
-import { TrendingRepositoryCard } from "./components/TrendingRepositoryCard";
-import { TrendingDeveloperCard } from "./components/TrendingDeveloperCard";
-import { useTrendingData } from "./hooks/useTrendingData";
+import { TrendingFilters } from "@/components/trending/TrendingFilters";
+import { TrendingRepositoryCard } from "@/components/trending/TrendingRepositoryCard";
+import { TrendingDeveloperCard } from "@/components/trending/TrendingDeveloperCard";
+import { useTrendingData } from "@/hooks/trending/useTrendingData";
 import {
   SPOKEN_LANGUAGES,
   SORT_OPTIONS,
   sortRepositories,
-} from "./utils/trendingHelpers";
+} from "@/lib/utils/trending/trendingHelpers";
 import { getHeatIndicator } from "@/lib/utils/colors";
 import { useMemo } from "react";
 

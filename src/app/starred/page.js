@@ -77,7 +77,7 @@ export default function StarredPage() {
         className="flex h-full w-full bg-background gradient-mesh flex-col overflow-hidden"
         suppressHydrationWarning
       >
-        <div className="flex flex-1 min-h-0 p-2 sm:p-4 gap-2 sm:gap-4 pb-[72px] md:pb-2">
+        <div className="flex flex-1 min-h-0 p-2 sm:p-4 gap-1 sm:gap-2 pb-[72px] md:pb-2">
           <SearchSidebar user={user} />
 
           <SidebarInset className="flex flex-col glass-premium rounded-xl sm:rounded-2xl shadow-premium border border-white/10 overflow-hidden flex-1 min-h-0">
@@ -90,7 +90,7 @@ export default function StarredPage() {
                   <span className="font-semibold">Starred Repositories</span>
                 </div>
                 <div className="flex-1" />
-                <Header showProfileDropdown={false} />
+                <Header showProfileDropdown={true} />
               </div>
             </div>
 

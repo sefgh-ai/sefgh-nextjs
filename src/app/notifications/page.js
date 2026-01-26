@@ -5,23 +5,23 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useAuthGuard } from "@/hooks/useAuthGuard";
 import { PageLoadingSpinner } from "@/components/shared/LoadingSpinner";
 import ErrorBoundary from "@/components/shared/ErrorBoundary";
-import { NotificationSidebar } from "./components/NotificationSidebar";
-import { NotificationTopBar } from "./components/NotificationTopBar";
-import { NotificationList } from "./components/NotificationList";
-import { NotificationMobileHeader } from "./components/NotificationMobileHeader";
-import { useNotifications } from "./hooks/useNotifications";
-import { useNotificationFilters } from "./hooks/useNotificationFilters";
-import { formatTimestamp } from "./utils/notificationHelpers";
+import { NotificationSidebar } from "@/components/notifications/NotificationSidebar";
+import { NotificationTopBar } from "@/components/notifications/NotificationTopBar";
+import { NotificationList } from "@/components/notifications/NotificationList";
+import { NotificationMobileHeader } from "@/components/notifications/NotificationMobileHeader";
+import { useNotifications } from "@/hooks/notifications/useNotifications";
+import { useNotificationFilters } from "@/hooks/notifications/useNotificationFilters";
+import { formatTimestamp } from "@/lib/utils/notifications/notificationHelpers";
 
 function NotificationsContent() {
   const { user, loading } = useAuth();
   const { isAuthenticated, isLoading } = useAuthGuard({ user, loading });
-  const { 
-    filter, 
-    setFilter, 
-    readFilter, 
-    setReadFilter, 
-    searchQuery, 
+  const {
+    filter,
+    setFilter,
+    readFilter,
+    setReadFilter,
+    searchQuery,
     setSearchQuery,
     typeFilter,
     setTypeFilter,
@@ -127,7 +127,9 @@ function NotificationsContent() {
 export default function NotificationsPage() {
   return (
     <ErrorBoundary>
-      <Suspense fallback={<PageLoadingSpinner message="Loading notifications..." />}>
+      <Suspense
+        fallback={<PageLoadingSpinner message="Loading notifications..." />}
+      >
         <NotificationsContent />
       </Suspense>
     </ErrorBoundary>

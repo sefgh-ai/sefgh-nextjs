@@ -8,7 +8,7 @@ import {
   getLastRefreshTime,
   TRENDING_TOPICS,
 } from "@/lib/trending";
-import { getLanguageColor } from "../utils/trendingHelpers";
+import { getLanguageColor } from "@/lib/utils/trending/trendingHelpers";
 
 export function useTrendingData(
   activeTab,
@@ -51,9 +51,7 @@ export function useTrendingData(
   const fetchTrendingRepos = async () => {
     try {
       const langParam =
-        programmingLanguage !== "any"
-          ? `?language=${programmingLanguage}`
-          : "";
+        programmingLanguage !== "any" ? `?language=${programmingLanguage}` : "";
       const spokenLangParam =
         spokenLanguage !== "any" ? `&spokenLanguage=${spokenLanguage}` : "";
       const response = await fetch(

@@ -3,9 +3,15 @@ import { createClient } from "@/lib/supabase/client";
 import {
   saveNotificationData,
   loadNotificationData,
-} from "../utils/notificationHelpers";
+} from "@/lib/utils/notifications/notificationHelpers";
 
-export function useNotifications(user, filter, readFilter, searchQuery, typeFilter = null) {
+export function useNotifications(
+  user,
+  filter,
+  readFilter,
+  searchQuery,
+  typeFilter = null
+) {
   const [allNotifications, setAllNotifications] = useState([]);
   const [loadingNotifications, setLoadingNotifications] = useState(true);
   const [selectedIds, setSelectedIds] = useState([]);
@@ -84,7 +90,15 @@ export function useNotifications(user, filter, readFilter, searchQuery, typeFilt
     }
 
     return filtered;
-  }, [allNotifications, filter, readFilter, searchQuery, typeFilter, savedIds, doneIds]);
+  }, [
+    allNotifications,
+    filter,
+    readFilter,
+    searchQuery,
+    typeFilter,
+    savedIds,
+    doneIds,
+  ]);
 
   // Compute counts
   const typeCounts = useMemo(() => {
@@ -94,19 +108,22 @@ export function useNotifications(user, filter, readFilter, searchQuery, typeFilt
       warning: 0,
       error: 0,
     };
-    
-    const inboxNotifications = allNotifications.filter((n) => !doneIds.includes(n.id));
+
+    const inboxNotifications = allNotifications.filter(
+      (n) => !doneIds.includes(n.id)
+    );
     inboxNotifications.forEach((n) => {
       if (n.type && counts[n.type] !== undefined) {
         counts[n.type]++;
       }
     });
-    
+
     return counts;
   }, [allNotifications, doneIds]);
 
   const unreadCount = useMemo(() => {
-    return allNotifications.filter((n) => !n.is_read && !doneIds.includes(n.id)).length;
+    return allNotifications.filter((n) => !n.is_read && !doneIds.includes(n.id))
+      .length;
   }, [allNotifications, doneIds]);
 
   const inboxCount = useMemo(() => {
@@ -149,7 +166,9 @@ export function useNotifications(user, filter, readFilter, searchQuery, typeFilt
 
       if (error) throw error;
 
-      setAllNotifications((prev) => prev.filter((n) => n.id !== notificationId));
+      setAllNotifications((prev) =>
+        prev.filter((n) => n.id !== notificationId)
+      );
       setSelectedIds((prev) => prev.filter((id) => id !== notificationId));
     } catch (error) {
       console.error("Error deleting notification:", error);
@@ -210,7 +229,8 @@ export function useNotifications(user, filter, readFilter, searchQuery, typeFilt
     setSelectedIds(notifications.map((n) => n.id));
   };
 
-  const isAllSelected = notifications.length > 0 && 
+  const isAllSelected =
+    notifications.length > 0 &&
     notifications.every((n) => selectedIds.includes(n.id));
 
   return {

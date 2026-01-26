@@ -1,46 +1,46 @@
-'use client'
+"use client";
 
-import { useAuth } from "@/contexts/AuthContext"
-import { useRouter } from "next/navigation"
-import { useEffect } from "react"
-import { Button } from "@/components/ui/button"
-import { ArrowLeft } from "lucide-react"
-import { Header } from "@/components/Header"
-import { ActivityLogger } from "@/lib/activity-logger"
-import UsageContributionsCard from "@/components/usage-contributions/UsageContributionsCard"
-import { PageLoadingSpinner } from "@/components/shared/LoadingSpinner"
-import { useAuthGuard } from "@/hooks/useAuthGuard"
-import { useProfileData } from "./hooks/useProfileData"
-import { getUserInitials } from "./utils/profileHelpers"
-import ProfileHeader from "./components/ProfileHeader"
-import PersonalInfoForm from "./components/PersonalInfoForm"
-import AccountInfoCard from "./components/AccountInfoCard"
+import { useAuth } from "@/contexts/AuthContext";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft } from "lucide-react";
+import { Header } from "@/components/Header";
+import { ActivityLogger } from "@/lib/activity-logger";
+import UsageContributionsCard from "@/components/usage-contributions/UsageContributionsCard";
+import { PageLoadingSpinner } from "@/components/shared/LoadingSpinner";
+import { useAuthGuard } from "@/hooks/useAuthGuard";
+import { useProfileData } from "@/hooks/profile/useProfileData";
+import { getUserInitials } from "@/lib/utils/profile/profileHelpers";
+import ProfileHeader from "@/components/profile/ProfileHeader";
+import PersonalInfoForm from "@/components/profile/PersonalInfoForm";
+import AccountInfoCard from "@/components/profile/AccountInfoCard";
 
 export default function ProfilePage() {
-  const { user, refreshUser } = useAuth()
-  const router = useRouter()
-  const { isAuthenticated, isLoading } = useAuthGuard()
-  
+  const { user, refreshUser } = useAuth();
+  const router = useRouter();
+  const { isAuthenticated, isLoading } = useAuthGuard();
+
   const {
     formData,
     loading,
     updateProfile,
     updateFormData,
-    handleAvatarUpload
-  } = useProfileData(user, refreshUser)
+    handleAvatarUpload,
+  } = useProfileData(user, refreshUser);
 
   useEffect(() => {
     if (user) {
-      ActivityLogger.profileView()
+      ActivityLogger.profileView();
     }
-  }, [user])
+  }, [user]);
 
   if (isLoading) {
-    return <PageLoadingSpinner />
+    return <PageLoadingSpinner />;
   }
 
   if (!isAuthenticated) {
-    return null
+    return null;
   }
 
   return (
@@ -53,11 +53,7 @@ export default function ProfilePage() {
       </div>
 
       <div className="container max-w-4xl mx-auto py-8 px-4">
-        <Button 
-          variant="ghost" 
-          onClick={() => router.back()}
-          className="mb-4"
-        >
+        <Button variant="ghost" onClick={() => router.back()} className="mb-4">
           <ArrowLeft className="h-4 w-4 mr-2" />
           Back
         </Button>
@@ -85,5 +81,5 @@ export default function ProfilePage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

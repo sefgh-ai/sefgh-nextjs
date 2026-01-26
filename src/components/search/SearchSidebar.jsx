@@ -176,20 +176,6 @@ export function SearchSidebar({ user }) {
                 </SidebarMenu>
               </SidebarGroupContent>
             </SidebarGroup>
-
-            {/* Settings Section */}
-            <SidebarGroup>
-              <SidebarGroupContent>
-                <SidebarMenu className="space-y-1">
-                  <NavItem
-                    href="/settings"
-                    icon={Settings}
-                    label="Settings"
-                    isActive={pathname === "/settings"}
-                  />
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </SidebarGroup>
           </>
         ) : (
           /* Get Started for logged out users */

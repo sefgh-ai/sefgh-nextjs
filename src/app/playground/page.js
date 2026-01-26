@@ -10,8 +10,8 @@ import { SearchNavbar } from "@/components/search/SearchNavbar";
 import { SearchSidebar } from "@/components/search/SearchSidebar";
 import { MobileBottomNav } from "@/components/search/MobileBottomNav";
 import Footer from "@/components/Footer";
-import PlaygroundHeader from "./components/PlaygroundHeader";
-import { playgroundTabs } from "./utils/tabConfig";
+import PlaygroundHeader from "@/components/playground/PlaygroundHeader";
+import { playgroundTabs } from "@/lib/utils/playground/tabConfig";
 
 export default function PlaygroundPage() {
   const { user } = useAuth() || {};

@@ -1,10 +1,23 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect, useCallback, useMemo } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  useMemo,
+} from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
-import { Bell, CheckCircle, AlertTriangle, AlertCircle, Info } from "lucide-react";
+import {
+  Bell,
+  CheckCircle,
+  AlertTriangle,
+  AlertCircle,
+  Info,
+} from "lucide-react";
 
 const NotificationContext = createContext(null);
 
@@ -70,39 +83,46 @@ export function NotificationProvider({ children }) {
     toast(notification.title, {
       description: notification.message,
       icon: <Icon className={`h-5 w-5 ${colorClass}`} />,
-      action: notification.link ? {
-        label: "View",
-        onClick: () => {
-          window.location.href = notification.link;
-        },
-      } : undefined,
+      action: notification.link
+        ? {
+            label: "View",
+            onClick: () => {
+              window.location.href = notification.link;
+            },
+          }
+        : undefined,
       duration: 5000,
     });
   }, []);
 
   // Handle real-time updates
-  const handleRealtimeUpdate = useCallback((payload) => {
-    if (payload.eventType === "INSERT") {
-      setNotifications((prev) => [payload.new, ...prev].slice(0, 50));
-      if (!payload.new.is_read) {
-        setUnreadCount((prev) => prev + 1);
-        // Show toast for new notification
-        showNotificationToast(payload.new);
+  const handleRealtimeUpdate = useCallback(
+    (payload) => {
+      if (payload.eventType === "INSERT") {
+        setNotifications((prev) => [payload.new, ...prev].slice(0, 50));
+        if (!payload.new.is_read) {
+          setUnreadCount((prev) => prev + 1);
+          // Show toast for new notification
+          showNotificationToast(payload.new);
+        }
+      } else if (payload.eventType === "UPDATE") {
+        setNotifications((prev) =>
+          prev.map((n) => (n.id === payload.new.id ? payload.new : n))
+        );
+        if (payload.old.is_read !== payload.new.is_read) {
+          setUnreadCount((prev) =>
+            payload.new.is_read ? Math.max(0, prev - 1) : prev + 1
+          );
+        }
+      } else if (payload.eventType === "DELETE") {
+        setNotifications((prev) => prev.filter((n) => n.id !== payload.old.id));
+        if (!payload.old.is_read) {
+          setUnreadCount((prev) => Math.max(0, prev - 1));
+        }
       }
-    } else if (payload.eventType === "UPDATE") {
-      setNotifications((prev) =>
-        prev.map((n) => (n.id === payload.new.id ? payload.new : n))
-      );
-      if (payload.old.is_read !== payload.new.is_read) {
-        setUnreadCount((prev) => (payload.new.is_read ? Math.max(0, prev - 1) : prev + 1));
-      }
-    } else if (payload.eventType === "DELETE") {
-      setNotifications((prev) => prev.filter((n) => n.id !== payload.old.id));
-      if (!payload.old.is_read) {
-        setUnreadCount((prev) => Math.max(0, prev - 1));
-      }
-    }
-  }, [showNotificationToast]);
+    },
+    [showNotificationToast]
+  );
 
   // Set up real-time subscription
   useEffect(() => {
@@ -140,23 +160,35 @@ export function NotificationProvider({ children }) {
   }, [user?.id, supabase, fetchNotifications, handleRealtimeUpdate]);
 
   // Mark a single notification as read
-  const markAsRead = useCallback(async (notificationId) => {
-    if (!user?.id) return { error: "Not authenticated" };
+  const markAsRead = useCallback(
+    async (notificationId) => {
+      if (!user?.id) return { error: "Not authenticated" };
 
-    try {
-      const { error } = await supabase
-        .from("notifications")
-        .update({ is_read: true })
-        .eq("id", notificationId)
-        .eq("user_id", user.id);
+      try {
+        const { error } = await supabase
+          .from("notifications")
+          .update({ is_read: true })
+          .eq("id", notificationId)
+          .eq("user_id", user.id);
 
-      if (error) throw error;
-      return { error: null };
-    } catch (error) {
-      console.error("Error marking notification as read:", error);
-      return { error };
-    }
-  }, [user?.id, supabase]);
+        if (error) throw error;
+
+        // Optimistic UI update - update local state immediately
+        setNotifications((prev) =>
+          prev.map((n) =>
+            n.id === notificationId ? { ...n, is_read: true } : n
+          )
+        );
+        setUnreadCount((prev) => Math.max(0, prev - 1));
+
+        return { error: null };
+      } catch (error) {
+        console.error("Error marking notification as read:", error);
+        return { error };
+      }
+    },
+    [user?.id, supabase]
+  );
 
   // Mark all notifications as read
   const markAllAsRead = useCallback(async () => {
@@ -170,6 +202,11 @@ export function NotificationProvider({ children }) {
         .eq("is_read", false);
 
       if (error) throw error;
+
+      // Optimistic UI update - update local state immediately
+      setNotifications((prev) => prev.map((n) => ({ ...n, is_read: true })));
+      setUnreadCount(0);
+
       return { error: null };
     } catch (error) {
       console.error("Error marking all notifications as read:", error);
@@ -178,23 +215,36 @@ export function NotificationProvider({ children }) {
   }, [user?.id, supabase]);
 
   // Delete a notification
-  const deleteNotification = useCallback(async (notificationId) => {
-    if (!user?.id) return { error: "Not authenticated" };
+  const deleteNotification = useCallback(
+    async (notificationId) => {
+      if (!user?.id) return { error: "Not authenticated" };
 
-    try {
-      const { error } = await supabase
-        .from("notifications")
-        .delete()
-        .eq("id", notificationId)
-        .eq("user_id", user.id);
+      try {
+        // Find the notification to check if it was unread before deleting
+        const notification = notifications.find((n) => n.id === notificationId);
 
-      if (error) throw error;
-      return { error: null };
-    } catch (error) {
-      console.error("Error deleting notification:", error);
-      return { error };
-    }
-  }, [user?.id, supabase]);
+        const { error } = await supabase
+          .from("notifications")
+          .delete()
+          .eq("id", notificationId)
+          .eq("user_id", user.id);
+
+        if (error) throw error;
+
+        // Optimistic UI update - update local state immediately
+        setNotifications((prev) => prev.filter((n) => n.id !== notificationId));
+        if (notification && !notification.is_read) {
+          setUnreadCount((prev) => Math.max(0, prev - 1));
+        }
+
+        return { error: null };
+      } catch (error) {
+        console.error("Error deleting notification:", error);
+        return { error };
+      }
+    },
+    [user?.id, supabase, notifications]
+  );
 
   // Clear all notifications
   const clearAllNotifications = useCallback(async () => {
@@ -207,6 +257,11 @@ export function NotificationProvider({ children }) {
         .eq("user_id", user.id);
 
       if (error) throw error;
+
+      // Optimistic UI update - update local state immediately
+      setNotifications([]);
+      setUnreadCount(0);
+
       return { error: null };
     } catch (error) {
       console.error("Error clearing notifications:", error);
@@ -215,64 +270,70 @@ export function NotificationProvider({ children }) {
   }, [user?.id, supabase]);
 
   // Add a local notification (for optimistic updates or client-side notifications)
-  const addLocalNotification = useCallback((notification) => {
-    const newNotification = {
-      id: `local-${Date.now()}`,
-      user_id: user?.id,
-      title: notification.title,
-      message: notification.message,
-      type: notification.type || "info",
-      link: notification.link,
-      is_read: false,
-      created_at: new Date().toISOString(),
-    };
+  const addLocalNotification = useCallback(
+    (notification) => {
+      const newNotification = {
+        id: `local-${Date.now()}`,
+        user_id: user?.id,
+        title: notification.title,
+        message: notification.message,
+        type: notification.type || "info",
+        link: notification.link,
+        is_read: false,
+        created_at: new Date().toISOString(),
+      };
 
-    setNotifications((prev) => [newNotification, ...prev].slice(0, 50));
-    setUnreadCount((prev) => prev + 1);
+      setNotifications((prev) => [newNotification, ...prev].slice(0, 50));
+      setUnreadCount((prev) => prev + 1);
 
-    if (notification.showToast !== false) {
-      showNotificationToast(newNotification);
-    }
+      if (notification.showToast !== false) {
+        showNotificationToast(newNotification);
+      }
 
-    return newNotification;
-  }, [user?.id, showNotificationToast]);
+      return newNotification;
+    },
+    [user?.id, showNotificationToast]
+  );
 
   // Refresh notifications
   const refresh = useCallback(() => {
     fetchNotifications();
   }, [fetchNotifications]);
 
-  const value = useMemo(() => ({
-    // State
-    notifications,
-    unreadCount,
-    loading,
-    isConnected,
-    
-    // Actions
-    markAsRead,
-    markAllAsRead,
-    deleteNotification,
-    clearAllNotifications,
-    addLocalNotification,
-    refresh,
-    
-    // Computed
-    hasUnread: unreadCount > 0,
-    recentNotifications: notifications.slice(0, 5),
-    unreadNotifications: notifications.filter((n) => !n.is_read),
-  }), [
-    notifications,
-    unreadCount,
-    loading,
-    isConnected,
-    markAsRead,
-    markAllAsRead,
-    deleteNotification,
-    clearAllNotifications,
-    addLocalNotification,
-    refresh,
-  ]);
+  const value = useMemo(
+    () => ({
+      // State
+      notifications,
+      unreadCount,
+      loading,
+      isConnected,
+
+      // Actions
+      markAsRead,
+      markAllAsRead,
+      deleteNotification,
+      clearAllNotifications,
+      addLocalNotification,
+      refresh,
+
+      // Computed
+      hasUnread: unreadCount > 0,
+      recentNotifications: notifications.slice(0, 5),
+      unreadNotifications: notifications.filter((n) => !n.is_read),
+    }),
+    [
+      notifications,
+      unreadCount,
+      loading,
+      isConnected,
+      markAsRead,
+      markAllAsRead,
+      deleteNotification,
+      clearAllNotifications,
+      addLocalNotification,
+      refresh,
+    ]
+  );
 
   return (
     <NotificationContext.Provider value={value}>
@@ -289,7 +350,9 @@ export function NotificationProvider({ children }) {
 export function useNotifications() {
   const context = useContext(NotificationContext);
   if (!context) {
-    throw new Error("useNotifications must be used within a NotificationProvider");
+    throw new Error(
+      "useNotifications must be used within a NotificationProvider"
+    );
   }
   return context;
 }

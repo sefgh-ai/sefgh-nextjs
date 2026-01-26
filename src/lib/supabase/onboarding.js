@@ -183,9 +183,8 @@ export async function needsOnboarding(userId) {
 
     // Needs onboarding if:
     // - No data exists, OR
-    // - Data exists but not completed
-    // Note: skipped only dismisses for current session, not permanently
-    const result = !data || !data.completed;
+    // - Data exists but not completed AND not skipped
+    const result = !data || (!data.completed && !data.skipped);
     console.log("[needsOnboarding] Result:", result);
     return result;
   } catch (error) {
