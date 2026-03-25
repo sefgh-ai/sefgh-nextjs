@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
+import { getMcpServerInfo } from "@/lib/supabase/mcp";
 
 /**
  * Send welcome notification to new users (server-side)
@@ -33,6 +34,7 @@ function isNewUser(user) {
 }
 
 export async function GET(request) {
+  console.log(getMcpServerInfo());
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get("code");
   const next = searchParams.get("next") ?? "/home";
@@ -40,6 +42,10 @@ export async function GET(request) {
   if (code) {
     const supabase = await createClient();
     const { error } = await supabase.auth.exchangeCodeForSession(code);
+
+    if (error) {
+      console.error("Error exchanging code for session:", error);
+    }
 
     if (!error) {
       // Get the authenticated user
