@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -12,6 +12,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { TrendingFilters } from "@/components/trending/TrendingFilters";
 import { TrendingRepositoryCard } from "@/components/trending/TrendingRepositoryCard";
 import { TrendingDeveloperCard } from "@/components/trending/TrendingDeveloperCard";
+import { EditorsChoice } from "@/components/trending/EditorsChoice";
 import { useTrendingData } from "@/hooks/trending/useTrendingData";
 import {
   SPOKEN_LANGUAGES,
@@ -19,7 +20,7 @@ import {
   sortRepositories,
 } from "@/lib/utils/trending/trendingHelpers";
 import { getHeatIndicator } from "@/lib/utils/colors";
-import { useMemo } from "react";
+import { editorsChoice } from "@/data/editorsChoice";
 
 export default function TrendingPage() {
   const router = useRouter();
@@ -111,6 +112,12 @@ export default function TrendingPage() {
 
             <main className="flex-1 py-6 px-4 pb-4 overflow-y-auto min-h-0">
               <div className="max-w-7xl mx-auto px-4">
+                {/* Editors' Choice */}
+                <EditorsChoice
+                  items={editorsChoice}
+                  onNavigate={(path) => router.push(path)}
+                />
+
                 {/* Filters */}
                 <TrendingFilters
                   activeTab={activeTab}
