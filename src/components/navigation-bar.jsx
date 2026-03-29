@@ -40,23 +40,35 @@ export function NavigationBar() {
             <DropdownMenuContent>
               <DropdownMenuLabel>Versions</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>sefgh v1</DropdownMenuItem>
-              <DropdownMenuItem>v2</DropdownMenuItem>
-              <DropdownMenuItem>v3</DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href="/versions">sefgh v1</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href="/versions">v2 (preview)</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href="/versions">v3 (preview)</Link>
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </NavigationMenuItem>
 
         <NavigationMenuItem>
-          <Button variant="outline">Login/Signup</Button>
+          <Button variant="outline" asChild>
+            <Link href="/login">Login / Signup</Link>
+          </Button>
         </NavigationMenuItem>
 
         <NavigationMenuItem>
-          <Button variant="outline">GitHub Search</Button>
+          <Button variant="outline" asChild>
+            <Link href="/search">GitHub Search</Link>
+          </Button>
         </NavigationMenuItem>
 
         <NavigationMenuItem>
-          <Button>Private Chat</Button>
+          <Button asChild>
+            <Link href="/chat">Private Chat</Link>
+          </Button>
         </NavigationMenuItem>
       </NavigationMenuList>
     </NavigationMenu>

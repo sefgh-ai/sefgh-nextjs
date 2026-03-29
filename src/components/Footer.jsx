@@ -6,14 +6,14 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   const footerLinks = [
-    { href: "/terms", label: "Terms" },
+    { href: "/terms-of-use", label: "Terms" },
     { href: "/privacy", label: "Privacy" },
-    { href: "/security", label: "Security" },
-    { href: "/status", label: "Status" },
-    { href: "/docs", label: "Docs" },
+    { href: "/cookie-policy", label: "Cookies" },
+    { href: "/accessibility", label: "Accessibility" },
+    { href: "/about", label: "About" },
     { href: "/contact", label: "Contact" },
-    { href: "/settings", label: "Manage cookies" },
-    { href: "/settings", label: "Do not share my personal information" },
+    { href: "/business", label: "Business" },
+    { href: "/feedback", label: "Feedback" },
   ];
 
   return (

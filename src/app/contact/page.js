@@ -274,7 +274,7 @@ export default function ContactPage() {
             <div className="space-y-4">
               {faqs.map((faq, index) => (
                 <div
-                  key={index}
+                  key={faq.question}
                   className="bg-slate-800/50 border border-slate-700 rounded-lg overflow-hidden"
                 >
                   <button
@@ -310,7 +310,7 @@ export default function ContactPage() {
                 references.
               </p>
               <Link
-                href="/docs"
+                href="/about"
                 className="text-blue-400 hover:underline text-sm font-medium"
               >
                 Browse Documentation →

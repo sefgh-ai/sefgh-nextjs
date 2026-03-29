@@ -156,9 +156,9 @@ export default function AboutPage() {
             What We Stand For
           </h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {values.map((value, index) => (
+            {values.map((value) => (
               <div
-                key={index}
+                key={value.title}
                 className="bg-slate-800/50 border border-slate-700 rounded-xl p-6 hover:border-blue-500/50 transition-colors"
               >
                 <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-600 to-teal-600 flex items-center justify-center mb-4">
@@ -186,7 +186,7 @@ export default function AboutPage() {
 
             {milestones.map((milestone, index) => (
               <div
-                key={index}
+                key={`${milestone.year}-${milestone.title}`}
                 className={`relative flex items-center mb-8 ${
                   index % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"
                 }`}
