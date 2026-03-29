@@ -22,6 +22,8 @@ import {
   GitBranch,
   Layers,
   Box,
+  Activity,
+  Download,
 } from "lucide-react";
 
 const ListItem = React.forwardRef(
@@ -204,6 +206,8 @@ export function AnimatedNavbar({ className }) {
                   title="Trending Repos"
                   icon={TrendingUp}
                 />
+                <ListItem href="/downloads" title="Downloads" icon={Download} />
+                <ListItem href="/status" title="Status" icon={Activity} />
               </ul>
             </NavigationMenuContent>
           </NavigationMenuItem>
@@ -238,6 +242,18 @@ export function AnimatedNavbar({ className }) {
                   href="/trending"
                   src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=200&fit=crop"
                   description="Discover the hottest repositories on GitHub"
+                />
+                <ProductCard
+                  title="Release Notes"
+                  href="/news"
+                  src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=200&fit=crop"
+                  description="Catch up on SEFGH launches and fixes"
+                />
+                <ProductCard
+                  title="Research"
+                  href="/research"
+                  src="https://images.unsplash.com/photo-1508387024700-9fe5c0b37f1c?w=400&h=200&fit=crop"
+                  description="Explore frontier updates and links"
                 />
               </div>
             </NavigationMenuContent>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useAuth } from "@/contexts/AuthContext";
 import { useAuthGuard } from "@/hooks/useAuthGuard";
 import { PageLoadingSpinner } from "@/components/shared/LoadingSpinner";
@@ -12,18 +13,52 @@ import { MobileBottomNav } from "@/components/search/MobileBottomNav";
 import Footer from "@/components/Footer";
 import PlaygroundHeader from "@/components/playground/PlaygroundHeader";
 import { playgroundTabs } from "@/lib/utils/playground/tabConfig";
+import { Button } from "@/components/ui/button";
 
 export default function PlaygroundPage() {
   const { user } = useAuth() || {};
   const { isAuthenticated, isLoading } = useAuthGuard();
   const [activeTab, setActiveTab] = useState("keys");
 
-  if (isLoading || !user) {
+  if (isLoading) {
     return <PageLoadingSpinner />;
   }
 
-  if (!isAuthenticated) {
-    return null;
+  if (!user || !isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex flex-col">
+        <div className="max-w-4xl mx-auto flex-1 w-full px-4 sm:px-6 lg:px-8 py-16 text-center space-y-6">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-200 text-sm font-medium">
+            Playground Preview
+          </div>
+          <h1 className="text-4xl md:text-5xl font-bold text-white">
+            Explore the Playground
+          </h1>
+          <p className="text-lg text-slate-400 max-w-2xl mx-auto">
+            Sign in to access interactive experiments, API key management, and advanced search tools tailored for SEFGH users.
+          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+            <Button asChild className="w-full sm:w-auto">
+              <Link href="/login">Sign in to continue</Link>
+            </Button>
+            <Button asChild variant="outline" className="w-full sm:w-auto">
+              <Link href="/pricing">View plans</Link>
+            </Button>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-left mt-8">
+            {["Run queries with saved prompts", "Manage personal API keys", "Try beta features early"].map((item) => (
+              <div
+                key={item}
+                className="p-4 rounded-xl border border-slate-800 bg-slate-900/60 text-slate-200"
+              >
+                {item}
+              </div>
+            ))}
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
   }
 
   return (

@@ -6,14 +6,17 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   const footerLinks = [
-    { href: "/terms-of-use", label: "Terms" },
-    { href: "/privacy", label: "Privacy" },
-    { href: "/cookie-policy", label: "Cookies" },
-    { href: "/accessibility", label: "Accessibility" },
+    { href: "/status", label: "Status" },
+    { href: "/news", label: "Release Notes" },
+    { href: "/research", label: "Research" },
+    { href: "/sitemap-preview", label: "Sitemap" },
+    { href: "/downloads", label: "Downloads" },
+    { href: "/playground", label: "Playground" },
     { href: "/about", label: "About" },
     { href: "/contact", label: "Contact" },
-    { href: "/business", label: "Business" },
-    { href: "/feedback", label: "Feedback" },
+    { href: "/privacy", label: "Privacy" },
+    { href: "/terms-of-use", label: "Terms" },
+    { href: "/cookie-policy", label: "Cookies" },
   ];
 
   return (

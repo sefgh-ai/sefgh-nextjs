@@ -265,6 +265,17 @@ export function NotificationBell() {
                 <p className="text-xs text-muted-foreground mt-1">
                   We'll notify you when something important happens
                 </p>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    setIsOpen(false);
+                    router.push("/notifications");
+                  }}
+                  className="mt-4 text-xs"
+                >
+                  View notification history →
+                </Button>
               </div>
             ) : (
               <div className="p-2 bg-card">

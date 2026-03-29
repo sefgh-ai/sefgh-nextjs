@@ -149,11 +149,8 @@ export default function LogoMarquee() {
 
     const scroll = () => {
       if (!isPaused) {
-        scrollPosition += scrollSpeed;
-        // Reset when we've scrolled through half the content (since we duplicate it)
-        if (scrollPosition >= scrollContainer.scrollWidth / 2) {
-          scrollPosition = 0;
-        }
+        const resetPoint = scrollContainer.scrollWidth / 2 || 1;
+        scrollPosition = (scrollPosition + scrollSpeed) % resetPoint;
         scrollContainer.scrollLeft = scrollPosition;
       }
       animationId = requestAnimationFrame(scroll);
