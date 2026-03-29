@@ -5,12 +5,10 @@ import { createClient } from '@/lib/supabase/server';
  * Generate a secure API key
  */
 function generateApiKey() {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let key = 'sk_';
-  for (let i = 0; i < 48; i++) {
-    key += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return key;
+  const bytes = new Uint8Array(32);
+  crypto.getRandomValues(bytes);
+  const hex = Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join('');
+  return `sk_${hex}`;
 }
 
 /**

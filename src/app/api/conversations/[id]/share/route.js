@@ -42,8 +42,9 @@ export async function POST(req, { params }) {
       return NextResponse.json({ error: shareErr.message }, { status: 400 })
     }
 
-    const origin = req.headers.get('origin') || process.env.NEXT_PUBLIC_SITE_URL || ''
-    const url = `${origin.replace(/\/$/, '')}/s/${share.share_token}`
+    const requestUrl = new URL(req.url)
+    const siteOrigin = (process.env.NEXT_PUBLIC_SITE_URL || requestUrl.origin || '').replace(/\/$/, '')
+    const url = `${siteOrigin}/s/${share.share_token}`
     return NextResponse.json({ share, url })
   } catch (e) {
     return NextResponse.json({ error: e.message }, { status: 500 })

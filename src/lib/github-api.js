@@ -52,13 +52,15 @@ export async function fetchGitHubRepoData(url) {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
     
-    // Fetch repo data from GitHub API
+    // Fetch repo data from GitHub API; prefer server-side token, never expose public tokens to the client bundle
+    const authHeader = process.env.GITHUB_TOKEN
+      ? { 'Authorization': `Bearer ${process.env.GITHUB_TOKEN}` }
+      : {};
+
     const response = await fetch(`https://api.github.com/repos/${owner}/${repo}`, {
       headers: {
         'Accept': 'application/vnd.github.v3+json',
-        ...(process.env.NEXT_PUBLIC_GITHUB_TOKEN && {
-          'Authorization': `Bearer ${process.env.NEXT_PUBLIC_GITHUB_TOKEN}`
-        })
+        ...authHeader
       },
       signal: controller.signal,
     });

@@ -34,10 +34,19 @@ function isNewUser(user) {
 }
 
 export async function GET(request) {
-  console.log(getMcpServerInfo());
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get("code");
   const next = searchParams.get("next") ?? "/home";
+
+  // Only allow relative redirects within the app to prevent open-redirect abuse
+  const isSafeInternalPath = (value) =>
+    typeof value === "string" &&
+    value.startsWith("/") &&
+    !value.startsWith("//") &&
+    !value.includes("://");
+
+  const safeNext = isSafeInternalPath(next) ? next : "/home";
+  const baseOrigin = process.env.NEXT_PUBLIC_SITE_URL || origin;
 
   if (code) {
     const supabase = await createClient();
@@ -63,10 +72,12 @@ export async function GET(request) {
       }
 
       // Redirect to home - onboarding banner will show there if needed
-      return NextResponse.redirect(`${origin}${next}`);
+      return NextResponse.redirect(new URL(safeNext, baseOrigin).toString());
     }
   }
 
   // Return the user to an error page with instructions
-  return NextResponse.redirect(`${origin}/login?error=authentication_failed`);
+  return NextResponse.redirect(
+    new URL("/login?error=authentication_failed", baseOrigin).toString()
+  );
 }

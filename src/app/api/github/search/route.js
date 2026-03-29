@@ -17,6 +17,24 @@ export async function GET(request) {
       );
     }
 
+    const isValidLanguage =
+      !language || /^[A-Za-z0-9._+-]{1,50}$/.test(language);
+    const isValidStars =
+      !stars || /^(\*|[0-9]+|[0-9]+\.\.[0-9]+|[<>]=?[0-9]+)$/.test(stars);
+
+    const pageNumber = Number(page);
+    const perPageNumber = Number(per_page);
+
+    if (!isValidLanguage || !isValidStars || Number.isNaN(pageNumber) || Number.isNaN(perPageNumber)) {
+      return NextResponse.json(
+        { error: "Invalid search parameters" },
+        { status: 400 }
+      );
+    }
+
+    const safePage = Math.max(1, pageNumber);
+    const safePerPage = Math.min(100, Math.max(1, perPageNumber));
+
     // Build GitHub search query
     let githubQuery = query;
     if (language) {
@@ -42,7 +60,7 @@ export async function GET(request) {
     // GitHub API request
     const url = `https://api.github.com/search/repositories?q=${encodeURIComponent(
       githubQuery
-    )}&sort=${githubSort}&order=${order}&page=${page}&per_page=${per_page}`;
+    )}&sort=${githubSort}&order=${order}&page=${safePage}&per_page=${safePerPage}`;
 
     const response = await fetch(url, {
       headers: {

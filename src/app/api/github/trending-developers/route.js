@@ -5,6 +5,11 @@ export async function GET(request) {
     const { searchParams } = new URL(request.url);
     const since = searchParams.get('since') || 'daily';
 
+    const allowedSince = ['daily', 'weekly', 'monthly'];
+    if (!allowedSince.includes(since)) {
+      return NextResponse.json({ error: 'Invalid parameters' }, { status: 400 });
+    }
+
     // GitHub doesn't have a trending developers API
     // We'll use GitHub search API to find active developers
     const sinceDate = getSinceDate(since);

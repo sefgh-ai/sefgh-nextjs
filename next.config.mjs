@@ -4,31 +4,40 @@ import { dirname } from "path";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+const securityHeaders = [
+  {
+    key: "Content-Security-Policy",
+    value:
+      "default-src 'self'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://*.supabase.co https://api.github.com https://vitals.vercel-insights.com https:; frame-ancestors 'none'; base-uri 'self'; form-action 'self';",
+  },
+  { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+  { key: "X-Content-Type-Options", value: "nosniff" },
+  { key: "X-Frame-Options", value: "DENY" },
+  { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
+  { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains; preload" },
+];
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  /* config options here */
   reactCompiler: false, // Disabled - causing 50s+ compile times
-
-  // Performance optimizations
   compress: true,
   poweredByHeader: false,
-  
-  // Speed up compilation (modularizeImports for tree-shaking)
+
   modularizeImports: {
     'lucide-react': {
       transform: 'lucide-react/dist/esm/icons/{{kebabCase member}}',
     },
   },
 
-  // Experimental: Use turbo for faster builds
-  experimental: {
-    turbo: {
-      root: __dirname,
-    },
-    optimizePackageImports: ['lucide-react', 'recharts', '@radix-ui/react-icons'],
+  async headers() {
+    return [
+      {
+        source: '/:path*',
+        headers: securityHeaders,
+      },
+    ];
   },
 
-  // Optimize images
   images: {
     remotePatterns: [
       {
@@ -74,17 +83,20 @@ const nextConfig = {
     minimumCacheTTL: 60,
   },
 
-  // Optimize build output
   experimental: {
+    turbo: {
+      root: __dirname,
+    },
     optimizePackageImports: [
-      "@heroicons/react",
-      "lucide-react",
-      "@radix-ui/react-icons",
-      "sonner",
-      "@react-three/fiber",
-      "@react-three/drei",
-      "three",
-      "framer-motion",
+      'lucide-react',
+      'recharts',
+      '@radix-ui/react-icons',
+      '@heroicons/react',
+      'sonner',
+      '@react-three/fiber',
+      '@react-three/drei',
+      'three',
+      'framer-motion',
     ],
   },
 };

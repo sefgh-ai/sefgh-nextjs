@@ -1,5 +1,5 @@
 // Example API route showing how to send notifications
-// This is a reference example - adapt to your needs
+// WARNING: Do not ship this file to production with a real service role key. It is reference-only.
 
 import { createClient } from '@supabase/supabase-js';
 

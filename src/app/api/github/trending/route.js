@@ -6,6 +6,13 @@ export async function GET(request) {
     const language = searchParams.get('language') || '';
     const since = searchParams.get('since') || 'daily';
 
+    const allowedSince = ['daily', 'weekly', 'monthly'];
+    const isValidLanguage = !language || /^[A-Za-z0-9._+-]{1,50}$/.test(language);
+
+    if (!allowedSince.includes(since) || !isValidLanguage) {
+      return NextResponse.json({ error: 'Invalid parameters' }, { status: 400 });
+    }
+
     // GitHub trending doesn't have an official API, so we'll use a scraper service
     // or fallback to GitHub search API with trending parameters
     

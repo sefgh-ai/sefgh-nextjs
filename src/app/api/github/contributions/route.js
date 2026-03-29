@@ -16,6 +16,14 @@ export async function GET(request) {
       )
     }
 
+    const isValidUsername = /^[A-Za-z0-9](?:-?[A-Za-z0-9]){0,38}$/.test(username)
+    if (!isValidUsername) {
+      return NextResponse.json(
+        { error: 'Invalid GitHub username format' },
+        { status: 400 }
+      )
+    }
+
     // Calculate date range (last 52 weeks starting from a Monday)
     const to = new Date()
     const from = new Date()
@@ -72,9 +80,9 @@ export async function GET(request) {
 
     if (!response.ok) {
       const errorText = await response.text()
-      console.error('GitHub API error:', errorText)
+      console.error('GitHub API error:', response.status)
       return NextResponse.json(
-        { error: 'Failed to fetch GitHub data', details: errorText },
+        { error: 'Failed to fetch GitHub data' },
         { status: response.status }
       )
     }
@@ -82,9 +90,9 @@ export async function GET(request) {
     const data = await response.json()
 
     if (data.errors) {
-      console.error('GraphQL errors:', data.errors)
+      console.error('GraphQL errors received from GitHub')
       return NextResponse.json(
-        { error: 'GraphQL query failed', details: data.errors },
+        { error: 'GraphQL query failed' },
         { status: 400 }
       )
     }
@@ -155,7 +163,7 @@ export async function GET(request) {
   } catch (error) {
     console.error('API error:', error)
     return NextResponse.json(
-      { error: 'Internal server error', details: error.message },
+      { error: 'Internal server error' },
       { status: 500 }
     )
   }
