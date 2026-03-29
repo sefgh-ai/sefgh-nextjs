@@ -34,7 +34,12 @@ export async function middleware(request) {
   // Refresh session if expired - required for Server Components
   const {
     data: { session },
+    error,
   } = await supabase.auth.getSession();
+
+  if (error) {
+    console.error("Error getting session in middleware:", error);
+  }
 
   // Redirect logged-in users from landing page to home
   // BUT allow PWA start_url to work (has ?source=pwa)
