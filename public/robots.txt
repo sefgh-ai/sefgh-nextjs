@@ -17,6 +17,13 @@ Allow: /search
 Allow: /trending
 Allow: /repo/
 Allow: /s/
+Allow: /docs
+Allow: /api-reference
+Allow: /blog
+Allow: /faq
+Allow: /help
+Allow: /forum
+Allow: /code-of-conduct
 
 # Sitemap location
 Sitemap: https://sefgh.org/sitemap.xml

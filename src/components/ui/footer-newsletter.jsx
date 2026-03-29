@@ -95,6 +95,7 @@ export default function FooterNewsletter() {
                   { name: "Pricing", href: "/pricing" },
                   { name: "Careers", href: "/careers" },
                   { name: "Brand", href: "/brand" },
+                  { name: "Blog", href: "/blog" },
                 ].map((item) => (
                   <li key={item.name}>
                     <Link
@@ -118,6 +119,10 @@ export default function FooterNewsletter() {
                   { name: "Versions", href: "/versions" },
                   { name: "Downloads", href: "/download" },
                   { name: "Trending", href: "/trending" },
+                  { name: "Docs", href: "/docs" },
+                  { name: "API Reference", href: "/api-reference" },
+                  { name: "FAQ", href: "/faq" },
+                  { name: "Help Center", href: "/help" },
                 ].map((item) => (
                   <li key={item.name}>
                     <Link
@@ -141,6 +146,7 @@ export default function FooterNewsletter() {
                   { name: "Terms of Use", href: "/terms-of-use" },
                   { name: "Privacy Policy", href: "/privacy" },
                   { name: "Accessibility", href: "/accessibility" },
+                  { name: "Code of Conduct", href: "/code-of-conduct" },
                 ].map((item) => (
                   <li key={item.name}>
                     <Link
@@ -168,6 +174,7 @@ export default function FooterNewsletter() {
                     external: true,
                   },
                   { name: "Starred", href: "/starred" },
+                  { name: "Forum", href: "/forum" },
                 ].map((item) => (
                   <li key={item.name}>
                     <Link

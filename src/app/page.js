@@ -44,6 +44,8 @@ export default function Home() {
   const { user } = useAuth();
   const [searchPlaceholder, setSearchPlaceholder] = useState(0);
   const [mounted, setMounted] = useState(false);
+  const [effectsReady, setEffectsReady] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(false);
   const { theme, setTheme } = useTheme();
   const [allowMotion, setAllowMotion] = useState(true);
   const reducedMotionQuery = useRef(null);
@@ -81,6 +83,27 @@ export default function Home() {
     }
   }, []);
 
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const media = window.matchMedia("(min-width: 1024px)");
+    const update = () => setIsDesktop(media.matches);
+    update();
+    media.addEventListener?.("change", update);
+    return () => media.removeEventListener?.("change", update);
+  }, []);
+
+  // Defer heavy visual effects until after paint/idle to improve first render
+  useEffect(() => {
+    if (!mounted || typeof window === "undefined") return;
+    const enableFx = () => setEffectsReady(true);
+    if ("requestIdleCallback" in window) {
+      const idleId = window.requestIdleCallback(enableFx, { timeout: 1500 });
+      return () => window.cancelIdleCallback?.(idleId);
+    }
+    const timeoutId = setTimeout(enableFx, 1200);
+    return () => clearTimeout(timeoutId);
+  }, [mounted]);
+
   // Rotate search placeholders
   useEffect(() => {
     if (!messages) return;
@@ -100,6 +123,8 @@ export default function Home() {
     );
   }
 
+  const shouldRenderFx = mounted && allowMotion && effectsReady && isDesktop;
+
   return (
     <main className="relative min-h-screen overflow-x-hidden bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
       {/* Skip to content for accessibility */}
@@ -110,7 +135,7 @@ export default function Home() {
         Skip to content
       </a>
       {/* Three.js 3D Background */}
-      {mounted && allowMotion && <ThreeBackground />}
+      {shouldRenderFx && <ThreeBackground />}
 
       {/* Top Bar - Logo and Actions */}
       <header className="relative z-10 bg-transparent">
@@ -119,7 +144,7 @@ export default function Home() {
             href="/"
             className="flex items-center gap-2 sm:gap-3 flex-shrink-0"
           >
-            {mounted && <ParticleText text={t("header.logo")} />}
+            {shouldRenderFx && <ParticleText text={t("header.logo")} />}
             <span className="hidden sm:inline-block px-2.5 py-1 glass-premium rounded-md text-blue-400/80 text-xs font-medium border border-blue-500/20">
               v2.8.5
             </span>

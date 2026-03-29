@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
 import { Building2, Users, Code2, Boxes } from "lucide-react";
 
 // Featured organizations/companies data
@@ -136,36 +135,6 @@ function OrgCard({ org }) {
 }
 
 export default function LogoMarquee() {
-  const scrollRef = useRef(null);
-  const [isPaused, setIsPaused] = useState(false);
-
-  useEffect(() => {
-    const scrollContainer = scrollRef.current;
-    if (!scrollContainer) return;
-
-    let animationId;
-    let scrollPosition = 0;
-    const scrollSpeed = 0.5;
-
-    const scroll = () => {
-      if (!isPaused) {
-        const resetPoint = scrollContainer.scrollWidth / 2 || 1;
-        scrollPosition = (scrollPosition + scrollSpeed) % resetPoint;
-        scrollContainer.scrollLeft = scrollPosition;
-      }
-      animationId = requestAnimationFrame(scroll);
-    };
-
-    animationId = requestAnimationFrame(scroll);
-
-    return () => {
-      if (animationId) {
-        cancelAnimationFrame(animationId);
-      }
-    };
-  }, [isPaused]);
-
-  // Duplicate orgs for seamless infinite scroll
   const duplicatedOrgs = [...FEATURED_ORGS, ...FEATURED_ORGS];
 
   return (
@@ -185,16 +154,27 @@ export default function LogoMarquee() {
       <div className="absolute right-0 top-0 bottom-0 w-20 sm:w-32 bg-gradient-to-l from-slate-950 to-transparent z-10 pointer-events-none" />
 
       {/* Scrolling Container */}
-      <div
-        ref={scrollRef}
-        className="flex gap-4 overflow-x-hidden"
-        onMouseEnter={() => setIsPaused(true)}
-        onMouseLeave={() => setIsPaused(false)}
-      >
-        {duplicatedOrgs.map((org, index) => (
-          <OrgCard key={`${org.name}-${index}`} org={org} />
-        ))}
+      <div className="overflow-hidden">
+        <div className="flex gap-4 animate-marquee will-change-transform">
+          {duplicatedOrgs.map((org, index) => (
+            <OrgCard key={`${org.name}-${index}`} org={org} />
+          ))}
+        </div>
       </div>
+
+      <style jsx>{`
+        @keyframes marquee {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+        .animate-marquee {
+          width: max-content;
+          animation: marquee 24s linear infinite;
+        }
+        .animate-marquee:hover {
+          animation-play-state: paused;
+        }
+      `}</style>
 
       {/* Stats Row */}
       <div className="flex flex-wrap justify-center gap-6 sm:gap-12 mt-10 sm:mt-12 px-4">

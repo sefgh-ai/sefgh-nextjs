@@ -15,6 +15,7 @@ import { PopularSearches } from "@/components/search/PopularSearches";
 import { SearchStats } from "@/components/search/SearchStats";
 import { ViewToggle } from "@/components/search/ViewToggle";
 import { QueryUnderstandingPanel } from "@/components/search/QueryUnderstandingPanel";
+import { SearchNavGuide } from "@/components/search/SearchNavGuide";
 import Footer from "@/components/Footer";
 import { useGitHubSearch } from "@/hooks/search/useGitHubSearch";
 import { PageLoadingSpinner } from "@/components/shared/LoadingSpinner";
@@ -80,6 +81,8 @@ function SearchPageContent() {
               >
                 <div className="max-w-6xl mx-auto">
                   <SearchHeader />
+
+                  <SearchNavGuide />
 
                   {/* Stats Banner */}
                   <SearchStats />

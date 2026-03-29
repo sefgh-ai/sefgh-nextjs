@@ -4,6 +4,16 @@ import { NextResponse } from "next/server";
 export async function middleware(request) {
   const { pathname } = request.nextUrl;
 
+  // Short-circuit for anonymous users to avoid a costly Supabase roundtrip on every request
+  const hasSupabaseSession =
+    request.cookies.has("sb-access-token") ||
+    request.cookies.has("sb-refresh-token");
+
+  // Skip auth work for static HEAD/OPTIONS requests and users without Supabase cookies
+  if (request.method === "HEAD" || request.method === "OPTIONS" || !hasSupabaseSession) {
+    return NextResponse.next({ request });
+  }
+
   let supabaseResponse = NextResponse.next({
     request,
   });

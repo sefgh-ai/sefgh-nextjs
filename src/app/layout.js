@@ -8,6 +8,8 @@ import { LanguageProvider } from "@/contexts/LanguageContext";
 import { NotificationProvider } from "@/contexts/NotificationContext";
 import PageWrapper from "@/components/PageWrapper";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
+import CookieBar from "@/components/CookieBar";
+import { DynamicIslandNav } from "@/components/navigation/DynamicIslandNav";
 import { Toaster } from "sonner";
 import "./globals.css";
 
@@ -209,17 +211,60 @@ export default function RootLayout({ children }) {
         {/* Google Analytics */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-3J37CNB3YE"
-          strategy="afterInteractive"
+          strategy="lazyOnload"
         />
-        <Script id="google-analytics" strategy="afterInteractive">
+        <Script id="google-analytics" strategy="lazyOnload">
           {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-3J37CNB3YE');
+            if (navigator?.doNotTrack === '1') {
+              console.info('GA disabled by DNT');
+            } else {
+              const runGA = () => {
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', 'G-3J37CNB3YE');
+              };
+              if ('requestIdleCallback' in window) {
+                window.requestIdleCallback(runGA, { timeout: 2000 });
+              } else {
+                setTimeout(runGA, 1200);
+              }
+            }
           `}
         </Script>
-        <Script src="/obelisk.min.js" strategy="afterInteractive" />
+        <Script id="obelisk-loader" strategy="lazyOnload">
+          {`
+            (function() {
+              const isLowPower = () => {
+                const mq = window.matchMedia('(max-width: 768px)');
+                const saveData = navigator?.connection?.saveData === true;
+                const lowMemory = navigator?.deviceMemory && navigator.deviceMemory <= 2;
+                const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                return mq.matches || saveData || lowMemory || reducedMotion;
+              };
+
+              if (isLowPower()) {
+                console.info('Obelisk skipped on low-power/mobile');
+                return;
+              }
+
+              const load = () => {
+                if (document.querySelector('script[data-obelisk]')) return;
+                const s = document.createElement('script');
+                s.src = '/obelisk.min.js';
+                s.async = true;
+                s.dataset.obelisk = '1';
+                document.body.appendChild(s);
+              };
+
+              if ('requestIdleCallback' in window) {
+                window.requestIdleCallback(load, { timeout: 2000 });
+              } else {
+                setTimeout(load, 1200);
+              }
+            })();
+          `}
+        </Script>
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
@@ -231,6 +276,8 @@ export default function RootLayout({ children }) {
               <SettingsProvider>
                 <LanguageProvider>
                   <ServiceWorkerRegister />
+                  <DynamicIslandNav />
+                  <CookieBar />
                   <PageWrapper>{children}</PageWrapper>
                   <Toaster
                     position="top-right"
