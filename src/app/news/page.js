@@ -1,5 +1,3 @@
-"use client";
-
 import { ArrowRight, CalendarDays, Megaphone, Sparkles } from "lucide-react";
 import Link from "next/link";
 import AppFooter from "@/components/ui/app-footer";

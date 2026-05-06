@@ -1,5 +1,3 @@
-"use client";
-
 import AppFooter from "@/components/ui/app-footer";
 import Link from "next/link";
 import { Shield, HeartHandshake, AlertTriangle } from "lucide-react";

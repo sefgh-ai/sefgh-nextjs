@@ -1,5 +1,3 @@
-"use client";
-
 import Link from "next/link";
 import { CalendarDays, ArrowRight, PenLine } from "lucide-react";
 import AppFooter from "@/components/ui/app-footer";

@@ -1,5 +1,3 @@
-"use client";
-
 import Link from "next/link";
 import { Code2, KeyRound, ShieldCheck, Gauge, ArrowRight } from "lucide-react";
 import AppFooter from "@/components/ui/app-footer";

@@ -1,5 +1,3 @@
-"use client";
-
 import Link from "next/link";
 import { BookOpen, Sparkles, ArrowRight, CheckCircle2 } from "lucide-react";
 import AppFooter from "@/components/ui/app-footer";
