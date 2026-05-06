@@ -83,10 +83,11 @@ const nextConfig = {
     minimumCacheTTL: 60,
   },
 
+  turbopack: {
+    root: __dirname,
+  },
+
   experimental: {
-    turbo: {
-      root: __dirname,
-    },
     optimizePackageImports: [
       'lucide-react',
       'recharts',

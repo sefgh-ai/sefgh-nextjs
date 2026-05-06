@@ -1,7 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse } from "next/server";
 
-export async function middleware(request) {
+export async function proxy(request) {
   const { pathname } = request.nextUrl;
 
   // Short-circuit for anonymous users to avoid a costly Supabase roundtrip on every request
@@ -48,7 +48,7 @@ export async function middleware(request) {
   } = await supabase.auth.getSession();
 
   if (error) {
-    console.error("Error getting session in middleware:", error);
+    console.error("Error getting session in proxy:", error);
   }
 
   // Redirect logged-in users from landing page to home
